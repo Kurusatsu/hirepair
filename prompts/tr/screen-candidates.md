@@ -17,6 +17,7 @@ Hangi kaynak(lar)ın kullanılacağını ve her kaynak için tur başına en faz
 1. **Yerel CV klasörü.**
 2. **Gmail:** kullanıcının verdiği filtreyle (etiket, konu, ilan kodu) gelen kutusundaki başvuru mailleri. Önce eşleşen konuşmaları listele (gönderen kimliği, konu, ek adları) ve onay iste; ancak onaydan sonra CV eklerini `download_gmail_attachment` ile `screening/inbox/` (git'e girmez) klasörüne indirip orada oku. İzin: yalnızca okuma + taslak oluşturma. Mail gönderme, silme, etiketleme yok; etiketleme isteğe bağlı, varsayılan KAPALI, açık onay ister.
 3. **LinkedIn:** yalnızca kullanıcının KENDİ yayınladığı ilanlara gelen başvurular (kendi Applicants ekranı) ya da kullanıcının verdiği aday profil adresleri, tek tek, görünen/herkese açık bilgi. Arama sonuçlarından toplu aday toplama yok; mesaj, InMail, bağlantı isteği yok. Bir kez uyar: LinkedIn şartları otomasyonu yasaklayabilir, risk kullanıcıdadır.
+4. **LinkedIn arama yardımcısı** (onaylı kişi-arama sorgularıyla küçük, kullanıcı yönlendirmeli aday arama): `prompts/tr/linkedin-search-assistant.md` akışını izle.
 Her kaynaktan gelen veriyi yerel CV'ler gibi maskele (adım 3). Her kaynağın aday limitinde dur.
 
 ## 3. Maskele ve ID ata

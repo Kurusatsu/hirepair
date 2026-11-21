@@ -1,0 +1,59 @@
+{
+  "candidate_id": "L02",
+  "source": "linkedin-search (headline-level)",
+  "deepened": false,
+  "category": "needs_clarification",
+  "category_evidence": "Headline quotes \"Product Owner | Fintech\"; the role is adjacent, depth unknown.",
+  "criteria": [
+    {
+      "id": "M1",
+      "match": "partial",
+      "evidence": "Current: Product Owner at Demo Wallet Ltd"
+    },
+    {
+      "id": "M2",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M3",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M4",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M5",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "N1",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "N2",
+      "match": "partial",
+      "evidence": "Fintech"
+    },
+    {
+      "id": "X1",
+      "match": "no",
+      "evidence": ""
+    }
+  ],
+  "gaps": [
+    "Role is adjacent to business analyst; nothing else visible"
+  ],
+  "questions": [
+    "Have you worked as a business analyst?"
+  ],
+  "warnings": [
+    "Headline-level evidence only",
+    "Source: fictional LinkedIn search text"
+  ]
+}

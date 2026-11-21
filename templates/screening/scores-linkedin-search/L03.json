@@ -1,0 +1,59 @@
+{
+  "candidate_id": "L03",
+  "source": "linkedin-search (headline-level)",
+  "deepened": false,
+  "category": "needs_clarification",
+  "category_evidence": "Headline quotes \"Software Tester\"; fit unclear, testing-only exclusion cannot be confirmed from a headline.",
+  "criteria": [
+    {
+      "id": "M1",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M2",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M3",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M4",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M5",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "N1",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "N2",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "X1",
+      "match": "not_stated",
+      "evidence": ""
+    }
+  ],
+  "gaps": [
+    "Only a testing title is visible; exclusion X1 cannot be confirmed from a headline"
+  ],
+  "questions": [
+    "Do you do analysis work beyond test execution?"
+  ],
+  "warnings": [
+    "Headline-level evidence only",
+    "Source: fictional LinkedIn search text"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "candidate_id": "L01",
+  "source": "linkedin-search (headline-level)",
+  "deepened": false,
+  "category": "possible",
+  "category_evidence": "Headline quotes \"Business Analyst | Payments and Cards\" (headline only; years, UAT and SQL not visible).",
+  "criteria": [
+    {
+      "id": "M1",
+      "match": "partial",
+      "evidence": "Current: Business Analyst at Fictional Bank Tech"
+    },
+    {
+      "id": "M2",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M3",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M4",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "M5",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "N1",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "N2",
+      "match": "partial",
+      "evidence": "Payments and Cards"
+    },
+    {
+      "id": "X1",
+      "match": "no",
+      "evidence": ""
+    }
+  ],
+  "gaps": [
+    "Years, requirements, UAT, SQL and English not visible at headline level"
+  ],
+  "questions": [
+    "How many years as a business analyst?",
+    "Do you run UAT and use SQL?"
+  ],
+  "warnings": [
+    "Headline-level evidence only",
+    "Source: fictional LinkedIn search text"
+  ]
+}

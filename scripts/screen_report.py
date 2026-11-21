@@ -5,7 +5,9 @@ Usage: python3 scripts/screen_report.py CRITERIA.json SCORES_DIR [--out report.m
 
 Scoring: yes=1, partial=0.5, no/not_stated=0. Must-have points and nice-to-have
 points are scaled to the weights in the criteria file (default 70/30).
-Reports candidate IDs only. Stdlib only. Never rejects anyone: exclusion hits are
+Reports candidate IDs only. Optional per-candidate "source" (for example "linkedin-search (headline-level)")
+and "deepened" (true after a user-chosen profile reading) fields; headline-level candidates cannot be strong_match.
+ Stdlib only. Never rejects anyone: exclusion hits are
 flagged for human review. Exit code 1 if a score file is invalid.
 """
 import argparse
@@ -31,6 +33,10 @@ def score(crit, cand, problems):
         problems.append(f"{cid}: category must be one of {', '.join(CATEGORIES)}")
     elif not cand.get("category_evidence", "").strip():
         problems.append(f"{cid}: category without category_evidence")
+    if str(cand.get("source", "")).startswith("linkedin-search") and not cand.get("deepened") \
+            and cand.get("category") in ("strong_match", "not_matching"):
+        problems.append(f"{cid}: headline-level (not deepened) candidates may only be 'possible' or "
+                        "'needs_clarification'; 'strong_match' requires a user-chosen profile deepening")
 
     def part(items):
         if not items:
@@ -78,10 +84,10 @@ def main():
     out = [f"# Candidate shortlist: {crit.get('role', '')}", "",
            "Advisory only. A human decides. Scores come from approved criteria and CV quotes; "
            "`not_stated` means the CV does not say, not that the candidate lacks it. Review the lower group too.", "",
-           "| Rank | ID | Category | Score | Must-have | Nice-to-have | Flags |", "|---|---|---|---|---|---|---|"]
+           "| Rank | ID | Source | Category | Score | Must-have | Nice-to-have | Flags |", "|---|---|---|---|---|---|---|---|"]
     for i, (t, m, n, h, _, c) in enumerate(rows, 1):
         flags = "exclusion hit: review" if h else "-"
-        out.append(f"| {i} | {c['candidate_id']} | {CATEGORIES.get(c.get('category'), '?')} | {t}/100 | {m}/{w['must_have']} | {n}/{w['nice_to_have']} | {flags} |")
+        out.append(f"| {i} | {c['candidate_id']} | {c.get('source', 'local')} | {CATEGORIES.get(c.get('category'), '?')} | {t}/100 | {m}/{w['must_have']} | {n}/{w['nice_to_have']} | {flags} |")
     out += ["", "## Category summary", ""]
     for key, label in CATEGORIES.items():
         ids = [r[5]["candidate_id"] for r in rows if r[5].get("category") == key]
@@ -96,6 +102,8 @@ def main():
                 continue
             ev = f' "{r["evidence"]}"' if r.get("evidence") else ""
             out.append(f"- {cid} {text}: **{r['match']}**{ev}")
+        if str(c.get("source", "")).startswith("linkedin-search") and not c.get("deepened"):
+            out.append("- Evidence level: HEADLINE ONLY (years and skills are not visible); weak evidence, profile deepening needed before any firm view.")
         if c.get("gaps"):
             out.append("- Gaps: " + "; ".join(c["gaps"]))
         if c.get("questions"):

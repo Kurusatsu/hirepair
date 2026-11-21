@@ -2,13 +2,13 @@
 
 Advisory only. A human decides. Scores come from approved criteria and CV quotes; `not_stated` means the CV does not say, not that the candidate lacks it. Review the lower group too.
 
-| Rank | ID | Category | Score | Must-have | Nice-to-have | Flags |
-|---|---|---|---|---|---|---|
-| 1 | C01 | Strong match | 100.0/100 | 70.0/70 | 30.0/30 | - |
-| 2 | C05 | Strong match | 77.5/100 | 70.0/70 | 7.5/30 | - |
-| 3 | C04 | Possible | 56.0/100 | 56.0/70 | 0.0/30 | - |
-| 4 | C02 | Needs clarification | 28.5/100 | 21.0/70 | 7.5/30 | - |
-| 5 | C03 | Does not meet criteria (suggestion) | 7.0/100 | 7.0/70 | 0.0/30 | exclusion hit: review |
+| Rank | ID | Source | Category | Score | Must-have | Nice-to-have | Flags |
+|---|---|---|---|---|---|---|---|
+| 1 | C01 | local | Strong match | 100.0/100 | 70.0/70 | 30.0/30 | - |
+| 2 | C05 | local | Strong match | 77.5/100 | 70.0/70 | 7.5/30 | - |
+| 3 | C04 | local | Possible | 56.0/100 | 56.0/70 | 0.0/30 | - |
+| 4 | C02 | local | Needs clarification | 28.5/100 | 21.0/70 | 7.5/30 | - |
+| 5 | C03 | local | Does not meet criteria (suggestion) | 7.0/100 | 7.0/70 | 0.0/30 | exclusion hit: review |
 
 ## Category summary
 

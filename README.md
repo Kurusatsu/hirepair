@@ -84,6 +84,12 @@ After you approve the criteria, choose one or more sources and a per-round candi
 
 Each candidate gets a category (strong match / possible / needs clarification / does not meet criteria) with an evidence quote. The last one is only a suggestion; the agent rejects nobody and contacts nobody. Reply drafts are drafts only. Masking applies to every source. Fictional samples: `templates/screening/`.
 
+## LinkedIn search assistant (recruiter sub-mode)
+
+A deliberately small, user-directed way to find leads: after you approve the criteria, the agent drafts people-search queries (keywords + location) for your approval; for each approved query it runs ONE search in your own open browser and reads only the first result page text (headline, current role line, location, connection degree; no names stored). Limits: results per round (suggest 10, hard maximum 25), queries per day (suggest 3). No paging, no profile visits, no connection requests, messages, InMail, follows or lead saving. You get a headline-level shortlist; profile deepening happens only for candidate IDs you pick in chat, one by one, with masking. It stops at once on any CAPTCHA, warning, verification or limit text. See `prompts/screening/linkedin-search-assistant.md`.
+
+**Honest limitations.** Headline text is weak evidence: years of experience and skills are mostly invisible, so the best category is "possible / needs clarification" and "strong match" is only possible after a deepening you chose. Results depend on LinkedIn's ranking and on your network visibility, so it will miss people. LinkedIn's terms prohibit automated bulk collection and accounts can be restricted; this mode is small on purpose and the risk stays with you. Leads are third-party personal data (KVKK/GDPR): minimum fields, local git-ignored folder, no sharing, delete when done. Not tested against the live site. See `docs/candidate-screening-safety.md`. Fictional samples: `templates/screening/linkedin-search-results.example.md`, `report.linkedin-search.example.md`.
+
 ## Quick start
 
 ```bash

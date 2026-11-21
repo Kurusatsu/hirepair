@@ -22,6 +22,7 @@ Ask which source(s) to use and the maximum number of candidates per round for ea
 1. **Local CV folder.**
 2. **Gmail:** application mails in the user's inbox selected by a filter the user gives (label, subject, job reference). First list the matching threads (sender ID, subject, attachment names) and ask approval; only then download CV attachments with `download_gmail_attachment` into `screening/inbox/` (git-ignored) and read them there. Permissions: read + create draft only. Never send, delete or relabel mail. Labeling is optional, OFF by default, and needs explicit approval.
 3. **LinkedIn:** only applicants to jobs the user posted themselves (their own Applicants screen), or candidate profile URLs the user supplies, one at a time, public/visible info only. No bulk collection from search results, no messages, InMail or connection requests. Warn once: LinkedIn's terms may forbid automation; the user bears the risk.
+4. **LinkedIn search assistant** (small, user-directed lead finding by approved people-search queries): follow `prompts/screening/linkedin-search-assistant.md`.
 Mask data from every source (Step 3) exactly like local CVs. Stop at each source's candidate cap.
 
 ## Step 3: mask and assign IDs

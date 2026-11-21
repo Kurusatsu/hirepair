@@ -66,6 +66,12 @@ Kriterleri onayladıktan sonra bir veya birkaç kaynak ve her biri için tur ba�
 
 Her aday kanıt alıntısıyla bir kategoriye girer (güçlü eşleşme / olası / netleştirme gerekli / kriterlere uymuyor). Sonuncusu yalnızca öneridir; ajan kimseyi reddetmez, kimseyle iletişime geçmez. Geri dönüş metinleri yalnızca taslaktır. Maskeleme her kaynağa uygulanır. Sahte örnekler: `templates/screening/`.
 
+## LinkedIn arama yardımcısı (işe alım alt modu)
+
+Aday adayı bulmanın bilerek küçük, kullanıcı yönlendirmeli yolu: kriterleri onayladıktan sonra ajan onayın için kişi-arama sorguları (anahtar kelime + lokasyon) üretir; onaylı her sorgu için senin açık tarayıcında TEK arama yapar ve yalnızca ilk sonuç sayfasının metnini okur (başlık, mevcut rol satırı, lokasyon, bağlantı derecesi; isim saklanmaz). Limitler: turda sonuç (öneri 10, sert üst sınır 25), günde sorgu (öneri 3). Sayfa gezme, profil ziyareti, bağlantı isteği, mesaj, InMail, takip, lead kaydı yok. Başlık düzeyinde kısa liste alırsın; profil derinleştirme yalnızca sohbette ID ile seçtiğin adaylar için, tek tek ve maskelemeyle yapılır. CAPTCHA, uyarı, doğrulama ya da limit metninde hemen durur. Bkz. `prompts/tr/linkedin-search-assistant.md`.
+
+**Dürüst sınırlamalar.** Başlık metni zayıf kanıttır: deneyim yılı ve beceriler çoğunlukla görünmez; en iyi kategori "olası / netleştirme gerekli"dir, "güçlü eşleşme" ancak senin seçtiğin bir derinleştirmeden sonra mümkündür. Sonuçlar LinkedIn'in sıralamasına ve ağ görünürlüğüne bağlıdır, bazı kişileri kaçırır. LinkedIn şartları otomatik toplu toplamayı yasaklar, hesap kısıtlanabilir; mod bilerek küçüktür ve risk sendedir. Bulgular üçüncü kişi verisidir (KVKK/GDPR): asgari alan, yerel git'e girmeyen klasör, paylaşım yok, bitince sil. Canlı sitede denenmedi. Bkz. `docs/candidate-screening-safety.tr.md`.
+
 ## Hızlı başlangıç
 
 ```bash
