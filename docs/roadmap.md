@@ -24,7 +24,7 @@ Order matters: finish what is below "Now" before starting "Next".
 Ordered by expected gain. The slowest part of a run is browser round trips and tokens, not the local code.
 
 **Agent flow**
-1. One JavaScript call per search-results page that returns every card's title, company, age and Applied/Saved badge; drop cards already in the seen-ID list or tracker before clicking any. Today each card is clicked to read its ID.
+1. Done: `scripts/linkedin_cards.js` reads a results page in one call; `scripts/card_filter.py` drops handled cards before any click. Still to verify on a real supervised run (selectors were tested only on a fake page).
 2. Title prefilter before opening a job page: skip titles that match the profile's exclusions or no target/adjacent role and no `queries.skills` keyword. Opened pages are the main cost.
 3. Make the read-only search subagent the default in scheduled runs; the parent only tailors CVs and fills forms (smaller parent context, fewer dropped browser sessions).
 4. Re-score from the cached job text instead of reopening pages when only the profile changed.
