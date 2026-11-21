@@ -11,3 +11,4 @@ upload/
 /screening/
 /reports/
 CV_PROJECT_ENTRY.md
+__pycache__/
