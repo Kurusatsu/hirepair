@@ -1,0 +1,56 @@
+# Copy to profile.local.yml (git-ignored) and fill in. Nothing here is real.
+candidate:
+  display_name: "Alex Example"        # used only in drafts you review
+  city: "Example City"
+  languages: ["English (C1)"]
+
+targets:
+  roles:                              # full score for these
+    - "Business Analyst"
+    - "Product Owner"
+    - "Implementation Consultant"
+    - "Release / Change Manager"
+  adjacent_roles:                     # half score
+    - "Project Coordinator"
+
+exclusions:                           # hard: reject, do not score
+  roles: ["Helpdesk / L1-L2 support", "Pure manual QA"]
+  skills_as_hard_requirement: ["<SKILL_YOU_LACK>"]
+  locations: ["<DISTRICT_TOO_FAR>"]
+  remote_exception: true              # excluded locations are fine if remote
+
+always_include_companies:             # always opened and scored, never skipped on seniority alone
+  - "<COMPANY_A>"
+  - "<COMPANY_B>"
+
+locations:
+  accepted: ["Example City", "Remote"]
+  work_model: ["on-site", "hybrid", "remote"]
+
+compensation:
+  currency: "<CURRENCY>"
+  net_monthly_expectation: "<NUMBER>"  # used only if a form requires a single number
+  gross_annual_expectation: "<NUMBER>"
+
+form_facts:                           # the ONLY facts the agent may use in forms
+  start_availability: "immediately"
+  work_authorization: "<ANSWER>"
+  driving_licence: "<ANSWER>"
+  military_service: "<ANSWER_OR_NOT_APPLICABLE>"
+  years_of_experience:                # keep consistent with the CV
+    sql: 0
+    python: 0
+
+queries:
+  jobs:
+    - "business analyst"
+    - "product owner"
+    - "implementation consultant"
+    - "release manager"
+  posts:
+    - "hiring business analyst <city>"
+    - "<role> we are hiring"
+  career_sites: []                    # optional career pages for the title-only check
+
+limits:
+  daily_prepared_cap: 20

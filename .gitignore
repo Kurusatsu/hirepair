@@ -1,0 +1,5 @@
+cv*.pdf
+data/
+tracker.md
+*.local.*
+.DS_Store
