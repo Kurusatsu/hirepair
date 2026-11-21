@@ -29,7 +29,7 @@ Nothing runs before you approve the roles (or the criteria). Missing facts are m
 1. [Claude Code](https://claude.com/claude-code) (the commands and prompts run as Claude Code commands and skills)
 2. The **Claude in Chrome** extension, with **you signed in to LinkedIn on your own account** (the agent never types passwords)
 3. A **Gmail connector** so it can read replies and create drafts (send permission is not needed)
-4. Your CV as a file in this folder
+4. Your CV as a file in this folder. Markdown or text works best; for a PDF the agent needs a PDF-to-text tool (on macOS `brew install poppler`), otherwise paste the text
 
 Python 3 (standard library only) is optional, for the small helper scripts.
 

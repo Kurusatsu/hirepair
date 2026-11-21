@@ -2,6 +2,8 @@
 
 Claude Code zamanlanmış görev prompt'u; günde bir kez (örn. 09:00). Posta kutusunda kesinlikle salt okunur; yalnızca tracker'ın Yanıt sütununu günceller.
 
+**Varsayılanlar:** `<RAPOR_DILI>` = kullanıcının yazdığı dil (varsayılan Türkçe).
+
 ---
 
 Adayın iş başvurularına gelen yanıtları kontrol et. Kısa, `<RAPOR_DILI>` dilinde yaz.

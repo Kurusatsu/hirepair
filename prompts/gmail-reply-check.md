@@ -2,6 +2,8 @@
 
 A scheduled-task prompt for Claude Code. It runs once a day (for example 09:00), is strictly read-only on the mailbox, and updates only the reply column of the tracker.
 
+**Defaults (nothing replaced):** `<REPORT_LANGUAGE>` = the user's language; `<PATH_TO_PROFILE_YML>` = `profile.local.yml`; `<PATH_TO_TRACKER_MD>` = `tracker.md`.
+
 ---
 
 Check replies to the candidate's job applications. Write in `<REPORT_LANGUAGE>`, briefly.

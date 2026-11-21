@@ -4,6 +4,8 @@ A scheduled-task prompt for Claude Code. It runs once a day (for example 17:00) 
 
 Replace every `<PLACEHOLDER>` before use. Keep your real data in files that are git-ignored (see `.gitignore`).
 
+**Defaults (interactive run, nothing replaced):** `<REPORT_LANGUAGE>` = the language the user writes in; `<PATH_TO_CV_MD>` = `cv.local.md`; `<PATH_TO_PROFILE_YML>` = `profile.local.yml`; `<PATH_TO_TRACKER_MD>` = `tracker.md`; `<PATH_TO_MANUAL_LIST_MD>` = `data/manual-candidates.md`; `<PATH_TO_SEEN_IDS_TXT>` = `data/seen-ids.txt`; `<CANDIDATES_FILE>` = `data/candidates-<date>.md`; `<MAIL_DRAFTS_FILE>` = `data/mail-drafts-<date>.md`. Create a missing file empty (all under git-ignored `data/`). `<YOUR_CV_BUILD_COMMAND>` has no default: if none is configured, save the tailored CV as `data/cv/<First_Last_Role_Cv>.md`, run `ats_check.py` on it, and ask the user how to produce the PDF (for example print to PDF from a browser). Never invent a build step.
+
 ---
 
 You are running a job-search sweep for the candidate. Write all user-facing text in `<REPORT_LANGUAGE>`. Be concise.
