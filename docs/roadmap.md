@@ -14,8 +14,10 @@ Order matters: finish what is below "Now" before starting "Next".
 - More ATS checks: section order, length by experience level, bilingual CV pair (TR/EN) check, with unit tests (`python3 -m unittest discover -s tests`)
 - Installable `hirepair` skill (`skills/hirepair`, `scripts/install_skill.py`). It is a thin entry point over this repo, not a self-contained bundle
 
+- Read-only local tracker page with a "waiting for you" list (`scripts/tracker_view.py`); recruiter score reports verify evidence quotes against the masked CVs (`--masked`)
+
 ## Later: small local web UI
-A minimal local dashboard (no accounts, no cloud, data stays on your machine):
+The read-only tracker page above is the first step. A minimal local dashboard (no accounts, no cloud, data stays on your machine):
 - Onboarding screen: upload CV, review proposed roles, approve or edit
 - Tracker board: status columns, replies, tailored CV per row
 - Recruiter view: criteria editor, ranked shortlist with evidence, candidate masking preview
