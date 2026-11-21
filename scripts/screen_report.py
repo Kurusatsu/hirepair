@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Build a ranked, advisory Markdown shortlist from per-candidate JSON score files.
 
-Usage: python3 scripts/screen_report.py CRITERIA.json SCORES_DIR [--out report.md]
+Usage: python3 scripts/screen_report.py CRITERIA.json SCORES_DIR [--out report.md] [--masked MASKED_DIR]
+
+With --masked, every yes/partial evidence quote must appear verbatim (whitespace-insensitive) in
+MASKED_DIR/<candidate_id>.txt; candidates without such a file are skipped. This enforces "no quote, no yes".
 
 Scoring: yes=1, partial=0.5, no/not_stated=0. Must-have points and nice-to-have
 points are scaled to the weights in the criteria file (default 70/30).
@@ -24,6 +27,23 @@ VALUE = {"yes": 1.0, "partial": 0.5, "no": 0.0, "not_stated": 0.0}
 def load(path):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
+
+
+def norm(t):
+    return " ".join(t.split()).lower()
+
+
+def check_quotes(cand, masked_dir, problems):
+    cid = cand.get("candidate_id", "?")
+    path = os.path.join(masked_dir, f"{cid}.txt")
+    if not os.path.isfile(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        cv = norm(f.read())
+    for r in cand.get("criteria", []):
+        ev = r.get("evidence", "").strip()
+        if r.get("match") in ("yes", "partial") and ev and norm(ev) not in cv:
+            problems.append(f"{cid}: {r.get('id')} evidence is not a verbatim quote of the masked CV: \"{ev[:60]}\"")
 
 
 def score(crit, cand, problems):
@@ -69,11 +89,14 @@ def main():
     ap.add_argument("criteria")
     ap.add_argument("scores_dir")
     ap.add_argument("--out")
+    ap.add_argument("--masked", help="folder of masked CVs (<ID>.txt) to verify evidence quotes against")
     a = ap.parse_args()
     crit = load(a.criteria)
     problems, rows = [], []
     for p in sorted(glob.glob(os.path.join(a.scores_dir, "*.json"))):
         cand = load(p)
+        if a.masked:
+            check_quotes(cand, a.masked, problems)
         total, must, nice, hits, by_id = score(crit, cand, problems)
         rows.append((total, must, nice, hits, by_id, cand))
     if problems:
