@@ -50,6 +50,15 @@ Sonra birini yaz:
 
 Ajan CV'ni (veya iş ilanını) ister, rolleri (veya kriterleri) önerir, günlük limitleri sorar ve senin onayını bekler.
 
+**İsteğe bağlı: skill olarak kur.** Böylece `/hirepair` her klasörden çalışır (yalnızca bir Hirepair klasöründe çalışır, değilse yolunu sorar):
+
+```bash
+python3 scripts/install_skill.py            # skills/hirepair'i ~/.claude/skills altına sembolik bağlar
+python3 scripts/install_skill.py --uninstall
+```
+
+Skill, prompt ve dokümanları bu repodan okur; repoyu yerinden oynatma.
+
 ## Öne çıkanlar
 
 - CV'nde bulunan gerçek bilgilerden üretilen **ATS uyumlu, role özel CV**: tek sütun, standart başlık ve tarih, metni seçilebilir PDF, en fazla 2 sayfa. Herhangi bir CV'yi `python3 scripts/ats_check.py cv.md --jd ilan.txt` ile kontrol et (eksik anahtar kelimeyi raporlar, hiçbirini eklemez). Ayrıca bölüm sırasını ve deneyim düzeyine göre CV uzunluğunu uyarır; `--pair cv_en.md` ile TR/EN CV çiftinde tarih, e-posta, bölüm ve sayıların tutarlılığını denetler. Kurallar: [docs/ats-rules.md](docs/ats-rules.md)

@@ -50,6 +50,15 @@ Then type one of:
 
 The agent asks for your CV (or the job description), proposes roles (or criteria), asks about daily limits, and waits for your yes.
 
+**Optional: install as a skill** so `/hirepair` works from any folder of yours (it only runs inside a Hirepair folder and asks for its path otherwise):
+
+```bash
+python3 scripts/install_skill.py            # symlinks skills/hirepair into ~/.claude/skills
+python3 scripts/install_skill.py --uninstall
+```
+
+The skill reads prompts and docs from this repo, so keep the repo in place.
+
 ## Highlights
 
 - **ATS-compliant, role-tailored CVs** built only from facts in your CV: single column, standard headings and dates, selectable-text PDF, at most 2 pages. Check any CV with `python3 scripts/ats_check.py cv.md --jd job.txt` (reports missing keywords; never adds any). It also warns on section order and CV length for your experience level, and `--pair cv_tr.md` checks a TR/EN CV pair for matching dates, e-mail, sections and numbers. Rules: [docs/ats-rules.md](docs/ats-rules.md)
