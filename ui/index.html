@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="csrf" content="{{CSRF}}">
+<title>Hirepair</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">İçeriğe geç</a>
+<header>
+  <h1>Hirepair</h1>
+  <span class="note" data-i18n="mode">İş arayan modu</span>
+  <span class="local" data-i18n="local">Yalnızca yerel · 127.0.0.1 · hiçbir şey bu bilgisayardan çıkmaz</span>
+  <button class="btn" id="lang" type="button" aria-label="Language / Dil">EN</button>
+</header>
+<nav role="tablist" aria-label="Sections" id="tabs">
+  <button role="tab" id="t-today" aria-controls="p-today" aria-selected="true" data-i18n="tab_today">Bugün</button>
+  <button role="tab" id="t-appr" aria-controls="p-appr" aria-selected="false" tabindex="-1"><span data-i18n="tab_appr">Seni bekleyenler</span> <span class="count" id="count" hidden>0</span></button>
+  <button role="tab" id="t-track" aria-controls="p-track" aria-selected="false" tabindex="-1" data-i18n="tab_track">Takip</button>
+  <button role="tab" id="t-rec" aria-controls="p-rec" aria-selected="false" tabindex="-1" data-i18n="tab_rec">İşe alımcı</button>
+</nav>
+<main id="main">
+  <section id="p-today" role="tabpanel" aria-labelledby="t-today" tabindex="0">
+    <h2 data-i18n="tab_today">Bugün</h2>
+    <div class="grid" id="stats"></div>
+    <h2 data-i18n="roles_h">Onaylı roller</h2>
+    <div class="card row" id="roles"></div>
+    <h2 data-i18n="limits_h">Limitler</h2>
+    <div class="card" id="limits"></div>
+  </section>
+
+  <section id="p-appr" role="tabpanel" aria-labelledby="t-appr" tabindex="0" hidden>
+    <h2 data-i18n="tab_appr">Seni bekleyenler</h2>
+    <p class="note" data-i18n="appr_intro">İki tür madde var. Burada onayla: ajan evetinden sonra devam eder. Kendin yap: onaylar, girişler, kimlik bilgileri ve son Gönder'i ajan asla yapmaz.</p>
+    <div id="inbox"></div>
+  </section>
+
+  <section id="p-track" role="tabpanel" aria-labelledby="t-track" tabindex="0" hidden>
+    <h2 data-i18n="tab_track">Takip</h2>
+    <label for="q" class="note" data-i18n="filter_label">Şirket, pozisyon veya duruma göre süz</label>
+    <input id="q" type="search" autocomplete="off">
+    <div class="wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+    <p id="none" class="note" hidden data-i18n="filter_empty">Eşleşen satır yok. Tümünü görmek için filtreyi temizle.</p>
+    <p id="trk-empty" class="note" hidden data-i18n="track_empty">Henüz satır yok.</p>
+  </section>
+
+  <section id="p-rec" role="tabpanel" aria-labelledby="t-rec" tabindex="0" hidden>
+    <h2 data-i18n="rec_h">Kısa liste</h2>
+    <p class="note" data-i18n="rec_note">Yalnızca tavsiye niteliğindedir. Kararı insan verir. Kimse bu sayfadan reddedilmez veya aranmaz.</p>
+    <pre class="preview" id="shortlist"></pre>
+    <p id="rec-empty" class="note" hidden data-i18n="rec_empty">Henüz kısa liste yok.</p>
+  </section>
+</main>
+
+<div class="toast" id="live" role="status" aria-atomic="true"></div>
+
+<dialog id="dlg" aria-labelledby="dlg-t">
+  <h3 id="dlg-t"></h3>
+  <p id="dlg-b"></p>
+  <label for="dlg-text" id="dlg-l" class="note" hidden data-i18n="edit_label">Metni düzenle</label>
+  <textarea id="dlg-text" rows="8" hidden></textarea>
+  <p id="dlg-err" class="err" role="alert" hidden></p>
+  <div class="row"><button class="btn primary" id="ok" type="button"></button><button class="btn" id="no" type="button" data-i18n="cancel">Vazgeç</button></div>
+</dialog>
+<script src="/static/app.js"></script>
+</body>
+</html>

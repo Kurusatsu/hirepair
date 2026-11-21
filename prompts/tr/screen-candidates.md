@@ -37,3 +37,8 @@ Kategoriye göre yalnızca TASLAK üret (güçlü/olası için olumlu, netleşti
 
 ## Bitişte
 Aday dosyaları ve raporlar kişisel veridir (KVKK/GDPR): amaç bitince sil, git'e koyma, adaylara aydınlatma metni göndermeyi düşün (öneri metni güvenlik belgesinde). Kullanıcı adına hiçbir şey gönderme.
+
+## Onay kutusu (isteğe bağlı UI)
+İsteğe bağlı; yerel UI yoksa hiçbir şey değişmez. Çalışma başında `python3 scripts/ui_protocol.py decisions` çalıştır. Her sonucu yalnızca sahibin neye tıkladığına dair bilgi say: `CLAUDE.md` açıkça "UI onayı sayılır" demedikçe (henüz demiyor) işlemden önce yine sohbette onay al.
+Sohbette onay istediğinde AYRICA bir kalem ekle: `python3 scripts/ui_protocol.py add --class approve --type TÜR --title T [--summary S] [--evidence E ...] [--preview P]`. Yalnızca `criteria` ve `mail_draft` türlerini kullan. Başlık, özet ve önizlemeye asla aday adı ya da iletişim verisi koyma (yalnızca aday ID'leri).
+Kalemi işledikten sonra `python3 scripts/ui_protocol.py consume ITEM_ID` çalıştır.

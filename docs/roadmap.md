@@ -15,6 +15,7 @@ Order matters: finish what is below "Now" before starting "Next".
 - Installable `hirepair` skill (`skills/hirepair`, `scripts/install_skill.py`). It is a thin entry point over this repo, not a self-contained bundle
 
 - Read-only local tracker page with a "waiting for you" list (`scripts/tracker_view.py`); recruiter score reports verify evidence quotes against the masked CVs (`--masked`)
+- Local UI phase 1: approval inbox + local server (`scripts/ui_server.py`, `scripts/ui_protocol.py`, `ui/`)
 
 ## Later: small local web UI
 The read-only tracker page above is the first step. A minimal local dashboard (no accounts, no cloud, data stays on your machine):

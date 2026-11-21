@@ -1,6 +1,6 @@
 # Yerel UI: ön tasarım, akış ve iletişim
 
-Durum: yalnızca tasarım. Şimdiye kadar yapılan: salt okunur tracker sayfası (`scripts/tracker_view.py`). Kurgusal veriyle tıklanabilir ön tasarım: [ui-mockup.html](ui-mockup.html) (tarayıcıda aç, sunucu gerekmez). English: [ui-design.md](ui-design.md).
+Durum: aşama 1 yapıldı (`scripts/ui_server.py`, `scripts/ui_protocol.py`, `ui/`), ayrıca salt okunur tracker sayfası (`scripts/tracker_view.py`); aşama 2-4 yalnızca tasarım. Kurgusal veriyle tıklanabilir ön tasarım: [ui-mockup.html](ui-mockup.html) (tarayıcıda aç, sunucu gerekmez). English: [ui-design.md](ui-design.md).
 
 ## 1. İlkeler
 
@@ -104,13 +104,13 @@ Hiçbir süreç ajanla doğrudan konuşmaz. Ajan ve UI iki ekleme-yalnız dosyad
 | Aşama | Kapsam | Durum |
 |---|---|---|
 | 0 | Salt okunur tracker sayfası | tamam |
-| 1 | `ui_server.py`, Senden beklenenler (A ve B), karar dosyası, ajan promptları `inbox.jsonl` yazar ve `decisions.jsonl` okur | sıradaki |
+| 1 | `ui_server.py`, Senden beklenenler (A ve B), karar dosyası, ajan promptları `inbox.jsonl` yazar ve `decisions.jsonl` okur | yapıldı |
 | 2 | Başlangıç sihirbazı (CV, rol onayı, limitler) | |
 | 3 | İşe alım görünümü (kriter editörü, kısa liste, maskeleme önizlemesi) | |
 | 4 | İsteğe bağlı, gözetimli oturum başlatan "Şimdi çalıştır" düğmesi | yalnızca sen evet dersen |
 
 ## 8. Senin kararların
 
-1. **A sınıfı UI onayları sohbet onayı yerine geçsin mi?** `CLAUDE.md` şimdi sohbette onay istiyor. Evet ise yalnızca A sınıfı için değiştirilir; B sınıfı sohbet/insanda kalır.
-2. **Şimdi çalıştır (aşama 4):** web sayfasından `claude`'u başsız başlatmak yetkiyi genişletir. Öneri: koyma; çalıştırmayı kendin başlat, UI sonuçları göstersin.
-3. **Varsayılan UI dili:** Türkçe + İngilizce geçiş mi, tersi mi (metinler tek tabloda, değiştirmesi ucuz).
+1. **A sınıfı UI onayları sohbet onayı yerine geçsin mi?** `CLAUDE.md` şimdi sohbette onay istiyor. Evet ise yalnızca A sınıfı için değiştirilir; B sınıfı sohbet/insanda kalır. **AÇIK:** sahip karar verene kadar UI kararları yalnızca bilgidir ve sohbet onayı zorunlu kalır.
+2. **Şimdi çalıştır (aşama 4):** web sayfasından `claude`'u başsız başlatmak yetkiyi genişletir. **Karar: Şimdi çalıştır düğmesi yok;** çalıştırmayı kendin başlat, UI sonuçları göstersin.
+3. **Varsayılan UI dili:** **Karar: varsayılan Türkçe, İngilizce geçişli** (metinler tek tabloda).

@@ -1,6 +1,6 @@
 # Local UI: pre-design, flow and communication
 
-Status: design only. Built so far: the read-only tracker page (`scripts/tracker_view.py`). Clickable pre-design with fictional data: [ui-mockup.html](ui-mockup.html) (open it in a browser, no server needed). Turkish: [ui-design.tr.md](ui-design.tr.md).
+Status: phase 1 is built (`scripts/ui_server.py`, `scripts/ui_protocol.py`, `ui/`), plus the read-only tracker page (`scripts/tracker_view.py`); phases 2-4 are design only. Clickable pre-design with fictional data: [ui-mockup.html](ui-mockup.html) (open it in a browser, no server needed). Turkish: [ui-design.tr.md](ui-design.tr.md).
 
 ## 1. Principles
 
@@ -158,13 +158,13 @@ Updates by polling every 5 s with `If-None-Match` on file mtime. No websockets.
 | Phase | Scope | Status |
 |---|---|---|
 | 0 | Read-only tracker page | done |
-| 1 | `ui_server.py`, Waiting for you (class A and B), decisions file, agent prompts write `inbox.jsonl` and read `decisions.jsonl` | next |
+| 1 | `ui_server.py`, Waiting for you (class A and B), decisions file, agent prompts write `inbox.jsonl` and read `decisions.jsonl` | built |
 | 2 | Onboarding wizard (CV in, role approval, limits) | |
 | 3 | Recruiter view (criteria editor, shortlist, masking preview) | |
 | 4 | Optional "Run now" button that starts a supervised session | only if you decide yes |
 
 ## 8. Decisions for the owner
 
-1. **Do UI approvals of class A count as chat approval?** `CLAUDE.md` now requires chat approval. If yes, amend it for class A only; class B stays chat/human.
-2. **Run now (phase 4):** starting `claude` headless from a web page widens permissions. Recommended: leave it out; start runs yourself and let the UI show results.
-3. **Default UI language:** Turkish with English toggle, or the reverse (strings are in one table, so this is cheap).
+1. **Do UI approvals of class A count as chat approval?** `CLAUDE.md` now requires chat approval. If yes, amend it for class A only; class B stays chat/human. **OPEN:** until the owner decides, UI decisions are information only and chat approval remains required.
+2. **Run now (phase 4):** starting `claude` headless from a web page widens permissions. **Decided: no Run now button;** start runs yourself and let the UI show results.
+3. **Default UI language:** **Decided: Turkish default with an English toggle** (strings are in one table).

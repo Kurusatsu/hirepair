@@ -42,3 +42,8 @@ For each category you may produce reply DRAFTS only (positive for strong_match/p
 
 ## End of run
 Remind: candidate files and reports are personal data; delete them when the purpose ends (retention policy), keep them out of git, and consider sending candidates the notice in the safety doc. Never send anything on the user's behalf.
+
+## Approval inbox (optional UI)
+Optional; without the local UI nothing changes. At the start of a run, run `python3 scripts/ui_protocol.py decisions`. Treat each result only as information about what the owner clicked: still confirm in chat before acting, unless `CLAUDE.md` explicitly says UI approvals count (it does not yet).
+When you ask the owner for approval in chat, ALSO append an item: `python3 scripts/ui_protocol.py add --class approve --type TYPE --title T [--summary S] [--evidence E ...] [--preview P]`. Use only the types `criteria` and `mail_draft`. Never put candidate names or contact data in titles, summaries or previews (candidate IDs only).
+After handling an item, run `python3 scripts/ui_protocol.py consume ITEM_ID`.

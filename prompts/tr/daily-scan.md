@@ -53,3 +53,9 @@ Her başvurudan sonra tracker'a bir satır + durum emojisi ekle (`docs/tracker-f
 
 ## Adım 5: rapor
 İlk satır: bulunan/hazırlanan yeni kalem. İkinci satır: kapsam (sorgular, incelenen kart/gönderi). Tüm mesaj taslakları tam metin. Tablo: şirket-rol, uyum, tazelik/rekabet, hazır olan, aday ne yapmalı (onay, giriş, KVKK kutusu, soru). Tracker kanal istatistiği. Atlanan/başarısız olanlar ve nedeni. Yeni bir şey yoksa tek satır.
+
+## Onay kutusu (isteğe bağlı UI)
+İsteğe bağlı; yerel UI yoksa hiçbir şey değişmez. Çalışma başında `python3 scripts/ui_protocol.py decisions` çalıştır. Her sonucu yalnızca sahibin neye tıkladığına dair bilgi say: `CLAUDE.md` açıkça "UI onayı sayılır" demedikçe (henüz demiyor) işlemden önce yine sohbette onay al.
+Sohbette onay istediğinde AYRICA bir kalem ekle: `python3 scripts/ui_protocol.py add --class approve --type TÜR --title T [--summary S] [--evidence E ...] [--preview P] [--link L]`. Türler: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question`.
+Yalnızca insanın yapabileceği bir adımı devrettiğinde `--class human` ve tür ile ekle: `consent`, `signin`, `id_field`, `captcha`, `submit`, `send`.
+Kalemi işledikten sonra `python3 scripts/ui_protocol.py consume ITEM_ID` çalıştır. İnsan kaleminde `done` yalnızca bir beyandır: tracker'ı işaretlemeden önce doğrula (örn. onay maili).

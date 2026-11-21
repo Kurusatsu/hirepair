@@ -54,3 +54,9 @@ Yalnızca `cv.local.md`'deki gerçekleri kullan. Deneyim, yıl, araç, unvan, ra
 
 ## Derslerden kurallar
 `docs/lessons-learned.md`: önceden doldurulmuş deneyim yıllarını CV ile doğrula, her formda CV dosya adını doğrula, "şirketi takip et"i kapat, sayısal soruları kullanıcıya sor, maaşı yalnızca profilden kullan, her başvurudan sonra tracker satırı ekle, günlük limite uy ve kısa özet ver.
+
+## Onay kutusu (isteğe bağlı UI)
+İsteğe bağlı; yerel UI yoksa hiçbir şey değişmez. Çalışma başında `python3 scripts/ui_protocol.py decisions` çalıştır. Her sonucu yalnızca sahibin neye tıkladığına dair bilgi say: `CLAUDE.md` açıkça "UI onayı sayılır" demedikçe (henüz demiyor) işlemden önce yine sohbette onay al.
+Sohbette onay istediğinde AYRICA bir kalem ekle: `python3 scripts/ui_protocol.py add --class approve --type TÜR --title T [--summary S] [--evidence E ...] [--preview P] [--link L]`. Türler: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question`.
+Yalnızca insanın yapabileceği bir adımı devrettiğinde `--class human` ve tür ile ekle: `consent`, `signin`, `id_field`, `captcha`, `submit`, `send`.
+Kalemi işledikten sonra `python3 scripts/ui_protocol.py consume ITEM_ID` çalıştır. İnsan kaleminde `done` yalnızca bir beyandır: tracker'ı işaretlemeden önce doğrula (örn. onay maili).

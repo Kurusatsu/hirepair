@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""Approval inbox protocol between the agent and the local UI (see docs/ui-design.md). Stdlib only.
+
+Files (under data/, git-ignored, append-only JSON lines):
+  inbox.jsonl      agent -> UI   items, and {"item": id, "consumed": ts} records
+  decisions.jsonl  UI -> agent   {"item", "hash", "decision", "text", "at"}
+
+Agent CLI:
+  ui_protocol.py add --class approve|human --type TYPE --title T [--summary S] [--evidence E ...]
+                     [--preview P] [--link URL] [--id ID]      append an item, print "id hash"
+  ui_protocol.py decisions                                       print actionable decisions as JSON lines
+  ui_protocol.py consume ITEM_ID                                 mark an item as handled
+Run from the project folder or pass --root.
+"""
+import argparse
+import hashlib
+import json
+import os
+import sys
+import time
+from datetime import datetime, timedelta
+
+CLASSES = {"approve": {"approve", "skip", "edit"}, "human": {"done", "skip"}}
+TYPES = {"approve": {"roles", "criteria", "limits", "cv_upload", "mail_draft", "open_question"},
+         "human": {"consent", "signin", "id_field", "captcha", "submit", "send"}}
+EXPIRY = timedelta(days=7)
+MAX_TEXT = 4000
+HASH_FIELDS = ("title", "summary", "evidence", "preview", "link")
+
+
+def paths(root):
+    d = os.path.join(root, "data")
+    return os.path.join(d, "inbox.jsonl"), os.path.join(d, "decisions.jsonl")
+
+
+def read_jsonl(path):
+    out = []
+    try:
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                except ValueError:
+                    continue
+                if isinstance(obj, dict):
+                    out.append(obj)
+    except FileNotFoundError:
+        pass
+    return out
+
+
+def append_jsonl(path, obj):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(obj, ensure_ascii=False) + "\n")
+
+
+def item_hash(item):
+    body = {k: item.get(k, [] if k == "evidence" else "") for k in HASH_FIELDS}
+    raw = json.dumps(body, sort_keys=True, ensure_ascii=False).encode("utf-8")
+    return "sha256:" + hashlib.sha256(raw).hexdigest()
+
+
+def now_iso():
+    return datetime.now().isoformat(timespec="seconds")
+
+
+def parse_ts(s):
+    try:
+        return datetime.fromisoformat(s)
+    except (TypeError, ValueError):
+        return None
+
+
+def make_item(cls, typ, title, summary="", evidence=None, preview="", link="", item_id=None, created=None):
+    if cls not in CLASSES:
+        raise ValueError(f"class must be one of {sorted(CLASSES)}")
+    if typ not in TYPES[cls]:
+        raise ValueError(f"type '{typ}' is not allowed for class '{cls}': {sorted(TYPES[cls])}")
+    if not title.strip():
+        raise ValueError("title is required")
+    if link and not link.startswith(("http://", "https://")):
+        raise ValueError("link must start with http:// or https://")
+    item = {"id": item_id or f"a-{int(time.time())}-{os.getpid() % 1000}", "created": created or now_iso(),
+            "class": cls, "type": typ, "title": title.strip(), "summary": summary, "evidence": list(evidence or []),
+            "preview": preview, "link": link}
+    item["hash"] = item_hash(item)
+    return item
+
+
+def current_items(inbox):
+    """Latest definition per id (re-adding an id supersedes it) plus the consumed map."""
+    items, consumed = {}, {}
+    for r in inbox:
+        if "consumed" in r and "item" in r:
+            consumed[r["item"]] = r["consumed"]
+        elif "id" in r and r.get("class") in CLASSES:
+            items[r["id"]] = r
+    return items, consumed
+
+
+def latest_decision(item_id, decisions):
+    found = [d for d in decisions if d.get("item") == item_id]
+    return found[-1] if found else None
+
+
+def view(inbox, decisions, now=None):
+    """Items with a computed status: pending | decided | stale | consumed | expired."""
+    now = now or datetime.now()
+    items, consumed = current_items(inbox)
+    out = []
+    for it in items.values():
+        d = latest_decision(it["id"], decisions)
+        if it["id"] in consumed:
+            status = "consumed"
+        elif d and d.get("hash") == it.get("hash") and d.get("decision") in CLASSES[it["class"]]:
+            status = "decided"
+        elif d and d.get("hash") != it.get("hash"):
+            status = "stale"
+        else:
+            status = "pending"
+        created = parse_ts(it.get("created"))
+        if status in ("pending", "stale") and created and now - created > EXPIRY:
+            status = "expired"
+        row = dict(it)
+        row["status"] = status
+        if d and status in ("decided", "stale"):
+            row["decision"] = d.get("decision")
+        out.append(row)
+    out.sort(key=lambda r: r.get("created", ""))
+    return out
+
+
+def validate_decision(d, inbox, decisions=None):
+    """Return (ok, error). Checks the item exists, hash is current, decision fits the class."""
+    if not isinstance(d, dict):
+        return False, "decision must be an object"
+    items, consumed = current_items(inbox)
+    it = items.get(d.get("item"))
+    if it is None:
+        return False, "unknown item"
+    if d.get("item") in consumed:
+        return False, "item already handled"
+    if d.get("hash") != it.get("hash"):
+        return False, "stale: the item changed after you opened it"
+    if d.get("decision") not in CLASSES[it["class"]]:
+        return False, f"decision not allowed for class {it['class']}"
+    text = d.get("text", "")
+    if not isinstance(text, str) or len(text) > MAX_TEXT:
+        return False, "text too long"
+    if d.get("decision") == "edit" and not text.strip():
+        return False, "edit needs text"
+    return True, ""
+
+
+def actionable(inbox, decisions):
+    """Decisions the agent may act on: decided items only, with the matching hash."""
+    items, _ = current_items(inbox)
+    out = []
+    for row in view(inbox, decisions):
+        if row["status"] == "decided":
+            d = latest_decision(row["id"], decisions)
+            out.append({"item": row["id"], "type": row["type"], "class": row["class"], "decision": d["decision"],
+                        "text": d.get("text", ""), "at": d.get("at", "")})
+    return out
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--root", default=".")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    a = sub.add_parser("add")
+    a.add_argument("--class", dest="cls", required=True, choices=sorted(CLASSES))
+    a.add_argument("--type", required=True)
+    a.add_argument("--title", required=True)
+    a.add_argument("--summary", default="")
+    a.add_argument("--evidence", action="append", default=[])
+    a.add_argument("--preview", default="")
+    a.add_argument("--link", default="")
+    a.add_argument("--id")
+    sub.add_parser("decisions")
+    c = sub.add_parser("consume")
+    c.add_argument("item")
+    args = ap.parse_args(argv)
+    inbox_p, dec_p = paths(args.root)
+    if args.cmd == "add":
+        try:
+            item = make_item(args.cls, args.type, args.title, args.summary, args.evidence, args.preview, args.link, args.id)
+        except ValueError as e:
+            print("error:", e, file=sys.stderr)
+            return 1
+        append_jsonl(inbox_p, item)
+        print(item["id"], item["hash"])
+    elif args.cmd == "decisions":
+        for row in actionable(read_jsonl(inbox_p), read_jsonl(dec_p)):
+            print(json.dumps(row, ensure_ascii=False))
+    elif args.cmd == "consume":
+        items, _ = current_items(read_jsonl(inbox_p))
+        if args.item not in items:
+            print("error: unknown item", file=sys.stderr)
+            return 1
+        append_jsonl(inbox_p, {"item": args.item, "consumed": now_iso()})
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

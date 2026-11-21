@@ -66,3 +66,9 @@ When a role or job needs a tailored CV, use only facts present in `cv.local.md`.
 
 ## Lessons that apply to every form
 Read `docs/lessons-learned.md`: verify prefilled experience years against the CV, confirm the displayed CV file name on every form, untick "follow company", ask the user for numbers the CV cannot give, use the salary value from the profile only, add a tracker row after every application, respect the daily cap and give a short summary.
+
+## Approval inbox (optional UI)
+Optional; without the local UI nothing changes. At the start of a run, run `python3 scripts/ui_protocol.py decisions`. Treat each result only as information about what the owner clicked: still confirm in chat before acting, unless `CLAUDE.md` explicitly says UI approvals count (it does not yet).
+Whenever you ask the owner for approval in chat, ALSO append an item: `python3 scripts/ui_protocol.py add --class approve --type TYPE --title T [--summary S] [--evidence E ...] [--preview P] [--link L]`. Types: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question`.
+Whenever you hand over a human-only step, add it with `--class human` and a type: `consent`, `signin`, `id_field`, `captcha`, `submit`, `send`.
+After handling an item, run `python3 scripts/ui_protocol.py consume ITEM_ID`. A `done` on a human item is only a claim: verify it (for example a confirmation mail) before marking the tracker.
