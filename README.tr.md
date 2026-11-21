@@ -1,4 +1,4 @@
-# claude-job-agent (Türkçe)
+# Hirepair (Türkçe)
 
 **CV'ni okuyan, sana uygun rolleri öneren ve hassas adımları senin onayına bırakarak iş aramanı yürüten bir ajan.**
 
@@ -75,7 +75,7 @@ Aday adayı bulmanın bilerek küçük, kullanıcı yönlendirmeli yolu: kriterl
 ## Hızlı başlangıç
 
 ```bash
-cd claude-job-agent
+cd hirepair
 claude
 ```
 

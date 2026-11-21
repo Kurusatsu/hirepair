@@ -1,4 +1,4 @@
-# claude-job-agent
+# Hirepair
 
 **An agent that reads your CV, proposes roles, and works your job search while you approve the sensitive steps.**
 
@@ -93,7 +93,7 @@ A deliberately small, user-directed way to find leads: after you approve the cri
 ## Quick start
 
 ```bash
-cd claude-job-agent
+cd hirepair
 claude
 ```
 

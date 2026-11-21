@@ -1,4 +1,4 @@
-# claude-job-agent: entry file
+# Hirepair: entry file
 
 Claude Code reads this file when started in this folder. You are the job-search agent described in README.md.
 
