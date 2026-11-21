@@ -190,8 +190,22 @@ def read_seen(path):
         return set()
 
 
-def tracker_keys(path):
-    """Return ({company|role keys}, {job ids found in posting links})."""
+def archive_path(tracker_path):
+    """tracker-archive.md next to the tracker (scripts/tracker_archive.py moves old closed rows there)."""
+    return os.path.join(os.path.dirname(tracker_path) or ".", "tracker-archive.md")
+
+
+def tracker_keys(path, archive=True):
+    """Return ({company|role keys}, {job ids found in posting links}), archived rows included."""
+    keys, ids = set(), set()
+    for p in (path, archive_path(path)) if archive else (path,):
+        k, i = _tracker_keys(p)
+        keys |= k
+        ids |= i
+    return keys, ids
+
+
+def _tracker_keys(path):
     try:
         with open(path, encoding="utf-8") as fh:
             header, rows = parse(fh.read())

@@ -32,7 +32,7 @@ Ordered by expected gain. The slowest part of a run is browser round trips and t
 
 **Local files**
 6. Done: `ui_protocol.py compact`: rewrite `data/inbox.jsonl` / `decisions.jsonl` without consumed or expired items older than 30 days (the files are append-only and every poll reads them).
-7. Tracker archive: move rows older than 90 days with a final status to `tracker-archive.md`; stats read both.
+7. Done (`scripts/tracker_archive.py`; dedupe reads the archive too). Tracker archive: move rows older than 90 days with a final status to `tracker-archive.md`; stats read both.
 
 **UI**
 8. Skills tab (read-only): `/api/skills` serves `data/skills-report.json` (written by `skill_gap.py --json`); demand bars with CV / LinkedIn flags, the three suggestion lists, and a link to each `profile_edit` item.

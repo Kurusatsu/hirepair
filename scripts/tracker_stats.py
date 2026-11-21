@@ -2,9 +2,10 @@
 """Count tracker rows by status emoji and by channel.
 
 Usage: python3 scripts/tracker_stats.py [tracker.md]
-Reads a Markdown table; the header row decides which columns are Status/Channel/Reply
+Reads a Markdown table (plus tracker-archive.md next to it, if present); the header row decides which columns are Status/Channel/Reply
 (English or the original Turkish names). Standard library only.
 """
+import os
 import sys
 from collections import Counter
 
@@ -46,24 +47,35 @@ def status_key(value):
     return parts[0] if parts else "(empty)"
 
 
-def main(path):
-    with open(path, encoding="utf-8") as f:
-        header, rows = parse(f.read())
+def load(path):
+    """[(status, channel, reply)] from one tracker file; [] if it does not exist."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            header, rows = parse(f.read())
+    except FileNotFoundError:
+        return []
     if header is None:
-        raise SystemExit("no table found")
+        raise SystemExit(f"no table found in {path}")
     si, ci, ri = col(header, STATUS), col(header, CHANNEL), col(header, REPLY)
-    rows = [r for r in rows if len(r) > max(si, ci, ri)]
-    status = Counter(status_key(r[si]) for r in rows)
-    print("rows:", len(rows))
+    return [(r[si], r[ci], r[ri]) for r in rows if len(r) > max(si, ci, ri)]
+
+
+def main(path):
+    if not os.path.exists(path):
+        raise SystemExit(f"{path} not found")
+    arch = os.path.join(os.path.dirname(path) or ".", "tracker-archive.md")
+    rows, archived = load(path), load(arch)
+    rows += archived
+    status = Counter(status_key(s) for s, _, _ in rows)
+    print("rows:", len(rows), f"({len(archived)} archived)" if archived else "")
     print("by status:")
     for k, v in status.most_common():
         print(f"  {k}  {v}")
     print("by channel (rows / with reply):")
-    chan = Counter(r[ci] for r in rows)
+    chan = Counter(c for _, c, _ in rows)
     for k, v in chan.most_common():
-        replied = sum(1 for r in rows if r[ci] == k and r[ri] not in NO_REPLY)
+        replied = sum(1 for _, c, r in rows if c == k and r not in NO_REPLY)
         print(f"  {k}: {v} / {replied}")
-
 
 if __name__ == "__main__":
     main(sys.argv[1] if len(sys.argv) > 1 else "tracker.md")

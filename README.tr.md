@@ -69,7 +69,7 @@ Skill, prompt ve dokümanları bu repodan okur; repoyu yerinden oynatma.
 - **Seçtiğin günlük limitler:** günlük arama, turda değerlendirilecek ilan, turda hazırlanacak başvuru
 - **Mail taslağı, asla gönderme:** [templates/emails](templates/emails/README.md) içinde hazır örnekler (başvuru, takip, netleştirme sorusu, görüşme daveti)
 - **Önyargı ve gizlilik içeride:** korunan özellikler (yaş, cinsiyet, uyruk, fotoğraf, isim kökeni...) puanlamadan önce maskelenir; tüm veri senin makinende kalır
-- **Takip tablosu:** düz bir Markdown dosyası; `python3 scripts/tracker_stats.py tracker.md` sayıları verir; `python3 scripts/tracker_view.py` salt okunur yerel bir sayfa açar (yalnızca 127.0.0.1): "senden beklenenler" listesi ve filtre. Onaylar sohbette kalır
+- **Takip tablosu:** düz bir Markdown dosyası; `python3 scripts/tracker_stats.py tracker.md` sayıları verir; `python3 scripts/tracker_archive.py` 90 günden eski kapanmış satırları `tracker-archive.md`'ye taşır; `python3 scripts/tracker_view.py` salt okunur yerel bir sayfa açar (yalnızca 127.0.0.1): "senden beklenenler" listesi ve filtre. Onaylar sohbette kalır
 - **Yerel UI (isteğe bağlı):** `python3 scripts/ui_server.py` yerel bir sayfa açar (yalnızca 127.0.0.1): Senden beklenenler / Tracker / İşe alımcı. KVKK/onay kutuları, giriş ve son Submit her zaman sende kalır. Ayrıntı: [docs/ui-design.tr.md](docs/ui-design.tr.md)
 - **Türkiye piyasası:** `prompts/tr/` içinde Türkçe promptlar, KVKK onay adımları, net/brüt maaş uyarısı
 

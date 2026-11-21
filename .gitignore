@@ -1,6 +1,7 @@
 cv*.pdf
 data/
 tracker.md
+tracker-archive.md
 *.local.*
 .DS_Store
 cv.local.md

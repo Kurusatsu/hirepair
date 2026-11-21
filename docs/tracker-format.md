@@ -42,3 +42,7 @@ An agent never writes ✅ on its own for an application it did not see confirmed
 - One row per company + role. Deduplicate by company + role before adding a row.
 - The agent only appends rows and edits the Status and Reply cells of existing rows.
 - Never put passwords, ID numbers or full personal data in the tracker.
+
+## Archive
+
+`python3 scripts/tracker_archive.py` (`--dry-run` first) moves rows older than 90 days whose Status is ✅ or ⛔ to `tracker-archive.md` next to the tracker (git-ignored, same header). Rows waiting for the human never move. Dedupe (`card_filter.py`, `candidates_check.py`, `rescore_queue.py`) and `tracker_stats.py` read both files. The human runs it, or the agent after a yes in chat, since it rewrites the tracker.
