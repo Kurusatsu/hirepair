@@ -1,6 +1,6 @@
 # Hirepair
 
-**An agent that reads your CV, proposes roles, and works your job search while you approve the sensitive steps.**
+**Hirepair works both sides of hiring: it reads your CV, proposes roles and works your job search, or reads your job criteria and screens candidates, while you approve every sensitive step.**
 
 **ATS-compliant, role-tailored CVs** from your own facts only. Turkish version: [README.tr.md](README.tr.md), prompts in `prompts/tr/`.
 

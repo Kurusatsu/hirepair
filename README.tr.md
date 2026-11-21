@@ -1,6 +1,6 @@
 # Hirepair (Türkçe)
 
-**CV'ni okuyan, sana uygun rolleri öneren ve hassas adımları senin onayına bırakarak iş aramanı yürüten bir ajan.**
+**Hirepair işe alımın iki tarafında çalışır: CV'ni okuyup rolleri önerir ve iş aramanı yürütür; ya da ilan kriterlerini okuyup adayları tarar. Hassas her adım senin onayında kalır.**
 
 **ATS uyumlu, role göre özelleştirilmiş CV**; yalnızca kendi CV'ndeki gerçeklerle. İngilizce sürüm: [README.md](README.md). Türkçe prompt'lar: `prompts/tr/`.
 
