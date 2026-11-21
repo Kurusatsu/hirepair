@@ -9,15 +9,15 @@ Replace every `<PLACEHOLDER>` before use. Keep your real data in files that are 
 You are running a job-search sweep for the candidate. Write all user-facing text in `<REPORT_LANGUAGE>`. Be concise.
 
 ## Load context first
-- Canonical CV (the ONLY source of facts): `<PATH_TO_CV_MD>`
-- Profile (targets, exclusions, form facts): `<PATH_TO_PROFILE_YML>` (see `templates/profile.example.yml`)
+- Canonical CV (the ONLY source of facts): `<PATH_TO_CV_MD>` (normally `cv.local.md`)
+- Approved profile: `<PATH_TO_PROFILE_YML>` (normally `profile.local.yml`, see `templates/profile.example.yml`). Read `approved_roles` first. If the file is missing, or `approved_roles` is empty or has no `approved: true` entries, STOP and report "Onboarding not completed: run prompts/onboarding.md". Never guess roles from the CV in a scan run.
 - Tracker (every company/role already handled): `<PATH_TO_TRACKER_MD>` (see `docs/tracker-format.md`)
 - Manually added candidates: `<PATH_TO_MANUAL_LIST_MD>`
 - Seen-ID list: `<PATH_TO_SEEN_IDS_TXT>` (one job ID per line)
 - CV builder: `<YOUR_CV_BUILD_COMMAND>` (anything that turns a per-job payload into a PDF of at most 2 pages)
 
 ## Who and what
-All role targets, exclusions, always-include companies, location rules and form facts come from the profile file. Do not hard-code them here. Treat the profile's exclusions as hard; everything else only lowers the score.
+Only roles in `approved_roles` (and `adjacent_roles`) are searched and scored. All role targets, exclusions, always-include companies, location rules and form facts come from the profile file. Do not hard-code them here. Treat the profile's exclusions as hard; everything else only lowers the score.
 
 ## Scoring rubric (1-5)
 Weights sum to 100, score = points / 20:
@@ -74,6 +74,7 @@ Hard rules for this unattended run:
 - Do NOT send any e-mail or message.
 - Do NOT tick terms / privacy / consent boxes.
 - Do NOT create accounts or enter passwords or ID numbers.
+- Do NOT send connection requests or InMail.
 - Do NOT solve CAPTCHAs.
 The candidate gives the final approval personally.
 

@@ -3,3 +3,7 @@ data/
 tracker.md
 *.local.*
 .DS_Store
+cv.local.md
+profile.local.yml
+upload/
+.claude/settings.local.json

@@ -4,6 +4,19 @@ candidate:
   city: "Example City"
   languages: ["English (C1)"]
 
+# Written by prompts/onboarding.md ONLY after the user approved the list in chat.
+# Scans refuse to run if this section is missing or approved is not true.
+approved_roles:
+  approved: true
+  approved_on: "2000-01-01"
+  roles:
+    - title: "Business Analyst"
+      reason: "Fictional: requirements work across two projects"
+      cv_evidence: "Fictional CV line: 'Wrote requirements for 3 release cycles'"
+    - title: "Product Owner"
+      reason: "Fictional: backlog ownership"
+      cv_evidence: "Fictional CV line: 'Owned the team backlog'"
+
 targets:
   roles:                              # full score for these
     - "Business Analyst"
@@ -54,3 +67,10 @@ queries:
 
 limits:
   daily_prepared_cap: 20
+
+mail:                                 # hints for the Gmail reply check
+  sender_hints: ["interview", "application", "invitation", "assessment"]
+  ats_domains: ["<ATS_DOMAIN>"]
+
+portals:                              # sites you allowed the browser to use
+  - "linkedin.com"
