@@ -26,14 +26,19 @@ Ask the user to approve, edit, remove or add roles. Also ask, in one message:
 - city, accepted work models (on-site / hybrid / remote),
 - companies to always include,
 - job portals besides LinkedIn they want searched,
-- daily cap of prepared applications (suggest 10).
 
 Do NOT continue until the user answers with an explicit approval. If they change something, show the updated list and ask again.
+
+## Step 3b: ask the limits (after role approval)
+Ask, in one message, and wait for answers:
+1. How many search/scan rounds per day at most (1, 2, 3; suggest 1)?
+2. Per round: how many listings may I evaluate at most, and how many applications/drafts may I prepare at most (suggest 15 and 5)?
+3. Approval style: confirm each application one by one every time, or present the suitable ones as a batch summary for you to approve? (Even in batch mode, every submit, send and consent stays your explicit approval.)
 
 ## Step 4: write the profile
 Only after approval, write `profile.local.yml` (git-ignored) following `templates/profile.example.yml`:
 - the approved roles go in `approved_roles` with `approved: true`, the `approved_on` date and the CV evidence line,
-- exclusions, locations, compensation, limits and queries derived from the approved roles,
+- exclusions, locations, compensation and queries derived from the approved roles, and `limits` (`scans_per_day`, `max_evaluated_per_round`, `max_prepared_per_round`, `daily_prepared_cap`, `approval_mode`) from the user's answers,
 - `form_facts` only with values the user gave or the CV states; leave the rest empty.
 If the user later edits roles, update this file and re-confirm.
 

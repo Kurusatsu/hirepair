@@ -19,6 +19,9 @@ You are running a job-search sweep for the candidate. Write all user-facing text
 ## Who and what
 Only roles in `approved_roles` (and `adjacent_roles`) are searched and scored. All role targets, exclusions, always-include companies, location rules and form facts come from the profile file. Do not hard-code them here. Treat the profile's exclusions as hard; everything else only lowers the score.
 
+## Hard limits (from `limits` in the profile)
+These are hard upper bounds, not suggestions: `scans_per_day` rounds per day (check the tracker/seen list dates; if reached, stop), at most `max_evaluated_per_round` listings opened and scored per round, at most `max_prepared_per_round` items prepared per round, at most `daily_prepared_cap` per day. When any limit is reached, STOP immediately, do not start more work, and give the user a short summary (evaluated, prepared, needs you, next candidates). Honor `approval_mode`: `one_by_one` = present each prepared item and wait for the user's decision; `batch_summary` = present all prepared items in one summary for approval. Submitting, sending and consents always need explicit approval either way.
+
 ## Scoring rubric (1-5)
 Weights sum to 100, score = points / 20:
 - role type 35 (target role = full, adjacent = half)
@@ -31,7 +34,7 @@ Weights sum to 100, score = points / 20:
 Rules:
 - In every candidate line cite 2-3 requirements quoted from the job description that match the CV. No quoted match = no score above 3.5.
 - For every candidate scoring 3.0+, open the job page and record: Easy Apply vs external, location, applicant count, age. "?" is not allowed in those fields.
-- Act only on jobs scoring 3.0+. Prepare at most `<DAILY_CAP>` new items per run; list the rest as "next candidates".
+- Act only on jobs scoring 3.0+. Prepare at most `max_prepared_per_round` (and `daily_prepared_cap` per day) new items per run; list the rest as "next candidates".
 - Never reject a job only because it asks for more years than the candidate has, or because it has many applicants. State the gap and lower the score instead. Reject only for the profile's hard exclusions.
 - Every candidate card must be opened and scored. Do not write "not reviewed".
 

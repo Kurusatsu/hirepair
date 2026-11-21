@@ -65,8 +65,12 @@ queries:
     - "<role> we are hiring"
   career_sites: []                    # optional career pages for the title-only check
 
-limits:
-  daily_prepared_cap: 20
+limits:                               # asked in onboarding; HARD upper bounds in scans
+  scans_per_day: 1                    # search rounds per day (suggest 1)
+  max_evaluated_per_round: 15         # listings opened and scored per round
+  max_prepared_per_round: 5           # applications/drafts prepared per round
+  daily_prepared_cap: 5               # all rounds together
+  approval_mode: "one_by_one"         # one_by_one | batch_summary
 
 mail:                                 # hints for the Gmail reply check
   sender_hints: ["interview", "application", "invitation", "assessment"]

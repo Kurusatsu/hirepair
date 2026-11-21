@@ -1,0 +1,58 @@
+{
+  "candidate_id": "C04",
+  "category": "possible",
+  "category_evidence": "Mail states: \"4 years in insurance software, writing requirements and running UAT\"; CV attachment not yet read, so tools are not stated.",
+  "criteria": [
+    {
+      "id": "M1",
+      "match": "yes",
+      "evidence": "4 years in insurance software"
+    },
+    {
+      "id": "M2",
+      "match": "yes",
+      "evidence": "writing requirements"
+    },
+    {
+      "id": "M3",
+      "match": "yes",
+      "evidence": "running UAT"
+    },
+    {
+      "id": "M4",
+      "match": "yes",
+      "evidence": "I use SQL daily"
+    },
+    {
+      "id": "M5",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "N1",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "N2",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "X1",
+      "match": "no",
+      "evidence": ""
+    }
+  ],
+  "gaps": [
+    "English level not stated",
+    "Based on mail text only"
+  ],
+  "questions": [
+    "What is your English level?",
+    "Which tools do you use besides SQL?"
+  ],
+  "warnings": [
+    "Source: Gmail (fictional)"
+  ]
+}

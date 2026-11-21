@@ -14,6 +14,8 @@ import json
 import os
 import sys
 
+CATEGORIES = {"strong_match": "Strong match", "possible": "Possible",
+              "needs_clarification": "Needs clarification", "not_matching": "Does not meet criteria (suggestion)"}
 VALUE = {"yes": 1.0, "partial": 0.5, "no": 0.0, "not_stated": 0.0}
 
 
@@ -25,6 +27,10 @@ def load(path):
 def score(crit, cand, problems):
     by_id = {c["id"]: c for c in cand.get("criteria", [])}
     cid = cand.get("candidate_id", "?")
+    if cand.get("category") not in CATEGORIES:
+        problems.append(f"{cid}: category must be one of {', '.join(CATEGORIES)}")
+    elif not cand.get("category_evidence", "").strip():
+        problems.append(f"{cid}: category without category_evidence")
 
     def part(items):
         if not items:
@@ -72,13 +78,18 @@ def main():
     out = [f"# Candidate shortlist: {crit.get('role', '')}", "",
            "Advisory only. A human decides. Scores come from approved criteria and CV quotes; "
            "`not_stated` means the CV does not say, not that the candidate lacks it. Review the lower group too.", "",
-           "| Rank | ID | Score | Must-have | Nice-to-have | Flags |", "|---|---|---|---|---|---|"]
+           "| Rank | ID | Category | Score | Must-have | Nice-to-have | Flags |", "|---|---|---|---|---|---|---|"]
     for i, (t, m, n, h, _, c) in enumerate(rows, 1):
         flags = "exclusion hit: review" if h else "-"
-        out.append(f"| {i} | {c['candidate_id']} | {t}/100 | {m}/{w['must_have']} | {n}/{w['nice_to_have']} | {flags} |")
+        out.append(f"| {i} | {c['candidate_id']} | {CATEGORIES.get(c.get('category'), '?')} | {t}/100 | {m}/{w['must_have']} | {n}/{w['nice_to_have']} | {flags} |")
+    out += ["", "## Category summary", ""]
+    for key, label in CATEGORIES.items():
+        ids = [r[5]["candidate_id"] for r in rows if r[5].get("category") == key]
+        out.append(f"- {label}: {len(ids)}" + (f" ({', '.join(ids)})" if ids else ""))
+    out.append("- `not_matching` is a suggestion only; nobody is rejected by this tool.")
     texts = {x["id"]: x["text"] for k in ("must_have", "nice_to_have", "exclusions") for x in crit.get(k, [])}
     for i, (t, m, n, h, by_id, c) in enumerate(rows, 1):
-        out += ["", f"## {i}. {c['candidate_id']} ({t}/100)", ""]
+        out += ["", f"## {i}. {c['candidate_id']} ({t}/100) - {CATEGORIES.get(c.get('category'), '?')}", "", f"Category evidence: {c.get('category_evidence', '')}"]
         for cid, text in texts.items():
             r = by_id.get(cid)
             if not r:

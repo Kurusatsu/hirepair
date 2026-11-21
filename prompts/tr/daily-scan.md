@@ -11,11 +11,14 @@ Adayın iş arama taramasını yapıyorsun. Rapor `<RAPOR_DILI>` (varsayılan T�
 - Onaylı profil: `profile.local.yml`. Önce `approved_roles`'u oku. Dosya yoksa ya da onaylı rol yoksa DUR ve "Onboarding tamamlanmadı: prompts/tr/onboarding.md" raporla. Rolleri CV'den tahmin etme.
 - Tracker: `tracker.md`; elle eklenen adaylar: `<ELLE_EKLENEN_LISTE>`; görülen ilan ID listesi: `<SEEN_IDS_TXT>`.
 
+## Sert limitler (profildeki `limits`)
+Bunlar öneri değil, sert üst sınırdır: günde `scans_per_day` tur (tracker/seen listesindeki tarihlere bak; doluysa dur), turda en çok `max_evaluated_per_round` ilan değerlendir, turda en çok `max_prepared_per_round` kalem hazırla, günde en çok `daily_prepared_cap`. Herhangi bir limite gelince HEMEN dur, yeni iş başlatma ve kullanıcıya kısa özet ver (değerlendirilen, hazırlanan, senden beklenen, sıradaki adaylar). `approval_mode`'a uy: `one_by_one` = her hazırlanan kalemi tek tek sun, kararı bekle; `batch_summary` = hepsini tek özette sun. Gönderim, mesaj ve rıza kutuları her iki modda da açık onay ister.
+
 ## Puanlama (1-5)
 Rol tipi 35 (onaylı rol tam, yakın rol yarım), alan uyumu 20, kıdem farkı 15 (yıl farkı puanı düşürür, sıfırlamaz), konum/çalışma modeli 10, tazelik ve rekabet 10, şirket/ücret sinyali 10. Puan = toplam / 20.
 - Her aday için ilan metninden CV ile eşleşen 2-3 gereksinimi alıntıla; alıntı yoksa 3,5 üstü verme.
 - 3,0+ adaylar için ilan sayfasını aç: Kolay Başvuru mu harici mi, konum, başvuru sayısı, ilan yaşı. "?" yasak.
-- Yalnızca 3,0+ işlenir; günde en çok `limits.daily_prepared_cap` yeni kalem hazırla, kalanı "sıradaki adaylar" olarak listele.
+- Yalnızca 3,0+ işlenir; limitlere uyarak yeni kalem hazırla, kalanı "sıradaki adaylar" olarak listele.
 - Sadece fazla yıl istendiği ya da çok başvuru olduğu için reddetme; farkı yaz, puanı düşür. Yalnızca profildeki kesin hariç tutmalarla reddet.
 - Hız önemli: önce uyum, sonra tazelik, sonra düşük rekabet. Ancak 7 güne kadar eski uygun ilan hâlâ değerlidir.
 

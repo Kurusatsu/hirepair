@@ -70,6 +70,20 @@ Every tailored CV follows `docs/ats-rules.md` (single column, standard headings 
 
 Recruiter mode masks protected and irrelevant attributes (age, gender, nationality, photo, name origin, address...) before scoring, marks missing information `not_stated` instead of guessing, keeps candidate data local (`screening/` and `reports/` are git-ignored), and never sends mail, InMail or messages. Read `docs/candidate-screening-safety.md` (KVKK/GDPR, retention, candidate notice, bias and fair use) first. Try it on the fictional data: `python3 scripts/screen_report.py templates/screening/criteria.example.json templates/screening/scores`. Turkish prompt: `prompts/tr/screen-candidates.md`. Platform terms apply to any LinkedIn use.
 
+## Limits you set
+
+After approving roles, onboarding asks: (1) max search rounds per day (suggest 1), (2) per round, max listings evaluated and max applications/drafts prepared (suggest 15 and 5), (3) approval style: one by one, or a batch summary. They are saved under `limits:` in `profile.local.yml` and the daily scan treats them as hard upper bounds: at a limit it stops and gives you a short summary. Submit, send and consent steps always need your explicit approval.
+
+## Candidate sources (recruiter mode)
+
+After you approve the criteria, choose one or more sources and a per-round candidate cap for each (suggest 30):
+
+1. **Local CV folder.**
+2. **Gmail:** application mails matching a filter you give. Matching threads are listed first; attachments are downloaded to the git-ignored `screening/inbox/` only after your approval. Read + create-draft only; no sending, deleting or labeling (labeling is optional, off by default, needs approval).
+3. **LinkedIn:** only applicants to postings you published yourself (your Applicants screen) or profile URLs you give. No bulk collection from search results, no messages, InMail or connection requests. LinkedIn's terms restrict automation; the risk is yours.
+
+Each candidate gets a category (strong match / possible / needs clarification / does not meet criteria) with an evidence quote. The last one is only a suggestion; the agent rejects nobody and contacts nobody. Reply drafts are drafts only. Masking applies to every source. Fictional samples: `templates/screening/`.
+
 ## Quick start
 
 ```bash

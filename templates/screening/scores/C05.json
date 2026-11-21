@@ -1,0 +1,56 @@
+{
+  "candidate_id": "C05",
+  "category": "strong_match",
+  "category_evidence": "Visible profile quotes: \"requirements and acceptance criteria\", \"UAT coordination\", \"SQL\", \"English (fluent)\".",
+  "criteria": [
+    {
+      "id": "M1",
+      "match": "yes",
+      "evidence": "Business Analyst, 03/2021 \u2013 06/2025"
+    },
+    {
+      "id": "M2",
+      "match": "yes",
+      "evidence": "requirements and acceptance criteria for policy-administration features"
+    },
+    {
+      "id": "M3",
+      "match": "yes",
+      "evidence": "UAT coordination"
+    },
+    {
+      "id": "M4",
+      "match": "yes",
+      "evidence": "Skills: SQL, Jira"
+    },
+    {
+      "id": "M5",
+      "match": "yes",
+      "evidence": "English (fluent)"
+    },
+    {
+      "id": "N1",
+      "match": "partial",
+      "evidence": "Skills: SQL, Jira"
+    },
+    {
+      "id": "N2",
+      "match": "not_stated",
+      "evidence": ""
+    },
+    {
+      "id": "X1",
+      "match": "no",
+      "evidence": ""
+    }
+  ],
+  "gaps": [
+    "Confluence not stated"
+  ],
+  "questions": [
+    "Which payment or fintech work have you done, if any?"
+  ],
+  "warnings": [
+    "Source: LinkedIn applicants screen (fictional)"
+  ]
+}

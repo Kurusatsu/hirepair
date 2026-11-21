@@ -52,6 +52,20 @@ Her uyarlanmış CV `docs/ats-rules.md` kurallarına uyar ve `python3 scripts/at
 
 İşe alım modu puanlamadan önce korunan ve ilgisiz özellikleri (yaş, cinsiyet, uyruk, fotoğraf, isim kökeni, adres vb.) maskeler, CV'de olmayan bilgiyi tahmin etmek yerine `not_stated` yazar, aday verisini yerelde tutar (`screening/` ve `reports/` git'e girmez), mail/InMail/mesaj göndermez. Önce `docs/candidate-screening-safety.md` oku (KVKK/GDPR, saklama süresi, aday aydınlatma metni, önyargı ve adil kullanım). Sahte veriyle dene: `python3 scripts/screen_report.py templates/screening/criteria.example.json templates/screening/scores`. Türkçe prompt: `prompts/tr/screen-candidates.md`. LinkedIn kullanımında platform şartları geçerlidir.
 
+## Belirlediğin limitler
+
+Roller onaylandıktan sonra onboarding şunları sorar: (1) günde en fazla kaç arama turu (öneri 1), (2) turda en fazla kaç ilan değerlendirilsin, kaç başvuru/taslak hazırlansın (öneri 15 ve 5), (3) onay biçimi: tek tek ya da toplu özet. Yanıtlar `profile.local.yml` içinde `limits:` altına yazılır; günlük tarama bunları sert üst sınır sayar, limite gelince durur ve kısa özet verir. Gönder, mesaj ve rıza adımları her zaman senin açık onayındadır.
+
+## Aday kaynakları (işe alım modu)
+
+Kriterleri onayladıktan sonra bir veya birkaç kaynak ve her biri için tur başına aday limiti seç (öneri 30):
+
+1. **Yerel CV klasörü.**
+2. **Gmail:** verdiğin filtreyle gelen başvuru mailleri. Önce eşleşen konuşmalar listelenir; ekler yalnızca onayınla git'e girmeyen `screening/inbox/` klasörüne indirilir. Yalnızca okuma + taslak; gönderme, silme, etiketleme yok (etiketleme isteğe bağlı, varsayılan kapalı, onay ister).
+3. **LinkedIn:** yalnızca kendi yayınladığın ilanlara gelen başvurular (Applicants ekranın) ya da verdiğin profil adresleri. Arama sonuçlarından toplu toplama, mesaj, InMail, bağlantı isteği yok. LinkedIn şartları otomasyonu kısıtlar; risk sendedir.
+
+Her aday kanıt alıntısıyla bir kategoriye girer (güçlü eşleşme / olası / netleştirme gerekli / kriterlere uymuyor). Sonuncusu yalnızca öneridir; ajan kimseyi reddetmez, kimseyle iletişime geçmez. Geri dönüş metinleri yalnızca taslaktır. Maskeleme her kaynağa uygulanır. Sahte örnekler: `templates/screening/`.
+
 ## Hızlı başlangıç
 
 ```bash

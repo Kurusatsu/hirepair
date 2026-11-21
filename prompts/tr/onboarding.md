@@ -22,11 +22,16 @@ Kullanıcıdan rolleri onaylamasını, düzenlemesini, çıkarmasını veya ekle
 - şehir ve çalışma modeli (ofis / hibrit / uzaktan),
 - her zaman dahil edilecek şirketler,
 - LinkedIn dışında aranacak portallar (örn. genel kariyer siteleri, banka/şirket kariyer sayfaları),
-- günlük hazırlanacak başvuru sınırı (öneri: 10).
 Açık onay gelmeden devam etme. Değişiklik olursa güncel listeyi göster, tekrar onay iste.
 
+## 3b. Limitleri sor (rol onayından sonra)
+Tek mesajda sor, yanıtı bekle:
+1. Günde en fazla kaç arama/tarama turu (1, 2, 3; öneri 1)?
+2. Her turda en fazla kaç ilanı değerlendireyim, en fazla kaç başvuru/taslak hazırlayayım (öneri 15 ve 5)?
+3. Onay biçimi: her başvuruyu tek tek mi onaylarsın, yoksa uygun olanları toplu özetle mi sunayım? (Toplu modda bile her gönderim, mesaj ve rıza kutusu senin açık onayında kalır.)
+
 ## 4. Profili yaz
-Onaydan sonra `templates/profile.example.yml` şablonuyla `profile.local.yml` yaz: `approved_roles` (approved: true, tarih, CV kanıtı), hariç tutmalar, konum, maaş, limit, sorgular. `form_facts` yalnızca kullanıcının verdiği veya CV'de yazan değerleri içerir; kalanı boş bırak. `tracker.md` yoksa şablondan oluştur.
+Onaydan sonra `templates/profile.example.yml` şablonuyla `profile.local.yml` yaz: `approved_roles` (approved: true, tarih, CV kanıtı), hariç tutmalar, konum, maaş, sorgular ve `limits` (`scans_per_day`, `max_evaluated_per_round`, `max_prepared_per_round`, `daily_prepared_cap`, `approval_mode`; kullanıcının yanıtlarından). `form_facts` yalnızca kullanıcının verdiği veya CV'de yazan değerleri içerir; kalanı boş bırak. `tracker.md` yoksa şablondan oluştur.
 
 ## 5. İzin kontrolü
 README.tr.md "İzinler" bölümüne göre kısaca anlat: linkedin.com ve seçilen portallara Chrome erişimi, Gmail okuma + taslak oluşturma, tek çalışma klasörü. Gmail gönderme izni gerekmez. Parola, ödeme, T.C. kimlik no asla girilmez. LinkedIn'e kullanıcının kendisinin giriş yapmış olmasını iste.
