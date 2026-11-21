@@ -79,7 +79,7 @@ Hiçbir süreç ajanla doğrudan konuşmaz. Ajan ve UI iki ekleme-yalnız dosyad
 
 ### Dosyalar ve şemalar
 Şema örnekleri ve alanlar İngilizce dokümandadır (`data/inbox.jsonl`: ajan → UI, `data/decisions.jsonl`: UI → ajan). Özet:
-- `class`: `approve` (A) veya `human` (B). A: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question`. B: `consent`, `signin`, `id_field`, `captcha`, `submit`, `send`.
+- `class`: `approve` (A) veya `human` (B). A: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question`, `profile_edit`. B: `consent`, `signin`, `id_field`, `captcha`, `submit`, `send`.
 - `hash`: önizleme ve ekli dosyayı kapsar. Karar: `approve`, `skip`, `edit` (metinle), `done` (yalnızca B).
 - Tüketimi ajan `inbox.jsonl`'a `{"item":"...","consumed":"..."}` ekleyerek kaydeder.
 

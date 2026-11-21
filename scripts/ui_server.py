@@ -61,12 +61,15 @@ class App:
     def p(self, *parts):
         return os.path.join(self.root, *parts)
 
-    def sources(self):
-        return [self.p("tracker.md"), self.p("profile.local.yml"), self.inbox_p, self.dec_p, self.p("reports", "shortlist.md")]
+    def sources(self, route):
+        """Files each route depends on, so a change in one file does not invalidate every route."""
+        return {"/api/tracker": [self.p("tracker.md")], "/api/inbox": [self.inbox_p, self.dec_p],
+                "/api/profile": [self.p("profile.local.yml")],
+                "/api/shortlist": [self.p("reports", "shortlist.md")]}[route]
 
-    def etag(self):
-        h = hashlib.sha256()
-        for s in self.sources():
+    def etag(self, route):
+        h = hashlib.sha256(route.encode())
+        for s in self.sources(route):
             try:
                 st = os.stat(s)
                 h.update(f"{s}:{st.st_mtime_ns}:{st.st_size};".encode())
@@ -155,7 +158,7 @@ def make_handler(app):
             fn = routes.get(path)
             if fn is None:
                 return self._send(404, b"not found", "text/plain; charset=utf-8")
-            tag = app.etag()
+            tag = app.etag(path)
             if self.headers.get("If-None-Match") == tag:
                 return self._send(304, extra={"ETag": tag})
             self._json(200, fn(), extra={"ETag": tag})

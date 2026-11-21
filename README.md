@@ -46,6 +46,7 @@ Then type one of:
 ```
 /start-job-agent      # I am looking for a job
 /screen-candidates    # I am hiring
+/linkedin-profile     # which skills do jobs ask for, and what to fix on my LinkedIn
 ```
 
 The agent asks for your CV (or the job description), proposes roles (or criteria), asks about daily limits, and waits for your yes.
@@ -62,6 +63,8 @@ The skill reads prompts and docs from this repo, so keep the repo in place.
 ## Highlights
 
 - **ATS-compliant, role-tailored CVs** built only from facts in your CV: single column, standard headings and dates, selectable-text PDF, at most 2 pages. Check any CV with `python3 scripts/ats_check.py cv.md --jd job.txt` (reports missing keywords; never adds any). It also warns on section order and CV length for your experience level, and `--pair cv_tr.md` checks a TR/EN CV pair for matching dates, e-mail, sections and numbers. Rules: [docs/ats-rules.md](docs/ats-rules.md)
+- **Skills from real listings:** every job text the scan reads is saved locally; `python3 scripts/skill_gap.py --jobs data/jobs --linkedin my-skills.txt` counts which skills the market asks for and compares them with your CV and LinkedIn skills. It suggests only skills your CV already states; gaps are listed, never added. The CV-backed ones can drive skill-based job search (`queries.skills`)
+- **LinkedIn profile help:** `/linkedin-profile` drafts headline, About, experience wording and skill changes from CV facts, then types each approved change into the edit box; you press Save
 - **CV pool:** point recruiter mode at a folder of CVs and it ranks them against your approved criteria. It can also read application mails in Gmail and applicants of your own LinkedIn postings
 - **Daily limits you choose:** searches per day, jobs evaluated per round, applications prepared per round
 - **Mail drafts, never sends:** ready examples in [templates/emails](templates/emails/README.md) (application, follow-up, clarifying question, interview invite)

@@ -21,7 +21,7 @@ import time
 from datetime import datetime, timedelta
 
 CLASSES = {"approve": {"approve", "skip", "edit"}, "human": {"done", "skip"}}
-TYPES = {"approve": {"roles", "criteria", "limits", "cv_upload", "mail_draft", "open_question"},
+TYPES = {"approve": {"roles", "criteria", "limits", "cv_upload", "mail_draft", "open_question", "profile_edit"},
          "human": {"consent", "signin", "id_field", "captcha", "submit", "send"}}
 EXPIRY = timedelta(days=7)
 MAX_TEXT = 4000
@@ -102,18 +102,27 @@ def current_items(inbox):
     return items, consumed
 
 
+def latest_decisions(decisions):
+    """Last decision per item in one pass (the files are append-only and grow over time)."""
+    last = {}
+    for d in decisions:
+        if "item" in d:
+            last[d["item"]] = d
+    return last
+
+
 def latest_decision(item_id, decisions):
-    found = [d for d in decisions if d.get("item") == item_id]
-    return found[-1] if found else None
+    return latest_decisions(decisions).get(item_id)
 
 
 def view(inbox, decisions, now=None):
     """Items with a computed status: pending | decided | stale | consumed | expired."""
     now = now or datetime.now()
     items, consumed = current_items(inbox)
+    last = latest_decisions(decisions)
     out = []
     for it in items.values():
-        d = latest_decision(it["id"], decisions)
+        d = last.get(it["id"])
         if it["id"] in consumed:
             status = "consumed"
         elif d and d.get("hash") == it.get("hash") and d.get("decision") in CLASSES[it["class"]]:
@@ -158,11 +167,11 @@ def validate_decision(d, inbox, decisions=None):
 
 def actionable(inbox, decisions):
     """Decisions the agent may act on: decided items only, with the matching hash."""
-    items, _ = current_items(inbox)
+    last = latest_decisions(decisions)
     out = []
     for row in view(inbox, decisions):
         if row["status"] == "decided":
-            d = latest_decision(row["id"], decisions)
+            d = last[row["id"]]
             out.append({"item": row["id"], "type": row["type"], "class": row["class"], "decision": d["decision"],
                         "text": d.get("text", ""), "at": d.get("at", "")})
     return out

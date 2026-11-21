@@ -23,6 +23,7 @@ tr: {
   d_t_criteria:'Bu kriterler onaylansın mı?', d_b_criteria:'Ajan CV değerlendirmesinde bu kriterleri kullanır. Sonuçlar yalnızca tavsiyedir.',
   d_t_limits:'Bu limitler onaylansın mı?', d_b_limits:'Ajan günlük işini bu limitler içinde tutar.',
   d_t_open_question:'Bu cevap onaylansın mı?', d_b_open_question:'Ajan bu cevabı kullanarak devam eder.',
+  d_t_profile_edit:'Bu LinkedIn profil değişikliği onaylansın mı?', d_b_profile_edit:'Ajan metni düzenleme kutusuna yazar ve durur. Kaydet\'e sen basarsın.',
   d_t_gen:'Bu madde onaylansın mı?', d_b_gen:'Ajan bir sonraki çalışmasında bu onayla devam eder. Geri alınamayabilir.',
   saved:'Karar kaydedildi. Ajan çalışmıyorsa sonraki çalışmada uygulanır.', err:'Karar kaydedilemedi: ', neterr:'Sunucuya ulaşılamadı.',
   waiting_n:'{n} madde bekliyor', waiting:'seni bekliyor', scored:'takipteki ilan', submitted:'gönderildi', replies:'yanıt',
@@ -51,6 +52,7 @@ en: {
   d_t_criteria:'Approve these criteria?', d_b_criteria:'The agent uses them to screen CVs. Results are advisory only.',
   d_t_limits:'Approve these limits?', d_b_limits:'The agent keeps its daily work within these limits.',
   d_t_open_question:'Approve this answer?', d_b_open_question:'The agent continues using this answer.',
+  d_t_profile_edit:'Approve this LinkedIn profile change?', d_b_profile_edit:'The agent types it into the edit box and stops. You press Save.',
   d_t_gen:'Approve this item?', d_b_gen:'The agent continues with this approval at its next run. It may not be reversible.',
   saved:'Decision saved. If the agent is not running, it applies at the next run.', err:'Could not save the decision: ', neterr:'Could not reach the server.',
   waiting_n:'{n} items waiting', waiting:'waiting for you', scored:'listings in tracker', submitted:'submitted', replies:'replies',
@@ -109,10 +111,12 @@ var toastTimer;
 function toast(msg) { announce(msg); clearTimeout(toastTimer); toastTimer = setTimeout(function () { $('live').textContent = ''; }, 6000); }
 
 var state = { tracker: null, inbox: null, profile: null, lastPending: null, sig: {} };
-function api(path) {
+function api(path, etag) {
   return fetch(path, { cache: 'no-cache', headers: { Accept: 'application/json' } }).then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
+    var tag = r.headers.get('ETag');
+    if (etag && tag && tag === etag) return { unchanged: true };
+    return r.json().then(function (d) { return { data: d, tag: tag }; });
   });
 }
 
@@ -303,11 +307,11 @@ function renderShortlist() {
   pre.textContent = md || '';
 }
 
+// Skip JSON parsing and re-rendering when the server's per-route ETag is unchanged (most polls).
 function take(key, path, done) {
-  return api(path).then(function (d) {
-    var s = JSON.stringify(d);
-    if (s === state.sig[key]) return;
-    state.sig[key] = s; state[key] = d; done();
+  return api(path, state.sig[key]).then(function (r) {
+    if (r.unchanged) return;
+    state.sig[key] = r.tag || null; state[key] = r.data; state.changedAt = Date.now(); done();
   });
 }
 function poll() {
@@ -321,7 +325,7 @@ function poll() {
 }
 function loadStatic() {
   take('profile', '/api/profile', renderToday).catch(function () {});
-  api('/api/shortlist').then(function (d) { state.shortlist = d.markdown; renderShortlist(); }).catch(function () {});
+  take('shortlistData', '/api/shortlist', function () { state.shortlist = state.shortlistData.markdown; renderShortlist(); }).catch(function () {});
 }
 
 var tabs = [].slice.call(document.querySelectorAll('[role=tab]'));
@@ -348,6 +352,11 @@ $('lang').addEventListener('click', function () {
   applyI18n();
 });
 document.addEventListener('visibilitychange', poll);
-setInterval(poll, 5000);
-applyI18n(); loadStatic(); poll();
+// Poll every 5 s while data is changing, back off to 20 s after 2 quiet minutes.
+state.changedAt = Date.now();
+function loop() {
+  poll();
+  setTimeout(loop, Date.now() - state.changedAt < 120000 ? 5000 : 20000);
+}
+applyI18n(); loadStatic(); loop();
 })();

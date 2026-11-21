@@ -63,6 +63,7 @@ queries:
   posts:
     - "hiring business analyst <city>"
     - "<role> we are hiring"
+  skills: []                          # skill keywords (CV-backed, in demand); see prompts/linkedin-profile.md
   career_sites: []                    # optional career pages for the title-only check
 
 limits:                               # asked in onboarding; HARD upper bounds in scans

@@ -118,7 +118,7 @@ No process talks to the agent directly. The agent and the UI meet in two append-
  "evidence":["Posting: requirements elicitation -> CV: Led UAT ..."],
  "preview":"(plain text shown to the user)","link":"https://example.com/jobs/1","hash":"sha256:..."}
 ```
-`class` is `approve` or `human`. `type`: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question` (class approve); `consent`, `signin`, `id_field`, `captcha`, `submit`, `send` (class human). `hash` covers the preview and any attached file.
+`class` is `approve` or `human`. `type`: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question`, `profile_edit` (class approve); `consent`, `signin`, `id_field`, `captcha`, `submit`, `send` (class human). `hash` covers the preview and any attached file.
 
 `data/decisions.jsonl` (UI → agent):
 ```json

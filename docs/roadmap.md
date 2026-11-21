@@ -17,6 +17,29 @@ Order matters: finish what is below "Now" before starting "Next".
 - Read-only local tracker page with a "waiting for you" list (`scripts/tracker_view.py`); recruiter score reports verify evidence quotes against the masked CVs (`--masked`)
 - Local UI phase 1: approval inbox + local server (`scripts/ui_server.py`, `scripts/ui_protocol.py`, `ui/`)
 
+- Skills and profile: job texts cached in `data/jobs/`, `scripts/skill_gap.py` (market demand vs CV vs LinkedIn skills, CV-backed suggestions only), skill-based job search (`queries.skills`), skill-cluster queries in the recruiter LinkedIn assistant, `/linkedin-profile` (drafts + guided edit, the human presses Save), `profile_edit` inbox type
+- UI performance: per-route ETags (a tracker change no longer invalidates the inbox), the page skips JSON parsing and re-rendering when the ETag is unchanged, polling backs off from 5 s to 20 s after 2 quiet minutes, the inbox view indexes decisions in one pass instead of one scan per item
+
+## Next: performance, UI and flow (planned 2026-11)
+Ordered by expected gain. The slowest part of a run is browser round trips and tokens, not the local code.
+
+**Agent flow**
+1. One JavaScript call per search-results page that returns every card's title, company, age and Applied/Saved badge; drop cards already in the seen-ID list or tracker before clicking any. Today each card is clicked to read its ID.
+2. Title prefilter before opening a job page: skip titles that match the profile's exclusions or no target/adjacent role and no `queries.skills` keyword. Opened pages are the main cost.
+3. Make the read-only search subagent the default in scheduled runs; the parent only tailors CVs and fills forms (smaller parent context, fewer dropped browser sessions).
+4. Re-score from the cached job text instead of reopening pages when only the profile changed.
+5. Monthly: `skill_gap.py` over the last 30 days of `data/jobs/`, propose `queries.skills` changes; drop skill queries that found nothing new for 7 days (same tally as #hiring queries).
+
+**Local files**
+6. `ui_protocol.py compact`: rewrite `data/inbox.jsonl` / `decisions.jsonl` without consumed or expired items older than 30 days (the files are append-only and every poll reads them).
+7. Tracker archive: move rows older than 90 days with a final status to `tracker-archive.md`; stats read both.
+
+**UI**
+8. Skills tab (read-only): `/api/skills` serves `data/skills-report.json` (written by `skill_gap.py --json`); demand bars with CV / LinkedIn flags, the three suggestion lists, and a link to each `profile_edit` item.
+9. Profile drafts in the inbox show before → after with the CV evidence line; approving types nothing by itself, it only tells the agent which change to type next.
+10. Tracker: sort by date / fit, paginate above 200 rows, render only the visible page.
+11. Recruiter: run `skill_gap.py` over the masked CV pool to show which must-have skills are rare in the pool, as a hint to relax criteria (advisory, the human edits criteria).
+
 ## Later: small local web UI
 The read-only tracker page above is the first step. A minimal local dashboard (no accounts, no cloud, data stays on your machine):
 - Onboarding screen: upload CV, review proposed roles, approve or edit

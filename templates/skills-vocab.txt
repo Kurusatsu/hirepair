@@ -1,0 +1,146 @@
+# Skill vocabulary for scripts/skill_gap.py. One skill per line: Canonical name | alias | alias
+# Matching is case-insensitive on whole words. Add your own lines to data/skills-vocab.local.txt
+# (git-ignored); the script reads both. Avoid one- or two-letter aliases (too many false hits).
+
+# Analysis and product
+Business Analysis | business analyst | iş analizi | iş analisti
+Requirements Gathering | requirements elicitation | requirement analysis | gereksinim analizi | ihtiyaç analizi
+User Stories | user story | kullanıcı hikayesi
+Use Cases | use case
+Process Improvement | process optimization | süreç iyileştirme
+Business Process Modeling | BPMN | process modeling | süreç modelleme
+Product Management | ürün yönetimi
+Product Ownership | product owner | backlog management | backlog yönetimi
+Stakeholder Management | stakeholder | paydaş yönetimi
+User Acceptance Testing | UAT | kullanıcı kabul testi
+Gap Analysis | gap analizi
+Data Analysis | data analytics | veri analizi
+Data Visualization | veri görselleştirme
+Reporting | raporlama
+KPI | key performance indicators
+Root Cause Analysis | RCA | kök neden analizi
+
+# Delivery and methods
+Agile Methodologies | agile | çevik
+Scrum
+Kanban
+Waterfall
+SAFe
+Project Management | proje yönetimi
+Program Management
+Change Management | değişiklik yönetimi
+Release Management | release manager | sürüm yönetimi
+ITIL
+IT Service Management | ITSM
+Incident Management | olay yönetimi
+Risk Management | risk yönetimi
+PMP
+PRINCE2
+Vendor Management | tedarikçi yönetimi
+Budgeting | bütçe
+
+# Tools
+Jira
+Confluence
+Azure DevOps | azure boards
+ServiceNow
+Microsoft Excel | excel
+Microsoft Power BI | power bi | powerbi
+Tableau
+Looker
+Qlik | qlikview | qlik sense
+Microsoft Visio | visio
+Figma
+Miro
+Trello
+Notion
+Microsoft Project | ms project
+SharePoint
+Salesforce
+SAP
+SAP S/4HANA | s/4hana | s4hana
+Oracle
+Dynamics 365 | microsoft dynamics
+Postman
+Swagger | OpenAPI
+Git | github | gitlab
+Google Analytics
+Google Sheets
+
+# Data and engineering
+SQL | T-SQL | PL/SQL | MySQL | PostgreSQL | MSSQL | SQL Server
+Python
+Java
+JavaScript | js
+TypeScript
+C#
+.NET
+Node.js | nodejs
+React | react.js | reactjs
+HTML
+CSS
+REST APIs | REST API | RESTful | rest servisleri
+SOAP
+JSON
+XML
+API Integration | entegrasyon | integration
+ETL
+Data Warehousing | data warehouse | veri ambarı
+Data Modeling | veri modelleme
+Data Governance
+Big Data
+Apache Spark | spark
+Apache Kafka | kafka
+Microservices | mikroservis
+Docker
+Kubernetes
+Linux
+Shell Scripting | bash
+AWS | amazon web services
+Microsoft Azure | azure
+Google Cloud Platform | GCP
+CI/CD | continuous integration
+DevOps
+Test Automation | test otomasyonu
+Selenium
+Manual Testing | manuel test
+Software Testing | QA | quality assurance | yazılım testi
+Software Development Life Cycle | SDLC
+
+# AI
+Machine Learning | makine öğrenmesi
+Artificial Intelligence | yapay zeka | AI
+Generative AI | GenAI | generative ai
+Large Language Models | LLM | LLMs
+Prompt Engineering
+AI Agents | ai agent | agentic
+Natural Language Processing | NLP
+Automation | otomasyon
+Robotic Process Automation | RPA | UiPath
+
+# Domain
+Banking | bankacılık
+Payments | ödeme sistemleri | ödeme
+Fintech
+Insurance | sigorta
+E-commerce | e-ticaret
+Telecommunications | telekom
+Retail | perakende
+ERP
+CRM
+Core Banking
+Regulatory Compliance | compliance | regülasyon | uyum
+KVKK
+GDPR
+
+# People and communication
+Communication | iletişim becerisi
+Presentation Skills | sunum
+Team Leadership | ekip liderliği | takım liderliği
+Mentoring
+Problem Solving | problem çözme
+Analytical Skills | analytical thinking | analitik düşünme
+Technical Documentation | dokümantasyon | documentation
+Training | eğitim verme
+Customer Success | müşteri başarısı
+Customer Support | müşteri desteği

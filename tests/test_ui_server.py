@@ -74,6 +74,15 @@ class Server(unittest.TestCase):
         s, _, _ = self.req("GET", "/api/tracker", headers={"If-None-Match": h["ETag"]})
         self.assertEqual(s, 304)
 
+    def test_etag_is_per_route(self):
+        inbox, tracker = self.app.etag("/api/inbox"), self.app.etag("/api/tracker")
+        self.assertNotEqual(inbox, tracker)
+        p = os.path.join(self.tmp.name, "tracker.md")
+        st = os.stat(p)
+        os.utime(p, ns=(st.st_atime_ns, st.st_mtime_ns + 10**9))
+        self.assertNotEqual(self.app.etag("/api/tracker"), tracker)
+        self.assertEqual(self.app.etag("/api/inbox"), inbox)
+
     def test_wrong_host_rejected(self):
         self.assertEqual(self.req("GET", "/api/tracker", host="evil.example:80")[0], 403)
 

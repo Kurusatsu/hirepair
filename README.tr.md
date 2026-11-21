@@ -46,6 +46,7 @@ Sonra birini yaz:
 ```
 /start-job-agent      # iş arıyorum
 /screen-candidates    # işe alım yapıyorum
+/linkedin-profile     # ilanlar hangi yetenekleri istiyor, LinkedIn'imde ne düzelmeli
 ```
 
 Ajan CV'ni (veya iş ilanını) ister, rolleri (veya kriterleri) önerir, günlük limitleri sorar ve senin onayını bekler.
@@ -62,6 +63,8 @@ Skill, prompt ve dokümanları bu repodan okur; repoyu yerinden oynatma.
 ## Öne çıkanlar
 
 - CV'nde bulunan gerçek bilgilerden üretilen **ATS uyumlu, role özel CV**: tek sütun, standart başlık ve tarih, metni seçilebilir PDF, en fazla 2 sayfa. Herhangi bir CV'yi `python3 scripts/ats_check.py cv.md --jd ilan.txt` ile kontrol et (eksik anahtar kelimeyi raporlar, hiçbirini eklemez). Ayrıca bölüm sırasını ve deneyim düzeyine göre CV uzunluğunu uyarır; `--pair cv_en.md` ile TR/EN CV çiftinde tarih, e-posta, bölüm ve sayıların tutarlılığını denetler. Kurallar: [docs/ats-rules.tr.md](docs/ats-rules.tr.md)
+- **Gerçek ilanlardan yetenekler:** taramanın okuduğu her ilan metni yerelde saklanır; `python3 scripts/skill_gap.py --jobs data/jobs --linkedin yeteneklerim.txt` piyasanın hangi yetenekleri istediğini sayar, CV'n ve LinkedIn yeteneklerinle karşılaştırır. Yalnızca CV'nde olan yetenekleri önerir; açıklar listelenir, asla eklenmez. CV destekli olanlarla yeteneğe göre iş arama yapılır (`queries.skills`)
+- **LinkedIn profil desteği:** `/linkedin-profile` başlık, Hakkında, deneyim ifadeleri ve yetenek değişikliklerini CV gerçeklerinden taslaklar, onaylanan her değişikliği düzenleme kutusuna yazar; Kaydet'e sen basarsın
 - **CV havuzu:** işe alım modunu bir CV klasörüne yönlendir; onayladığın kriterlere göre sıralar. Gmail'deki başvuru maillerini ve kendi LinkedIn ilanlarının başvurularını da okuyabilir
 - **Seçtiğin günlük limitler:** günlük arama, turda değerlendirilecek ilan, turda hazırlanacak başvuru
 - **Mail taslağı, asla gönderme:** [templates/emails](templates/emails/README.md) içinde hazır örnekler (başvuru, takip, netleştirme sorusu, görüşme daveti)

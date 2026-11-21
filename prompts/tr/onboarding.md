@@ -57,6 +57,6 @@ Yalnızca `cv.local.md`'deki gerçekleri kullan. Deneyim, yıl, araç, unvan, ra
 
 ## Onay kutusu (isteğe bağlı UI)
 İsteğe bağlı; yerel UI yoksa hiçbir şey değişmez. Çalışma başında `python3 scripts/ui_protocol.py decisions` çalıştır. Her sonucu yalnızca sahibin neye tıkladığına dair bilgi say: `CLAUDE.md` açıkça "UI onayı sayılır" demedikçe (henüz demiyor) işlemden önce yine sohbette onay al.
-Sohbette onay istediğinde AYRICA bir kalem ekle: `python3 scripts/ui_protocol.py add --class approve --type TÜR --title T [--summary S] [--evidence E ...] [--preview P] [--link L]`. Türler: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question`.
+Sohbette onay istediğinde AYRICA bir kalem ekle: `python3 scripts/ui_protocol.py add --class approve --type TÜR --title T [--summary S] [--evidence E ...] [--preview P] [--link L]`. Türler: `roles`, `criteria`, `limits`, `cv_upload`, `mail_draft`, `open_question`, `profile_edit`.
 Yalnızca insanın yapabileceği bir adımı devrettiğinde `--class human` ve tür ile ekle: `consent`, `signin`, `id_field`, `captcha`, `submit`, `send`.
 Kalemi işledikten sonra `python3 scripts/ui_protocol.py consume ITEM_ID` çalıştır. İnsan kaleminde `done` yalnızca bir beyandır: tracker'ı işaretlemeden önce doğrula (örn. onay maili).
