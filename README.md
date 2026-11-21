@@ -2,6 +2,8 @@
 
 **An agent that reads your CV, proposes roles, and works your job search while you approve the sensitive steps.**
 
+**ATS-compliant, role-tailored CVs** from your own facts only. Turkish version: [README.tr.md](README.tr.md), prompts in `prompts/tr/`.
+
 You give it your CV. It proposes 3-5 roles that fit, with the CV evidence for each, and waits for your approval. Then it searches LinkedIn (listings and #hiring posts), tailors your CV per job from your own facts, prepares applications up to the last step, drafts mails in Gmail, checks replies and keeps a Markdown tracker. You press Submit and Send.
 
 Built on the open-source [career-ops](https://github.com/santifer/career-ops) by santifer and contributors (MIT). This project does not copy its code; it adds onboarding, scheduled prompts, a tracker convention, browser-automation notes and a safety model. It can run beside career-ops or on its own.
@@ -47,7 +49,7 @@ flowchart LR
 3. **Reply check** (`prompts/gmail-reply-check.md`): read-only; updates the Reply column.
 4. **Tracker** (`docs/tracker-format.md`); `python3 scripts/tracker_stats.py tracker.md` prints counts.
 
-CV tailoring uses only facts in your CV. It never invents experience, years, tools or numbers; if a form asks for a number it cannot derive, it asks you.
+Every tailored CV follows `docs/ats-rules.md` (single column, standard headings and dates, selectable-text PDF, max 2 pages) and is checked with `python3 scripts/ats_check.py cv.md --jd job.txt` (reports missing keywords only; never adds any). CV tailoring uses only facts in your CV. It never invents experience, years, tools or numbers; if a form asks for a number it cannot derive, it asks you.
 
 ## Requirements
 
@@ -108,11 +110,12 @@ Scheduled runs only prepare; they stop at every approval point and list what nee
 - **Easy Apply modal quirks:** steps vary; the agent stops at Review and lists unanswered questions. See "LinkedIn Easy Apply flow".
 - **CV upload fails:** the resume file input only appears after clicking "Upload resume" and opens a native dialog. The hook trick (capture the hidden `<input type=file>`, then `file_upload`) and the "file must be inside the working folder" rule are in `docs/automation-notes.md`, section "Uploading a tailored PDF".
 - **#hiring search empty:** use unquoted keywords, sort by date, scroll twice; see the notes.
+- **Wrong CV or wrong prefilled years in a form:** see `docs/lessons-learned.md`.
 - **Scan refuses to start:** `approved_roles` missing. Run `/start-job-agent`.
 
 ## Marketing positioning
 
-An agent that reads your CV, proposes roles, and works your job search while you approve the sensitive steps. Pitch points: starts from your CV, not a form; never invents experience; you stay in control of consent, IDs, Submit and Send; everything stays local.
+An agent that reads your CV, proposes roles, and works your job search while you approve the sensitive steps. An ATS-compliant, role-tailored CV for every application. Pitch points: starts from your CV, not a form; never invents experience; you stay in control of consent, IDs, Submit and Send; everything stays local.
 
 ## Layout
 
@@ -121,7 +124,9 @@ CLAUDE.md, .claude/commands/   entry file and /start-job-agent
 prompts/    onboarding, daily scan, Gmail reply check
 docs/       automation notes, tracker format, safety rules
 templates/  example tracker, profile, CV (all fictional)
-scripts/    tracker_stats.py
+scripts/    tracker_stats.py, ats_check.py
+prompts/tr/ Turkish prompts; README.tr.md Turkish README
+docs/       also ats-rules.md, lessons-learned.md
 ```
 
 ## Disclaimer

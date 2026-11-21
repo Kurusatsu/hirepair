@@ -61,3 +61,14 @@ The job search's semantic ranking returns almost the same ~30 cards for similar 
 - Bank career portals often depend on the user already being signed in within the same Chrome. If a sign-in page appears, list the role instead of trying to log in.
 - Portals that send an e-mail verification link need a separate step: read the verification mail (read only), open the link, then continue the question flow. Check again later for a "complete your application" mail; a "link already used" message means nothing is left. Only a "received" confirmation mail justifies marking the row as submitted.
 - Do not tick consent boxes even when the page makes them look mandatory; hand that step to the human.
+
+## Turkey-specific portal pitfalls (generic)
+
+- Many forms ask salary as a single number. Check whether it means net or gross, monthly or annual, and the currency (usually TL). Use only the profile value; if unclear, ask the user.
+- National ID number (T.C. kimlik no), date of birth, military-service status and similar fields appear on local portals. Never fill identity numbers; leave them for the user.
+- KVKK clarification / explicit-consent boxes are often mandatory-looking and sometimes ticked by default. Never tick or untick; hand it to the user.
+- Local job boards can require a full profile (education history, forms) before applying. If a CV auto-parse fills the profile, check every parsed field against the CV; parsers misread dates and titles.
+- Phone fields may demand a specific format (+90, leading 0 or not). Read the hint text, do not guess; ask the user if unsure.
+- Turkish characters (ç ğ ı ö ş ü İ) can break in file names and some form fields. Use ASCII file names (`Ad_Soyad_Rol_Cv.pdf`); keep Turkish text inside the CV.
+- Bank and corporate career portals often use a separate candidate account and e-mail verification. List the role and the link; the user signs in.
+- Job-post age is shown relatively ("3 gün önce", "1 hafta önce"); convert to days before ranking.

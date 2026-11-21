@@ -1,21 +1,23 @@
 # Alex Example
 
-Example City | alex.example@example.com | +00 000 000 00 00 | linkedin.com/in/alex-example
+Example City, alex.example@example.com, +00 000 000 00 00, linkedin.com/in/alex-example
 
 > Fictional person. Replace with your own CV. The agent may only use facts that appear in this file.
 
-## Summary
+## Professional Summary
 
 Business analyst with 4 years of experience in payments software, covering requirements, UAT and release coordination.
 
-## Experience
+## Work Experience
 
-### Business Analyst, Sample Payments Ltd (2022 - 2025)
+### Business Analyst, Sample Payments Ltd
+03/2022 – 06/2025
 - Wrote requirements and acceptance criteria for a card-payments platform.
 - Ran user acceptance testing cycles with business stakeholders.
 - Coordinated monthly releases with development and operations.
 
-### Junior Analyst, Demo Retail Co (2020 - 2022)
+### Junior Analyst, Demo Retail Co
+07/2020 – 02/2022
 - Documented order-handling processes and maintained process diagrams.
 - Produced weekly SQL reports for the operations team.
 
@@ -25,7 +27,7 @@ Business analyst with 4 years of experience in payments software, covering requi
 
 ## Education
 
-- B.Sc. Industrial Engineering -- Example University (2016 - 2020)
+- B.Sc. Industrial Engineering -- Example University, 09/2016 – 06/2020
 
 ## Skills
 

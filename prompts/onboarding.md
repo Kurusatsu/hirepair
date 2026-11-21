@@ -55,4 +55,9 @@ These need an explicit yes in chat, for that specific action:
 Unattended scheduled runs prepare only; they never do any of the above.
 
 ## CV tailoring rule
+Every tailored CV must follow `docs/ats-rules.md` (single column, standard headings and MM/YYYY dates, selectable-text PDF, no tables/icons, file name `First_Last_Role_Cv.pdf`, max 2 pages). Run `python3 scripts/ats_check.py <cv.md> --jd <job.txt>` and fix every ERROR before building the PDF; the keyword report is information only. Turkish users: use `prompts/tr/`.
+
 When a role or job needs a tailored CV, use only facts present in `cv.local.md`. Never invent experience, years, tools, titles or numbers. If a form asks for a number you cannot derive from the CV or `form_facts` (years of a skill, salary, notice period), ask the user and, if they answer, save it to `form_facts`.
+
+## Lessons that apply to every form
+Read `docs/lessons-learned.md`: verify prefilled experience years against the CV, confirm the displayed CV file name on every form, untick "follow company", ask the user for numbers the CV cannot give, use the salary value from the profile only, add a tracker row after every application, respect the daily cap and give a short summary.
