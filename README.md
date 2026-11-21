@@ -1,169 +1,107 @@
 # Hirepair
 
-**Hirepair works both sides of hiring: it reads your CV, proposes roles and works your job search, or reads your job criteria and screens candidates, while you approve every sensitive step.**
+**One agent for both sides of hiring.** Give it your CV and it finds and prepares jobs for you. Give it a job description and it screens candidates for you. You approve every sensitive step.
 
-**ATS-compliant, role-tailored CVs** from your own facts only. Turkish version: [README.tr.md](README.tr.md), prompts in `prompts/tr/`.
+[Türkçe README](README.tr.md) · [Roadmap](docs/roadmap.md) · MIT
 
-You give it your CV. It proposes 3-5 roles that fit, with the CV evidence for each, and waits for your approval. Then it searches LinkedIn (listings and #hiring posts), tailors your CV per job from your own facts, prepares applications up to the last step, drafts mails in Gmail, checks replies and keeps a Markdown tracker. You press Submit and Send.
+---
 
-Built on the open-source [career-ops](https://github.com/santifer/career-ops) by santifer and contributors (MIT). This project does not copy its code; it adds onboarding, scheduled prompts, a tracker convention, browser-automation notes and a safety model. It can run beside career-ops or on its own.
+## Why this exists
 
-## Demo flow
+Applying to dozens of roles by hand is the same loop every day: scan listings, tailor the CV, fill forms, check mail, update a spreadsheet, and lose track of what went where. Hirepair automates the repetitive part of that loop and stops wherever a person must decide. The same engine also works for the other side of the table: a recruiter with a pile of CVs.
+
+**Credit where it is due.** This project grew out of [career-ops](https://github.com/career-ops-hq/career-ops) by [@santifer](https://github.com/santifer) and its contributors (MIT). I learned the pipeline idea, the tracker mindset and the "evaluate, then apply" discipline from it. Hirepair does not copy its code; it adds onboarding, scheduled prompts, recruiter mode and a Turkish-market layer. If you want a full-featured job-search system, start with career-ops and give it a star.
+
+## What it does
+
+| | Job seeker `/start-job-agent` | Recruiter `/screen-candidates` |
+|---|---|---|
+| You give | Your CV | A job description |
+| It proposes | 3-5 roles that fit, with CV evidence | Must-have / nice-to-have / exclusion criteria |
+| You approve | The roles | The criteria |
+| It then | Searches LinkedIn, tailors an **ATS-compliant CV per job**, prepares applications, drafts mails, tracks replies | Reads CVs from **a CV pool folder**, Gmail applications, or your own LinkedIn postings; ranks with evidence quotes |
+| You still do | Consent boxes, IDs, Submit, Send | Every decision; it never rejects or contacts anyone |
+
+Nothing runs before you approve the roles (or the criteria). Missing facts are marked `not_stated`, never guessed.
+
+## Minimum requirements
+
+1. [Claude Code](https://claude.com/claude-code) (the commands and prompts run as Claude Code commands and skills)
+2. The **Claude in Chrome** extension, with **you signed in to LinkedIn on your own account** (the agent never types passwords)
+3. A **Gmail connector** so it can read replies and create drafts (send permission is not needed)
+4. Your CV as a file in this folder
+
+Python 3 (standard library only) is optional, for the small helper scripts.
+
+## Quick start
+
+```bash
+git clone <your-fork-url> hirepair
+cd hirepair
+claude
+```
+
+Then type one of:
 
 ```
-you:    /start-job-agent
-agent:  Give me your CV (path inside this folder, or paste text).
-you:    data/my_cv.pdf
-agent:  Proposed roles:
-        1. Business Analyst - 3 yrs of requirements work (CV: "Wrote requirements for 3 releases")
-        2. Product Owner    - owned a team backlog (CV: "Owned the team backlog")
-        3. ...
-        Approve, edit, remove or add? Exclusions? Salary? City / remote?
-you:    Drop 3, add "Implementation Consultant", Istanbul or remote, no helpdesk.
-agent:  Saved profile.local.yml. Start the first scan? (supervised)
-you:    yes
-agent:  12 new jobs, 7 prepared to the Review page, 2 mail drafts in Gmail.
-        Needs you: 3 consent boxes, 1 question ("years of SQL?"), Submit.
+/start-job-agent      # I am looking for a job
+/screen-candidates    # I am hiring
 ```
 
-Nothing runs before you approve the roles.
+The agent asks for your CV (or the job description), proposes roles (or criteria), asks about daily limits, and waits for your yes.
+
+## Highlights
+
+- **ATS-compliant, role-tailored CVs** built only from facts in your CV: single column, standard headings and dates, selectable-text PDF, at most 2 pages. Check any CV with `python3 scripts/ats_check.py cv.md --jd job.txt` (reports missing keywords; never adds any). Rules: [docs/ats-rules.md](docs/ats-rules.md)
+- **CV pool:** point recruiter mode at a folder of CVs and it ranks them against your approved criteria. It can also read application mails in Gmail and applicants of your own LinkedIn postings
+- **Daily limits you choose:** searches per day, jobs evaluated per round, applications prepared per round
+- **Mail drafts, never sends:** ready examples in [templates/emails](templates/emails/README.md) (application, follow-up, clarifying question, interview invite)
+- **Bias and privacy built in:** protected attributes (age, gender, nationality, photo, name origin...) are masked before scoring; all data stays on your machine
+- **Tracker:** a plain Markdown file; `python3 scripts/tracker_stats.py tracker.md` prints counts
+- **Turkish market:** Turkish prompts in `prompts/tr/`, KVKK-aware consent steps, net/gross salary care
+
+## What you must do yourself
+
+Passwords, payment details and government ID numbers are never entered by the agent. It also stops for CAPTCHAs, account creation, consent boxes (KVKK/GDPR/terms), InMail and connection requests, the final Submit and every Send.
+
+## Permissions to grant (nothing more)
+
+| Grant | Why |
+|---|---|
+| Chrome access to `linkedin.com` and the job portals you choose | Search listings, open application forms |
+| Gmail read | Reply check |
+| Gmail create draft | Drafts for you to review |
+| File access to this one folder | Read CV, write profile, tracker, tailored PDFs |
+
+Keep Gmail **send off**, or approval-gated. Page and mail content is treated as untrusted data.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-  CV[Your CV] --> O[Onboarding: propose roles]
-  O --> H1{{You approve roles}}
-  H1 --> P[profile.local.yml]
-  P --> S[Daily scan: listings + #hiring posts]
-  S --> M[Dedupe + score]
-  M --> C[Tailor CV from CV facts only]
-  C --> F[Form to Review page / Gmail draft]
-  F --> T[(tracker.md)]
-  T --> H2{{You: consents, IDs, Submit, Send}}
-  G[Gmail reply check, read-only] --> T
+  A[Your CV or a job description] --> B[Propose roles or criteria]
+  B --> C{{You approve}}
+  C --> D[Search: LinkedIn, Gmail, CV pool]
+  D --> E[Tailor CV or score candidates, with evidence]
+  E --> F[Drafts, forms to Review page, shortlist]
+  F --> G{{You: consent, Submit, Send, decide}}
+  G --> H[(Tracker)]
 ```
 
-1. **Onboarding** (`prompts/onboarding.md`): CV in, roles proposed with evidence, your approval, profile written.
-2. **Scan** (`prompts/daily-scan.md`): reads only approved roles; scores 1-5 with quoted job requirements; prepares up to your daily cap.
-3. **Reply check** (`prompts/gmail-reply-check.md`): read-only; updates the Reply column.
-4. **Tracker** (`docs/tracker-format.md`); `python3 scripts/tracker_stats.py tracker.md` prints counts.
+Details: [prompts/onboarding.md](prompts/onboarding.md), [prompts/daily-scan.md](prompts/daily-scan.md), [prompts/gmail-reply-check.md](prompts/gmail-reply-check.md), [recruiter mode and limits](docs/recruiter-mode.md), [safety rules](docs/safety-rules.md), [candidate screening safety](docs/candidate-screening-safety.md), [automation notes](docs/automation-notes.md), [lessons learned](docs/lessons-learned.md).
 
-Every tailored CV follows `docs/ats-rules.md` (single column, standard headings and dates, selectable-text PDF, max 2 pages) and is checked with `python3 scripts/ats_check.py cv.md --jd job.txt` (reports missing keywords only; never adds any). CV tailoring uses only facts in your CV. It never invents experience, years, tools or numbers; if a form asks for a number it cannot derive, it asks you.
+## Schedule it (optional)
 
-## Requirements
+After one supervised run, create two Claude Code scheduled tasks: the daily scan (about 17:00, `prompts/daily-scan.md`) and the Gmail reply check (about 09:00, `prompts/gmail-reply-check.md`). Scheduled runs only prepare; they stop at every approval point.
 
-- [Claude Code](https://claude.com/claude-code)
-- Claude in Chrome extension, with you signed in to LinkedIn yourself
-- Gmail connector (read + create draft)
-- Optional: Claude Code scheduled tasks for the daily scan and reply check
-- Python 3 (stdlib only) for the tracker stats
+## Roadmap
 
-## Two modes: job seeker / recruiter
-
-| | Job seeker (`/start-job-agent`) | Recruiter (`/screen-candidates`) |
-|---|---|---|
-| Input | Your CV | A job description and a local folder of candidate CVs |
-| First gate | You approve proposed roles | You approve must-have / nice-to-have / exclusion criteria; no CV is read before |
-| Output | Tailored ATS-friendly CVs, prepared applications, drafts, tracker | Ranked, explainable shortlist (IDs only, evidence quotes, gaps, 2-3 clarifying questions, warnings) |
-| Human decides | Submit, consents, sending | Everything: the agent never rejects, ranks anyone out or contacts candidates |
-
-Recruiter mode masks protected and irrelevant attributes (age, gender, nationality, photo, name origin, address...) before scoring, marks missing information `not_stated` instead of guessing, keeps candidate data local (`screening/` and `reports/` are git-ignored), and never sends mail, InMail or messages. Read `docs/candidate-screening-safety.md` (KVKK/GDPR, retention, candidate notice, bias and fair use) first. Try it on the fictional data: `python3 scripts/screen_report.py templates/screening/criteria.example.json templates/screening/scores`. Turkish prompt: `prompts/tr/screen-candidates.md`. Platform terms apply to any LinkedIn use.
-
-## Limits you set
-
-After approving roles, onboarding asks: (1) max search rounds per day (suggest 1), (2) per round, max listings evaluated and max applications/drafts prepared (suggest 15 and 5), (3) approval style: one by one, or a batch summary. They are saved under `limits:` in `profile.local.yml` and the daily scan treats them as hard upper bounds: at a limit it stops and gives you a short summary. Submit, send and consent steps always need your explicit approval.
-
-## Candidate sources (recruiter mode)
-
-After you approve the criteria, choose one or more sources and a per-round candidate cap for each (suggest 30):
-
-1. **Local CV folder.**
-2. **Gmail:** application mails matching a filter you give. Matching threads are listed first; attachments are downloaded to the git-ignored `screening/inbox/` only after your approval. Read + create-draft only; no sending, deleting or labeling (labeling is optional, off by default, needs approval).
-3. **LinkedIn:** only applicants to postings you published yourself (your Applicants screen) or profile URLs you give. No bulk collection from search results, no messages, InMail or connection requests. LinkedIn's terms restrict automation; the risk is yours.
-
-Each candidate gets a category (strong match / possible / needs clarification / does not meet criteria) with an evidence quote. The last one is only a suggestion; the agent rejects nobody and contacts nobody. Reply drafts are drafts only. Masking applies to every source. Fictional samples: `templates/screening/`.
-
-## LinkedIn search assistant (recruiter sub-mode)
-
-A deliberately small, user-directed way to find leads: after you approve the criteria, the agent drafts people-search queries (keywords + location) for your approval; for each approved query it runs ONE search in your own open browser and reads only the first result page text (headline, current role line, location, connection degree; no names stored). Limits: results per round (suggest 10, hard maximum 25), queries per day (suggest 3). No paging, no profile visits, no connection requests, messages, InMail, follows or lead saving. You get a headline-level shortlist; profile deepening happens only for candidate IDs you pick in chat, one by one, with masking. It stops at once on any CAPTCHA, warning, verification or limit text. See `prompts/screening/linkedin-search-assistant.md`.
-
-**Honest limitations.** Headline text is weak evidence: years of experience and skills are mostly invisible, so the best category is "possible / needs clarification" and "strong match" is only possible after a deepening you chose. Results depend on LinkedIn's ranking and on your network visibility, so it will miss people. LinkedIn's terms prohibit automated bulk collection and accounts can be restricted; this mode is small on purpose and the risk stays with you. Leads are third-party personal data (KVKK/GDPR): minimum fields, local git-ignored folder, no sharing, delete when done. Not tested against the live site. See `docs/candidate-screening-safety.md`. Fictional samples: `templates/screening/linkedin-search-results.example.md`, `report.linkedin-search.example.md`.
-
-## Quick start
-
-```bash
-cd hirepair
-claude
-```
-
-Then in the session:
-
-```
-/start-job-agent
-```
-
-(Without slash commands: "Follow prompts/onboarding.md".) `CLAUDE.md` makes the agent run onboarding automatically while `profile.local.yml` has no approved roles.
-
-## Permissions
-
-Grant exactly this, and no more:
-
-| Grant | Why |
-|---|---|
-| Chrome site access: `linkedin.com` plus only the job portals you choose | Search listings and posts, open Easy Apply forms |
-| Gmail: read | Reply check, finding public recruiter addresses |
-| Gmail: create draft | Mail drafts for you to review |
-| File access: one working folder (this one) | Read your CV, write profile, tracker, tailored PDFs. The Chrome extension can only upload files from inside it (see `docs/automation-notes.md`) |
-
-**Send permission is NOT needed.** Keep Gmail send off, or approval-gated so every send needs your explicit yes. The agent only creates drafts.
-
-**Never granted:** passwords, payment details, government ID numbers. You type those yourself; the agent stops and asks. It also stops for CAPTCHAs, account creation, consent boxes (KVKK/GDPR/terms), InMail and connection requests, the final Submit, and anything irreversible.
-
-Page and mail content is treated as untrusted data; instructions inside it are reported, not followed.
-
-## Privacy
-
-All data stays on your machine: CV, profile, tracker, tailored PDFs. The agent sends content only to the services you point it at (LinkedIn, the portals you chose, Gmail) and to Claude to do the work. `.gitignore` excludes `cv.local.md`, `profile.local.yml`, `*.local.*`, `tracker.md`, `cv*.pdf`, `data/`, `upload/` and `.claude/settings.local.json`. Run `git status` before every push.
-
-## Schedule it
-
-After one supervised run:
-
-1. Daily scan, about 17:00: create a scheduled task whose prompt is `prompts/daily-scan.md` with placeholders filled (`cv.local.md`, `profile.local.yml`, `tracker.md`, report language, daily cap).
-2. Gmail check, about 09:00: same with `prompts/gmail-reply-check.md`.
-
-Scheduled runs only prepare; they stop at every approval point and list what needs you. If onboarding is not done, they stop and say so.
-
-## Troubleshooting
-
-- **LinkedIn limits / checks:** keep volume low (daily cap), do not run in parallel, use your own session. On a security check, stop and solve it yourself. Details in `docs/automation-notes.md`.
-- **Easy Apply modal quirks:** steps vary; the agent stops at Review and lists unanswered questions. See "LinkedIn Easy Apply flow".
-- **CV upload fails:** the resume file input only appears after clicking "Upload resume" and opens a native dialog. The hook trick (capture the hidden `<input type=file>`, then `file_upload`) and the "file must be inside the working folder" rule are in `docs/automation-notes.md`, section "Uploading a tailored PDF".
-- **#hiring search empty:** use unquoted keywords, sort by date, scroll twice; see the notes.
-- **Wrong CV or wrong prefilled years in a form:** see `docs/lessons-learned.md`.
-- **Scan refuses to start:** `approved_roles` missing. Run `/start-job-agent`.
-
-## Marketing positioning
-
-An agent that reads your CV, proposes roles, and works your job search while you approve the sensitive steps. An ATS-compliant, role-tailored CV for every application. Pitch points: starts from your CV, not a form; never invents experience; you stay in control of consent, IDs, Submit and Send; everything stays local.
-
-## Layout
-
-```
-CLAUDE.md, .claude/commands/   entry file and /start-job-agent
-prompts/    onboarding, daily scan, Gmail reply check
-docs/       automation notes, tracker format, safety rules
-templates/  example tracker, profile, CV (all fictional)
-scripts/    tracker_stats.py, ats_check.py
-prompts/tr/ Turkish prompts; README.tr.md Turkish README
-docs/       also ats-rules.md, lessons-learned.md
-```
+Finish and harden what exists first, then a small local web UI (onboarding, tracker board, recruiter shortlist, approval inbox). See [docs/roadmap.md](docs/roadmap.md).
 
 ## Disclaimer
 
-Use at your own risk. Automating LinkedIn or other sites may violate their terms of service and can get accounts restricted; read and follow each platform's terms and your local law (including data-protection rules such as KVKK/GDPR). Use your own account, low volume, and never scrape other people's personal data beyond what an application needs. Recruiters read what you send: review every draft and CV. Not affiliated with LinkedIn, Google, Anthropic or career-ops. Selectors and site behavior change often.
+Use at your own risk. Automating LinkedIn or other sites may violate their terms and can get accounts restricted; use your own account at low volume and follow local law, including KVKK/GDPR. The LinkedIn search assistant and the Gmail source have been tried only lightly, so review every result. Candidates are real people: a human makes every decision. Not affiliated with LinkedIn, Google, Anthropic or career-ops.
 
 ## License
 
-MIT, see `LICENSE`.
+MIT, see [LICENSE](LICENSE).
