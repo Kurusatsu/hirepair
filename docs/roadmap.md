@@ -38,7 +38,7 @@ Ordered by expected gain. The slowest part of a run is browser round trips and t
 8. Done: Skills tab (read-only): `/api/skills` serves `data/skills-report.json` (written by `skill_gap.py --json`); demand bars with CV / LinkedIn flags, the three suggestion lists, and a link to each `profile_edit` item.
 9. Done (`ui_protocol.py add --before`): profile drafts in the inbox show before → after with the CV evidence line; approving types nothing by itself, it only tells the agent which change to type next.
 10. Done: tracker sort by date / fit, paginate above 200 rows, render only the visible page.
-11. Recruiter: run `skill_gap.py` over the masked CV pool to show which must-have skills are rare in the pool, as a hint to relax criteria (advisory, the human edits criteria).
+11. Done (`scripts/criteria_rarity.py`: per-criterion match counts from the score files, RARE vs UNCLEAR, vocabulary skills in masked CVs). Recruiter: run `skill_gap.py` over the masked CV pool to show which must-have skills are rare in the pool, as a hint to relax criteria (advisory, the human edits criteria).
 
 ## Later: small local web UI
 The read-only tracker page above is the first step. A minimal local dashboard (no accounts, no cloud, data stays on your machine):
