@@ -19,10 +19,11 @@ import sys
 from datetime import date
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from card_filter import COMPANY_MAX, TITLE_MAX, mini_yaml, norm, tracker_keys  # noqa: E402
+from card_filter import COMPANY_MAX, TITLE_MAX, fingerprint, mini_yaml, norm, tracker_keys  # noqa: E402
 from tracker_stats import parse  # noqa: E402
 
 DONE = re.compile(r"^SUBAGENT_DONE\b", re.M)
+PROFILE_LINE = re.compile(r"^Profile:\s*([0-9a-f]+)\s*$", re.M)
 MUST_KNOW = ("easy apply", "location", "applicants", "age (days)")
 
 
@@ -80,6 +81,9 @@ def check(text, profile_text="", tracker_path="tracker.md", jobs_dir=os.path.joi
                 "queue": [], "next": [], "coverage": {}}
     header, rows = cand
     col = {h: i for i, h in enumerate(header)}
+    fp = PROFILE_LINE.search(text)
+    if profile_text and (fp is None or fp.group(1) != fingerprint(profile_text)):
+        warnings.append("scored with a different or unknown profile; run scripts/rescore_queue.py before preparing")
     for need in ("job id", "company", "role", "score", "url", "evidence") + MUST_KNOW:
         if need not in col:
             problems.append(f"Candidates table has no '{need}' column")

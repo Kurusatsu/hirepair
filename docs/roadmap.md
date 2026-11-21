@@ -27,7 +27,7 @@ Ordered by expected gain. The slowest part of a run is browser round trips and t
 1. Done: `scripts/linkedin_cards.js` reads a results page in one call; `scripts/card_filter.py` drops handled cards before any click. Still to verify on a real supervised run (selectors were tested only on a fake page).
 2. Done: title prefilter in `card_filter.py` (exclusions, role phrases, `queries.jobs`, `queries.skills`, always-include companies bypass it); skipped titles are reported, not hidden.
 3. Done: the read-only search subagent is the default in scheduled runs, with a fixed candidate-file format; `scripts/candidates_check.py` waits for it (`--done-only`), checks rows and query coverage, and prints the prepare queue within the limits.
-4. Re-score from the cached job text instead of reopening pages when only the profile changed.
+4. Done: candidate files carry a profile hash; `scripts/rescore_queue.py` lists cached jobs scored with an older profile, and the search subagent re-scores them from `data/jobs/` without opening pages; `candidates_check.py` warns when a file was scored with a different profile.
 5. Monthly: `skill_gap.py` over the last 30 days of `data/jobs/`, propose `queries.skills` changes; drop skill queries that found nothing new for 7 days (same tally as #hiring queries).
 
 **Local files**

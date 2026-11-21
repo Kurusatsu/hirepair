@@ -18,6 +18,7 @@ list them; nothing is dropped by title when the profile has no role phrases.
 Prints the cards to open, then one line of counts. Does not write any file.
 """
 import argparse
+import hashlib
 import json
 from collections import defaultdict
 import os
@@ -91,6 +92,19 @@ def mini_yaml(text):
         else:
             out[".".join(path + [key])].append(_unquote(val))
     return out
+
+
+# Profile fields the scoring rubric reads (role type, domain, exclusions, location, pay signal).
+RELEVANT = ("approved_roles.roles.title", "targets.roles", "targets.adjacent_roles", "exclusions.roles",
+            "exclusions.skills_as_hard_requirement", "exclusions.locations", "exclusions.remote_exception",
+            "always_include_companies", "locations.accepted", "locations.work_model", "queries.skills")
+
+
+def fingerprint(profile_text):
+    """Short hash of the scoring-relevant profile fields; written into candidate files as 'Profile: <hash>'."""
+    y = mini_yaml(profile_text or "")
+    body = json.dumps({k: sorted(norm(v) for v in y[k]) for k in RELEVANT}, sort_keys=True)
+    return hashlib.sha256(body.encode()).hexdigest()[:12]
 
 
 FILLER = {"and", "or", "ve", "veya", "of", "for", "the", "&", "-"}
