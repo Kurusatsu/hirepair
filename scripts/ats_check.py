@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """ATS-friendliness checker for a Markdown/plain-text CV. Stdlib only.
 
-Usage: python3 scripts/ats_check.py CV.md [--jd JOB.txt] [--lang en|tr|auto]
+Usage: python3 scripts/ats_check.py CV.md [--jd JOB.txt] [--lang en|tr|auto] [--pair OTHER_LANG_CV.md]
 
 Reports problems; never edits the CV and never suggests adding skills you lack.
 Exit code 1 if any ERROR is found, else 0.
 """
 import argparse
+import datetime
 import re
 import sys
 import unicodedata
@@ -35,7 +36,7 @@ STOP = set("""the and for with you your are our will from that this have has not
 
 
 def norm(s):
-    return re.sub(r"\s+", " ", s.strip().lower())
+    return re.sub(r"\s+", " ", s.strip().replace("İ", "i").replace("I", "ı").lower())
 
 
 def headings(lines):
@@ -47,11 +48,83 @@ def headings(lines):
     return out
 
 
+CORE_ORDER = ["summary", "experience", "education", "skills", "languages"]
+
+
+def section_key(name):
+    for key, v in SECTIONS.items():
+        if name in v["en"] + v["tr"]:
+            return key
+    return None
+
+
+def date_ranges(text):
+    """Return [(start 'MM/YYYY', end 'MM/YYYY' or 'present')] for MM/YYYY ranges."""
+    out = []
+    for m in MONTH_RANGE.finditer(text):
+        end = m.group(3).lower()
+        end = end if re.match(r"\d", end) else "present"
+        out.append((f"{m.group(1)}/{m.group(2)}", end))
+    return out
+
+
+def career_years(ranges):
+    """Span from earliest start to latest end, in years (not the sum of jobs)."""
+    if not ranges:
+        return 0.0
+    today = datetime.date.today()
+
+    def ym(s):
+        mm, yy = s.split("/")
+        return int(yy) * 12 + int(mm)
+
+    start = min(ym(a) for a, _ in ranges)
+    end = max(today.year * 12 + today.month if b == "present" else ym(b) for _, b in ranges)
+    return max(0, end - start) / 12
+
+
+def detect_lang(names, forced="auto"):
+    if forced != "auto":
+        return forced
+    tr = sum(any(n in names for n in v["tr"]) for v in SECTIONS.values())
+    en = sum(any(n in names for n in v["en"]) for v in SECTIONS.values())
+    return "tr" if tr > en else "en"
+
+
+def pair_check(text, other, lang, other_lang):
+    """Compare a CV with its other-language twin. Returns (errors, warnings)."""
+    errors, warns = [], []
+    if lang == other_lang:
+        warns.append(f"both CVs look like {lang.upper()}; a TR/EN pair needs one of each")
+    d1, d2 = date_ranges(text), date_ranges(other)
+    if sorted(d1) != sorted(d2):
+        only1, only2 = sorted(set(d1) - set(d2)), sorted(set(d2) - set(d1))
+        errors.append(f"pair: date ranges differ (only in this CV: {only1 or '-'}; only in the other: {only2 or '-'})")
+    if set(EMAIL.findall(text)) != set(EMAIL.findall(other)):
+        errors.append("pair: e-mail addresses differ")
+    k1 = [section_key(h) for _, h in headings(text.splitlines()) if section_key(h)]
+    k2 = [section_key(h) for _, h in headings(other.splitlines()) if section_key(h)]
+    if k1 != k2:
+        errors.append(f"pair: section sequence differs ({', '.join(k1) or '-'} vs {', '.join(k2) or '-'})")
+
+    def numbers(t):
+        t = MONTH_RANGE.sub(" ", t)
+        t = re.sub(r"(?<=\d)[.,](?=\d{3}\b)", "", t)
+        return Counter(re.findall(r"\d+(?:[.,]\d+)?%?", t))
+
+    n1, n2 = numbers(text), numbers(other)
+    diff = sorted(set((n1 - n2).elements()) | set((n2 - n1).elements()))
+    if diff:
+        warns.append(f"pair: numbers appear in only one CV: {', '.join(diff)}; check they were not changed in translation")
+    return errors, warns
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("cv")
     ap.add_argument("--jd")
     ap.add_argument("--lang", default="auto", choices=["en", "tr", "auto"])
+    ap.add_argument("--pair", help="the same CV in the other language (TR/EN consistency check)")
     a = ap.parse_args()
     text = open(a.cv, encoding="utf-8").read()
     lines = text.splitlines()
@@ -59,11 +132,7 @@ def main():
 
     hs = headings(lines)
     names = {h for _, h in hs}
-    lang = a.lang
-    if lang == "auto":
-        tr_hits = sum(any(n in names for n in v["tr"]) for v in SECTIONS.values())
-        en_hits = sum(any(n in names for n in v["en"]) for v in SECTIONS.values())
-        lang = "tr" if tr_hits > en_hits else "en"
+    lang = detect_lang(names, a.lang)
     for key, v in SECTIONS.items():
         if not any(n in names for n in v[lang]):
             errors.append(f"missing section heading '{v[lang][0]}' ({lang.upper()} standard names: {', '.join(v[lang])})")
@@ -72,6 +141,11 @@ def main():
         for i, h in hs:
             if h not in known and not re.match(r"^#{3,}", lines[i - 1].strip()) and lines[i - 1].lstrip().startswith("##"):
                 warns.append(f"line {i}: non-standard section heading '{h}'")
+
+    order = [k for k in (section_key(h) for _, h in hs) if k in CORE_ORDER]
+    ranked = [CORE_ORDER.index(k) for k in order]
+    if ranked != sorted(ranked):
+        warns.append(f"section order is {' > '.join(order)}; recommended: {' > '.join(CORE_ORDER)}")
 
     month, year, named = len(MONTH_RANGE.findall(text)), len(YEAR_RANGE.findall(text)), len(NAMED_MONTH.findall(text))
     if month == 0:
@@ -98,8 +172,13 @@ def main():
     if not EMAIL.search(text):
         errors.append("no e-mail address found in the CV body (contact info must be in the body, not a header/footer)")
     words = len(re.findall(r"\w+", text))
+    years = career_years(date_ranges(text))
     if words > 900:
         warns.append(f"{words} words; likely over 2 pages (limit 2)")
+    elif years < 5 and words > 550:
+        warns.append(f"{words} words for about {years:.0f} years of experience; aim for 1 page (about 550 words or fewer)")
+    elif years >= 5 and words < 250:
+        warns.append(f"only {words} words for about {years:.0f} years of experience; the CV may be too thin")
 
     print(f"ATS check: {a.cv}  (language: {lang}, words: {words})")
     for e in errors:
@@ -120,6 +199,17 @@ def main():
         print("In CV:      ", ", ".join(found) or "-")
         print("Not in CV:  ", ", ".join(missing) or "-")
         print("Note: report only. Use a missing term only if it is TRUE for you AND already supported by your CV facts.")
+
+    if a.pair:
+        other = open(a.pair, encoding="utf-8").read()
+        other_lang = detect_lang({h for _, h in headings(other.splitlines())})
+        pe, pw = pair_check(text, other, lang, other_lang)
+        errors += pe
+        warns += pw
+        for e in pe:
+            print("ERROR", e)
+        for w in pw:
+            print("WARN ", w)
 
     print("\nResult:", "FAIL" if errors else "PASS", f"({len(errors)} errors, {len(warns)} warnings)")
     sys.exit(1 if errors else 0)

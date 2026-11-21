@@ -52,7 +52,7 @@ Ajan CV'ni (veya iş ilanını) ister, rolleri (veya kriterleri) önerir, günl�
 
 ## Öne çıkanlar
 
-- CV'nde bulunan gerçek bilgilerden üretilen **ATS uyumlu, role özel CV**: tek sütun, standart başlık ve tarih, metni seçilebilir PDF, en fazla 2 sayfa. Herhangi bir CV'yi `python3 scripts/ats_check.py cv.md --jd ilan.txt` ile kontrol et (eksik anahtar kelimeyi raporlar, hiçbirini eklemez). Kurallar: [docs/ats-rules.md](docs/ats-rules.md)
+- CV'nde bulunan gerçek bilgilerden üretilen **ATS uyumlu, role özel CV**: tek sütun, standart başlık ve tarih, metni seçilebilir PDF, en fazla 2 sayfa. Herhangi bir CV'yi `python3 scripts/ats_check.py cv.md --jd ilan.txt` ile kontrol et (eksik anahtar kelimeyi raporlar, hiçbirini eklemez). Ayrıca bölüm sırasını ve deneyim düzeyine göre CV uzunluğunu uyarır; `--pair cv_en.md` ile TR/EN CV çiftinde tarih, e-posta, bölüm ve sayıların tutarlılığını denetler. Kurallar: [docs/ats-rules.md](docs/ats-rules.md)
 - **CV havuzu:** işe alım modunu bir CV klasörüne yönlendir; onayladığın kriterlere göre sıralar. Gmail'deki başvuru maillerini ve kendi LinkedIn ilanlarının başvurularını da okuyabilir
 - **Seçtiğin günlük limitler:** günlük arama, turda değerlendirilecek ilan, turda hazırlanacak başvuru
 - **Mail taslağı, asla gönderme:** [templates/emails](templates/emails/README.md) içinde hazır örnekler (başvuru, takip, netleştirme sorusu, görüşme daveti)

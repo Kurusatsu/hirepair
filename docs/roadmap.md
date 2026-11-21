@@ -10,7 +10,9 @@ Order matters: finish what is below "Now" before starting "Next".
 ## Next: tidy and harden
 - Run every mode end to end on a real account and fix what breaks (LinkedIn search assistant and Gmail source are only tested on fictional data)
 - Package the commands as an installable Claude skill
-- More ATS checks (section order, length by experience level) and a bilingual CV pair (TR/EN) check
+
+## Done in "tidy and harden"
+- More ATS checks: section order, length by experience level, bilingual CV pair (TR/EN) check, with unit tests (`python3 -m unittest discover -s tests`)
 
 ## Later: small local web UI
 A minimal local dashboard (no accounts, no cloud, data stays on your machine):

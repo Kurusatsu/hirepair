@@ -15,4 +15,8 @@ Every CV the agent tailors for a role MUST follow these rules. Check with `pytho
 11. **Maximum 2 pages.**
 12. **Contact details in the body** (top of page one): city, e-mail, phone, profile link.
 
+13. **Section order:** Summary, Experience, Education, Skills, Languages (the checker warns on other orders).
+14. **Length by level:** under 5 years of experience aim for 1 page (about 550 words or fewer); the 2-page cap applies to everyone.
+15. **TR/EN pair:** if you keep both language versions, check them with `--pair`; dates, e-mail, section sequence and numbers must match. A translation never changes a fact.
+
 If a rule conflicts with the truth of the CV, the truth wins: drop the keyword, not the fact.

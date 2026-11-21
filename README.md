@@ -52,7 +52,7 @@ The agent asks for your CV (or the job description), proposes roles (or criteria
 
 ## Highlights
 
-- **ATS-compliant, role-tailored CVs** built only from facts in your CV: single column, standard headings and dates, selectable-text PDF, at most 2 pages. Check any CV with `python3 scripts/ats_check.py cv.md --jd job.txt` (reports missing keywords; never adds any). Rules: [docs/ats-rules.md](docs/ats-rules.md)
+- **ATS-compliant, role-tailored CVs** built only from facts in your CV: single column, standard headings and dates, selectable-text PDF, at most 2 pages. Check any CV with `python3 scripts/ats_check.py cv.md --jd job.txt` (reports missing keywords; never adds any). It also warns on section order and CV length for your experience level, and `--pair cv_tr.md` checks a TR/EN CV pair for matching dates, e-mail, sections and numbers. Rules: [docs/ats-rules.md](docs/ats-rules.md)
 - **CV pool:** point recruiter mode at a folder of CVs and it ranks them against your approved criteria. It can also read application mails in Gmail and applicants of your own LinkedIn postings
 - **Daily limits you choose:** searches per day, jobs evaluated per round, applications prepared per round
 - **Mail drafts, never sends:** ready examples in [templates/emails](templates/emails/README.md) (application, follow-up, clarifying question, interview invite)
