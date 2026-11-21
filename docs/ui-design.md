@@ -43,7 +43,7 @@ Rules taken from the checks: contrast 4.5:1 minimum (palette re-measured: the su
 
 ### Job seeker
 1. **Onboarding** (first run): add CV (file in the folder, or paste) → agent proposes 3-5 roles with a CV quote each → you approve, edit, remove → limits (scans per day, evaluated, prepared, one-by-one or batch) → "Start first scan". Nothing runs before the roles are approved.
-2. **Daily:** Today shows the last scan summary and numbers → "Waiting for you" lists items in two kinds (below) → Tracker shows everything.
+2. **Daily:** Today shows the last scan summary and numbers → "Waiting for you" lists items in two kinds (below) → Tracker shows everything (newest or best fit first, 200 rows per page; only the visible page is rendered) → Skills shows the last `skill_gap.py` report (demand bars with CV / LinkedIn flags, add / pin / gaps lists, and a link to pending `profile_edit` items). A `profile_edit` card shows the current text and the suggestion side by side (`--before`); approving types nothing by itself.
 3. **Waiting for you:**
    - *Approve here* (class A): roles, criteria, limits, tailored CV for upload, answers to open form questions, creating a mail draft.
    - *Do it yourself* (class B): consent boxes, sign-in, ID fields, CAPTCHA, final Submit, sending mail. The card has "Open the form" and "I did it". "I did it" is a claim; the agent still checks (for example a confirmation mail) before it writes ✅.
@@ -144,6 +144,7 @@ No process talks to the agent directly. The agent and the UI meet in two append-
 | `POST /api/decisions` | append one decision (schema-checked) |
 | `GET /api/profile` | approved roles and limits (read-only) |
 | `GET /api/shortlist` | recruiter ranking from `reports/` (IDs only) |
+| `GET /api/skills` | `data/skills-report.json` (`skill_gap.py --json`): skill names, counts and flags only, never CV text |
 
 Updates by polling every 5 s with `If-None-Match` on file mtime. No websockets.
 

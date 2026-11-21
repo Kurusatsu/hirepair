@@ -23,12 +23,20 @@ tr: {
   d_t_criteria:'Bu kriterler onaylansın mı?', d_b_criteria:'Ajan CV değerlendirmesinde bu kriterleri kullanır. Sonuçlar yalnızca tavsiyedir.',
   d_t_limits:'Bu limitler onaylansın mı?', d_b_limits:'Ajan günlük işini bu limitler içinde tutar.',
   d_t_open_question:'Bu cevap onaylansın mı?', d_b_open_question:'Ajan bu cevabı kullanarak devam eder.',
-  d_t_profile_edit:'Bu LinkedIn profil değişikliği onaylansın mı?', d_b_profile_edit:'Ajan metni düzenleme kutusuna yazar ve durur. Kaydet\'e sen basarsın.',
+  d_t_profile_edit:'Bu LinkedIn profil değişikliği onaylansın mı?', d_b_profile_edit:'Onay tek başına hiçbir şey yazmaz: ajana sıradaki değişikliği söyler. Ajan metni düzenleme kutusuna yazar ve durur; Kaydet\'e sen basarsın.',
   d_t_gen:'Bu madde onaylansın mı?', d_b_gen:'Ajan bir sonraki çalışmasında bu onayla devam eder. Geri alınamayabilir.',
   saved:'Karar kaydedildi. Ajan çalışmıyorsa sonraki çalışmada uygulanır.', err:'Karar kaydedilemedi: ', neterr:'Sunucuya ulaşılamadı.',
   waiting_n:'{n} madde bekliyor', waiting:'seni bekliyor', scored:'takipteki ilan', submitted:'gönderildi', replies:'yanıt',
   prof_none:'Profil henüz yok. Önce onboarding tamamlanmalı.', prof_pending:'Roller henüz onaylanmadı.', roles_none:'Onaylı rol yok.',
-  limits_none:'Limit tanımlı değil.', per_day:'günlük tarama', advisory:'Yalnızca tavsiye. Kararı insan verir.', load_err:'Veri yüklenemedi.'
+  limits_none:'Limit tanımlı değil.', per_day:'günlük tarama', advisory:'Yalnızca tavsiye. Kararı insan verir.', load_err:'Veri yüklenemedi.',
+  tab_skills:'Yetenekler', sk_note:"Kaydedilen ilan metinlerinden. Yalnızca CV'nde yazan yetenekler önerilir; LinkedIn'de Kaydet'e sen basarsın.",
+  sk_demand:'İlanlarda en çok istenenler', sk_empty:'Henüz yetenek raporu yok. Ajana /linkedin-profile de veya şunu çalıştır: python3 scripts/skill_gap.py --jobs data/jobs --json > data/skills-report.json',
+  sk_meta:'{n} ilan metni · rapor tarihi {d}', sk_weak:'10 ilandan az: rapor zayıf.',
+  sk_add:"LinkedIn'e ekle (CV'de var, isteniyor)", sk_pin:'Öne çıkar (CV\'de var, en çok istenen)', sk_gap:'Eksikler (CV\'de yok: doğru ve kanıtlanabilir değilse ekleme)',
+  sk_check:"LinkedIn'de var, CV'de yok (doğru mu kontrol et)", sk_li_none:'LinkedIn yetenekleri verilmedi.', sk_none:'-',
+  sk_edits:'{n} profil değişikliği onayını bekliyor', sk_go:'Onaylara git', in_cv:'CV', on_li:'LinkedIn', not_cv:'CV\'de yok',
+  sort_label:'Sırala', sort_date:'En yeni önce', sort_fit:'En uyumlu önce', prev:'Önceki', next:'Sonraki', range:'{a}–{b} / {n} satır',
+  before:'Şimdi', after:'Önerilen'
 },
 en: {
   skip:'Skip to content', mode:'Job-seeker mode', local:'Local only · 127.0.0.1 · nothing leaves this computer',
@@ -52,12 +60,20 @@ en: {
   d_t_criteria:'Approve these criteria?', d_b_criteria:'The agent uses them to screen CVs. Results are advisory only.',
   d_t_limits:'Approve these limits?', d_b_limits:'The agent keeps its daily work within these limits.',
   d_t_open_question:'Approve this answer?', d_b_open_question:'The agent continues using this answer.',
-  d_t_profile_edit:'Approve this LinkedIn profile change?', d_b_profile_edit:'The agent types it into the edit box and stops. You press Save.',
+  d_t_profile_edit:'Approve this LinkedIn profile change?', d_b_profile_edit:'Approving types nothing by itself: it tells the agent which change to type next. The agent types it into the edit box and stops; you press Save.',
   d_t_gen:'Approve this item?', d_b_gen:'The agent continues with this approval at its next run. It may not be reversible.',
   saved:'Decision saved. If the agent is not running, it applies at the next run.', err:'Could not save the decision: ', neterr:'Could not reach the server.',
   waiting_n:'{n} items waiting', waiting:'waiting for you', scored:'listings in tracker', submitted:'submitted', replies:'replies',
   prof_none:'No profile yet. Onboarding must be completed first.', prof_pending:'Roles are not approved yet.', roles_none:'No approved roles.',
-  limits_none:'No limits set.', per_day:'scans per day', advisory:'Advisory only. A human decides.', load_err:'Could not load data.'
+  limits_none:'No limits set.', per_day:'scans per day', advisory:'Advisory only. A human decides.', load_err:'Could not load data.',
+  tab_skills:'Skills', sk_note:'From saved job texts. Only skills your CV states are suggested; you press Save on LinkedIn.',
+  sk_demand:'Most asked in listings', sk_empty:'No skill report yet. Ask the agent for /linkedin-profile or run: python3 scripts/skill_gap.py --jobs data/jobs --json > data/skills-report.json',
+  sk_meta:'{n} job texts · report from {d}', sk_weak:'Fewer than 10 jobs: the report is weak.',
+  sk_add:'Add to LinkedIn (in CV, asked for)', sk_pin:'Pin as top skills (in CV, most asked)', sk_gap:'Gaps (not in CV: do not add unless true and provable)',
+  sk_check:'On LinkedIn, not in CV (check they are true)', sk_li_none:'No LinkedIn skills given.', sk_none:'-',
+  sk_edits:'Profile changes waiting for approval: {n}', sk_go:'Go to approvals', in_cv:'CV', on_li:'LinkedIn', not_cv:'not in CV',
+  sort_label:'Sort', sort_date:'Newest first', sort_fit:'Best fit first', prev:'Previous', next:'Next', range:'{a}–{b} of {n} rows',
+  before:'Now', after:'Suggested'
 }};
 var lang = 'tr';
 try { var sv = localStorage.getItem('hp_lang'); if (sv === 'en' || sv === 'tr') lang = sv; } catch (e) {}
@@ -176,15 +192,35 @@ function colRows() {
   });
 }
 
+var PAGE = 200, view = { page: 0, sort: 'date' };
+function fitNum(s) { var m = /\d+(?:[.,]\d+)?/.exec(s || ''); return m ? parseFloat(m[0].replace(',', '.')) : -1; }
+// Filter, sort and slice the data, then build DOM rows for the visible page only.
 function renderTracker() {
   var head = $('thead'), body = $('tbody'); clear(head); clear(body);
   if (!state.tracker) return;
   var cols = ['date', 'company', 'role', 'fit', 'status', 'reply'], tr = el('tr');
-  cols.forEach(function (c) { tr.appendChild(el('th', '', t('c_' + c))); });
+  cols.forEach(function (c) {
+    var th = el('th', '', t('c_' + c));
+    if ((c === 'date' && view.sort === 'date') || (c === 'fit' && view.sort === 'fit')) th.setAttribute('aria-sort', 'descending');
+    tr.appendChild(th);
+  });
   head.appendChild(tr);
-  var rows = colRows();
-  $('trk-empty').hidden = rows.length > 0;
-  rows.forEach(function (r) {
+  var all = colRows(), q = $('q').value.trim().toLowerCase();
+  $('trk-empty').hidden = all.length > 0;
+  var rows = all.map(function (r, i) { r.i = i; return r; }).filter(function (r) {
+    return !q || [r.date, r.company, r.role, r.fit, r.status, t(statusOf(r.status).m[1]), r.reply].join(' ').toLowerCase().indexOf(q) > -1;
+  });
+  rows.sort(view.sort === 'fit'
+    ? function (a, b) { return fitNum(b.fit) - fitNum(a.fit) || (b.date < a.date ? -1 : b.date > a.date ? 1 : 0); }
+    : function (a, b) { return b.date < a.date ? -1 : b.date > a.date ? 1 : b.i - a.i; });
+  $('none').hidden = rows.length > 0 || all.length === 0;
+  var pages = Math.max(1, Math.ceil(rows.length / PAGE));
+  if (view.page >= pages) view.page = pages - 1;
+  var from = view.page * PAGE, shown = rows.slice(from, from + PAGE);
+  $('pager').hidden = rows.length <= PAGE;
+  $('range').textContent = t('range').replace('{a}', rows.length ? from + 1 : 0).replace('{b}', from + shown.length).replace('{n}', rows.length);
+  $('prev').disabled = view.page === 0; $('next').disabled = view.page >= pages - 1;
+  shown.forEach(function (r) {
     var row = el('tr');
     cols.forEach(function (c) {
       var td = el('td');
@@ -200,16 +236,6 @@ function renderTracker() {
     });
     body.appendChild(row);
   });
-  filterRows();
-}
-
-function filterRows() {
-  var v = $('q').value.toLowerCase(), n = 0, total = 0;
-  [].forEach.call($('tbody').children, function (r) {
-    total++;
-    var m = r.textContent.toLowerCase().indexOf(v) > -1; r.hidden = !m; if (m) n++;
-  });
-  $('none').hidden = n > 0 || total === 0;
 }
 
 function renderInbox() {
@@ -234,7 +260,12 @@ function itemCard(it) {
   add(c, el('h3', '', it.title));
   if (it.summary) c.appendChild(el('p', 'tight', it.summary));
   (Array.isArray(it.evidence) ? it.evidence : []).forEach(function (e) { c.appendChild(el('div', 'ev', e)); });
-  if (it.preview) c.appendChild(el('div', 'preview', it.preview));
+  if (it.before && it.preview) {
+    var ba = el('div', 'ba');
+    add(ba, add(el('div'), el('span', '', t('before')), el('div', 'preview', it.before)),
+      add(el('div'), el('span', '', t('after')), el('div', 'preview', it.preview)));
+    c.appendChild(ba);
+  } else if (it.preview) c.appendChild(el('div', 'preview', it.preview));
   if (it.status === 'stale') c.appendChild(el('p', 'err tight', t('stale')));
   var acts = el('div', 'row'), url = safeUrl(it.link);
   if (pend && !human) {
@@ -299,7 +330,49 @@ function send(it, decision, text, inDlg) {
   }).catch(function () { fail(t('neterr')); });
 }
 
-function renderAll() { renderCount(); renderToday(); renderTracker(); renderInbox(); renderShortlist(); }
+function renderAll() { renderCount(); renderToday(); renderTracker(); renderInbox(); renderShortlist(); renderSkills(); }
+
+function chipList(title, names, tone) {
+  var c = el('div', 'card');
+  c.appendChild(el('h3', '', title));
+  var w = el('div', 'chips');
+  if (names && names.length) names.forEach(function (n) { w.appendChild(el('span', 'badge b-' + tone, n)); });
+  else w.appendChild(el('span', 'note', t('sk_none')));
+  c.appendChild(w);
+  return c;
+}
+function renderSkills() {
+  var r = state.skills, lists = $('sk-lists'), bars = $('sk-bars'), meta = $('sk-meta'), eds = $('sk-edits');
+  clear(lists); clear(bars); clear(eds); meta.textContent = '';
+  var edits = ((state.inbox && state.inbox.items) || []).filter(function (i) { return i.type === 'profile_edit' && i.status === 'pending'; });
+  if (edits.length) {
+    var e = el('div', 'card row');
+    var go = el('button', 'btn primary', t('sk_go')); go.type = 'button';
+    go.addEventListener('click', function () { var x = $('t-appr'); x.focus(); show(x); });
+    add(e, badge('wait', 'clock', t('sk_edits').replace('{n}', edits.length)), go);
+    eds.appendChild(e);
+  }
+  var has = !!(r && r.exists && r.jobs);
+  $('sk-empty').hidden = has; bars.hidden = !has;
+  if (!has) return;
+  var d = r.generated ? new Date(r.generated * 1000).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-GB') : '-';
+  meta.textContent = t('sk_meta').replace('{n}', r.jobs).replace('{d}', d) + (r.jobs < 10 ? ' · ' + t('sk_weak') : '');
+  add(lists, r.linkedin_given ? chipList(t('sk_add'), r.add_to_linkedin, 'ok') : add(chipList(t('sk_add'), [], 'ok'), el('p', 'note tight', t('sk_li_none'))),
+    chipList(t('sk_pin'), r.top_skills, 'info'), chipList(t('sk_gap'), r.gaps, 'wait'));
+  if (r.linkedin_given && r.linkedin_not_in_cv && r.linkedin_not_in_cv.length) lists.appendChild(chipList(t('sk_check'), r.linkedin_not_in_cv, 'bad'));
+  var rows = (r.demand || []).slice(0, 25), max = rows.length ? rows[0].jobs : 1;
+  rows.forEach(function (x) {
+    var b = el('div', 'bar'), tr = el('div', 'track'), f = el('div', 'fill' + (x.in_cv ? '' : ' gap'));
+    f.style.width = Math.max(2, Math.round(100 * x.jobs / max)) + '%'; tr.appendChild(f);
+    tr.setAttribute('role', 'img'); tr.setAttribute('aria-label', x.jobs + '/' + r.jobs);
+    var flags = el('span', 'row');
+    add(flags, el('span', 'note', x.jobs + '/' + r.jobs),
+      x.in_cv ? badge('ok', 'check', t('in_cv')) : badge('wait', 'info', t('not_cv')),
+      x.on_linkedin ? badge('info', 'link', t('on_li')) : null);
+    add(b, el('span', '', x.skill), tr, flags);
+    bars.appendChild(b);
+  });
+}
 
 function renderShortlist() {
   var md = state.shortlist, pre = $('shortlist');
@@ -319,12 +392,13 @@ function poll() {
   take('inbox', '/api/inbox', function () {
     var n = pendingItems().length;
     if (state.lastPending !== null && n !== state.lastPending) announce(t('waiting_n').replace('{n}', n));
-    state.lastPending = n; renderCount(); renderInbox(); renderToday();
+    state.lastPending = n; renderCount(); renderInbox(); renderToday(); renderSkills();
   }).catch(function () {});
   take('tracker', '/api/tracker', function () { renderTracker(); renderToday(); }).catch(function () {});
 }
 function loadStatic() {
   take('profile', '/api/profile', renderToday).catch(function () {});
+  take('skills', '/api/skills', renderSkills).catch(function () {});
   take('shortlistData', '/api/shortlist', function () { state.shortlist = state.shortlistData.markdown; renderShortlist(); }).catch(function () {});
 }
 
@@ -334,7 +408,7 @@ function show(tab) {
     var on = x === tab; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1;
     $(x.getAttribute('aria-controls')).hidden = !on;
   });
-  if (tab.id === 't-rec' || tab.id === 't-today') loadStatic();
+  if (tab.id === 't-rec' || tab.id === 't-today' || tab.id === 't-skills') loadStatic();
 }
 tabs.forEach(function (x, i) {
   x.addEventListener('click', function () { show(x); });
@@ -345,7 +419,10 @@ tabs.forEach(function (x, i) {
     var y = tabs[(n + tabs.length) % tabs.length]; y.focus(); show(y);
   });
 });
-$('q').addEventListener('input', filterRows);
+$('q').addEventListener('input', function () { view.page = 0; renderTracker(); });
+$('sort').addEventListener('change', function () { view.sort = $('sort').value; view.page = 0; renderTracker(); });
+$('prev').addEventListener('click', function () { view.page--; renderTracker(); $('thead').scrollIntoView({ block: 'nearest' }); });
+$('next').addEventListener('click', function () { view.page++; renderTracker(); $('thead').scrollIntoView({ block: 'nearest' }); });
 $('lang').addEventListener('click', function () {
   lang = lang === 'tr' ? 'en' : 'tr';
   try { localStorage.setItem('hp_lang', lang); } catch (e) {}

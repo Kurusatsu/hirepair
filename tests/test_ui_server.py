@@ -83,6 +83,24 @@ class Server(unittest.TestCase):
         self.assertNotEqual(self.app.etag("/api/tracker"), tracker)
         self.assertEqual(self.app.etag("/api/inbox"), inbox)
 
+    def test_skills_report(self):
+        s, _, b = self.req("GET", "/api/skills")
+        self.assertEqual((s, json.loads(b)), (200, {"exists": False}))
+        rp = os.path.join(self.tmp.name, "data", "skills-report.json")
+        with open(rp, "w", encoding="utf-8") as fh:
+            json.dump({"jobs": 3, "demand": [{"skill": "SQL", "jobs": 2, "share": 0.67, "in_cv": True,
+                                              "on_linkedin": False}], "gaps": [], "extra": "x"}, fh)
+        try:
+            r = json.loads(self.req("GET", "/api/skills")[2])
+            self.assertTrue(r["exists"])
+            self.assertEqual(r["demand"][0]["skill"], "SQL")
+            self.assertNotIn("extra", r)
+            with open(rp, "w", encoding="utf-8") as fh:
+                fh.write("{broken")
+            self.assertFalse(json.loads(self.req("GET", "/api/skills")[2])["exists"])
+        finally:
+            os.remove(rp)
+
     def test_wrong_host_rejected(self):
         self.assertEqual(self.req("GET", "/api/tracker", host="evil.example:80")[0], 403)
 

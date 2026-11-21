@@ -19,6 +19,7 @@
   <button role="tab" id="t-today" aria-controls="p-today" aria-selected="true" data-i18n="tab_today">Bugün</button>
   <button role="tab" id="t-appr" aria-controls="p-appr" aria-selected="false" tabindex="-1"><span data-i18n="tab_appr">Seni bekleyenler</span> <span class="count" id="count" hidden>0</span></button>
   <button role="tab" id="t-track" aria-controls="p-track" aria-selected="false" tabindex="-1" data-i18n="tab_track">Takip</button>
+  <button role="tab" id="t-skills" aria-controls="p-skills" aria-selected="false" tabindex="-1" data-i18n="tab_skills">Yetenekler</button>
   <button role="tab" id="t-rec" aria-controls="p-rec" aria-selected="false" tabindex="-1" data-i18n="tab_rec">İşe alımcı</button>
 </nav>
 <main id="main">
@@ -39,11 +40,27 @@
 
   <section id="p-track" role="tabpanel" aria-labelledby="t-track" tabindex="0" hidden>
     <h2 data-i18n="tab_track">Takip</h2>
-    <label for="q" class="note" data-i18n="filter_label">Şirket, pozisyon veya duruma göre süz</label>
-    <input id="q" type="search" autocomplete="off">
+    <div class="tools">
+      <div class="grow"><label for="q" class="note" data-i18n="filter_label">Şirket, pozisyon veya duruma göre süz</label>
+      <input id="q" type="search" autocomplete="off"></div>
+      <div><label for="sort" class="note" data-i18n="sort_label">Sırala</label>
+      <select id="sort"><option value="date" data-i18n="sort_date">En yeni önce</option><option value="fit" data-i18n="sort_fit">En uyumlu önce</option></select></div>
+    </div>
     <div class="wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
     <p id="none" class="note" hidden data-i18n="filter_empty">Eşleşen satır yok. Tümünü görmek için filtreyi temizle.</p>
     <p id="trk-empty" class="note" hidden data-i18n="track_empty">Henüz satır yok.</p>
+    <div class="row" id="pager" hidden><button class="btn" id="prev" type="button" data-i18n="prev">Önceki</button><span class="note" id="range" aria-live="polite"></span><button class="btn" id="next" type="button" data-i18n="next">Sonraki</button></div>
+  </section>
+
+  <section id="p-skills" role="tabpanel" aria-labelledby="t-skills" tabindex="0" hidden>
+    <h2 data-i18n="tab_skills">Yetenekler</h2>
+    <p class="note" data-i18n="sk_note">Kaydedilen ilan metinlerinden. Yalnızca CV'nde yazan yetenekler önerilir; LinkedIn'de Kaydet'e sen basarsın.</p>
+    <p class="note" id="sk-meta"></p>
+    <div id="sk-edits"></div>
+    <div class="grid" id="sk-lists"></div>
+    <h2 data-i18n="sk_demand">İlanlarda en çok istenenler</h2>
+    <div class="card" id="sk-bars"></div>
+    <p id="sk-empty" class="note" hidden data-i18n="sk_empty">Henüz yetenek raporu yok. Ajana /linkedin-profile de veya şunu çalıştır: python3 scripts/skill_gap.py --jobs data/jobs --json &gt; data/skills-report.json</p>
   </section>
 
   <section id="p-rec" role="tabpanel" aria-labelledby="t-rec" tabindex="0" hidden>

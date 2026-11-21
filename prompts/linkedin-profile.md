@@ -7,7 +7,7 @@ Facts come only from `cv.local.md`. Market demand comes only from saved job desc
 ## Step 1: skill demand report (read only)
 1. Need job texts in `data/jobs/` (the daily scan saves them). If there are fewer than 10, say so: the report is weak. Offer one of: wait for more scans, or run the approved `queries.jobs` and `queries.skills` once, read up to `limits.max_evaluated_per_round` job pages, and save each text to `data/jobs/<job-id>.txt`. Opening pages is read-only; still respect the limits.
 2. Ask the user for their current LinkedIn skills: paste them, or let you read the profile's Skills section in their own signed-in browser (read only; open their own profile only, never other people's). Save them to `data/linkedin-skills.local.txt`, one per line.
-3. Run `python3 scripts/skill_gap.py --jobs data/jobs --cv cv.local.md --linkedin data/linkedin-skills.local.txt`.
+3. Run `python3 scripts/skill_gap.py --jobs data/jobs --cv cv.local.md --linkedin data/linkedin-skills.local.txt`, then the same with `--json > data/skills-report.json` (the UI's Skills tab reads it).
    The vocabulary is `templates/skills-vocab.txt`; if the job texts keep naming a skill the report does not know, add it to `data/skills-vocab.local.txt` (`Name | alias`) and re-run.
 4. Show the result in four short lists, each skill with its demand (for example "SQL, 14/30 jobs") and, for CV skills, the CV line that proves it:
    - **Add to LinkedIn:** in the CV, asked by the market, missing on the profile.
@@ -23,7 +23,7 @@ Ask the user to paste, or let you read (own profile, read only), the headline, A
 - **Experience bullets:** reword CV bullets so the in-demand skill names appear where they are true. Same facts, same numbers.
 - **Open to work / job preferences:** suggest titles = approved roles and locations = profile `locations`. The user decides on visibility (recruiters only or everyone).
 
-Show every change as before → after, with the CV line behind it. Save drafts to `data/linkedin-profile-drafts.md`. Add one `profile_edit` item per change to the approval inbox if the UI is used (`python3 scripts/ui_protocol.py add --class approve --type profile_edit --title ... --preview ...`).
+Show every change as before → after, with the CV line behind it. Save drafts to `data/linkedin-profile-drafts.md`. Add one `profile_edit` item per change to the approval inbox if the UI is used (`python3 scripts/ui_protocol.py add --class approve --type profile_edit --title ... --before "<current text>" --preview "<suggested text>" --evidence "<CV line>"`; the card shows before → after).
 
 ## Step 3: guided edit (only on explicit approval, one change at a time)
 Profile edits are public. For each change the user approved in chat, by name:

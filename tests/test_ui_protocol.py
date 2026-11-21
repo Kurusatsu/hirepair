@@ -114,5 +114,15 @@ class Compact(unittest.TestCase):
             self.assertEqual(len(p.read_jsonl(inbox_p)), 1)
 
 
+class Before(unittest.TestCase):
+    def test_before_is_hashed_only_when_set(self):
+        a = item(typ="profile_edit", item_id="x")
+        b = item(typ="profile_edit", item_id="x", before="old headline")
+        self.assertNotIn("before", a)
+        self.assertEqual(a["hash"], p.item_hash({k: a[k] for k in p.HASH_FIELDS}))  # old hashes unchanged
+        self.assertNotEqual(a["hash"], b["hash"])
+        self.assertEqual(b["before"], "old headline")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -7,7 +7,8 @@ Files (under data/, git-ignored, append-only JSON lines):
 
 Agent CLI:
   ui_protocol.py add --class approve|human --type TYPE --title T [--summary S] [--evidence E ...]
-                     [--preview P] [--link URL] [--id ID]      append an item, print "id hash"
+                     [--preview P] [--before B] [--link URL] [--id ID]
+                                                                 append an item, print "id hash"
   ui_protocol.py decisions                                       print actionable decisions as JSON lines
   ui_protocol.py consume ITEM_ID                                 mark an item as handled
   ui_protocol.py compact [--keep-days 30]                        rewrite both files without items consumed or
@@ -63,6 +64,8 @@ def append_jsonl(path, obj):
 
 def item_hash(item):
     body = {k: item.get(k, [] if k == "evidence" else "") for k in HASH_FIELDS}
+    if item.get("before"):  # only when set, so hashes of items without it stay the same
+        body["before"] = item["before"]
     raw = json.dumps(body, sort_keys=True, ensure_ascii=False).encode("utf-8")
     return "sha256:" + hashlib.sha256(raw).hexdigest()
 
@@ -78,7 +81,7 @@ def parse_ts(s):
         return None
 
 
-def make_item(cls, typ, title, summary="", evidence=None, preview="", link="", item_id=None, created=None):
+def make_item(cls, typ, title, summary="", evidence=None, preview="", link="", item_id=None, created=None, before=""):
     if cls not in CLASSES:
         raise ValueError(f"class must be one of {sorted(CLASSES)}")
     if typ not in TYPES[cls]:
@@ -90,6 +93,8 @@ def make_item(cls, typ, title, summary="", evidence=None, preview="", link="", i
     item = {"id": item_id or f"a-{int(time.time())}-{os.getpid() % 1000}", "created": created or now_iso(),
             "class": cls, "type": typ, "title": title.strip(), "summary": summary, "evidence": list(evidence or []),
             "preview": preview, "link": link}
+    if before:
+        item["before"] = before
     item["hash"] = item_hash(item)
     return item
 
@@ -234,6 +239,7 @@ def main(argv=None):
     a.add_argument("--summary", default="")
     a.add_argument("--evidence", action="append", default=[])
     a.add_argument("--preview", default="")
+    a.add_argument("--before", default="", help="current text, shown as before -> after (profile_edit)")
     a.add_argument("--link", default="")
     a.add_argument("--id")
     sub.add_parser("decisions")
@@ -256,7 +262,8 @@ def main(argv=None):
         return 0
     if args.cmd == "add":
         try:
-            item = make_item(args.cls, args.type, args.title, args.summary, args.evidence, args.preview, args.link, args.id)
+            item = make_item(args.cls, args.type, args.title, args.summary, args.evidence, args.preview, args.link,
+                             args.id, before=args.before)
         except ValueError as e:
             print("error:", e, file=sys.stderr)
             return 1

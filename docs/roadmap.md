@@ -35,9 +35,9 @@ Ordered by expected gain. The slowest part of a run is browser round trips and t
 7. Done (`scripts/tracker_archive.py`; dedupe reads the archive too). Tracker archive: move rows older than 90 days with a final status to `tracker-archive.md`; stats read both.
 
 **UI**
-8. Skills tab (read-only): `/api/skills` serves `data/skills-report.json` (written by `skill_gap.py --json`); demand bars with CV / LinkedIn flags, the three suggestion lists, and a link to each `profile_edit` item.
-9. Profile drafts in the inbox show before → after with the CV evidence line; approving types nothing by itself, it only tells the agent which change to type next.
-10. Tracker: sort by date / fit, paginate above 200 rows, render only the visible page.
+8. Done: Skills tab (read-only): `/api/skills` serves `data/skills-report.json` (written by `skill_gap.py --json`); demand bars with CV / LinkedIn flags, the three suggestion lists, and a link to each `profile_edit` item.
+9. Done (`ui_protocol.py add --before`): profile drafts in the inbox show before → after with the CV evidence line; approving types nothing by itself, it only tells the agent which change to type next.
+10. Done: tracker sort by date / fit, paginate above 200 rows, render only the visible page.
 11. Recruiter: run `skill_gap.py` over the masked CV pool to show which must-have skills are rare in the pool, as a hint to relax criteria (advisory, the human edits criteria).
 
 ## Later: small local web UI

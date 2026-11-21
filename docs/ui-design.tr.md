@@ -43,7 +43,7 @@ Kontrollerden alınan kurallar: kontrast en az 4,5:1 (palet yeniden ölçüldü:
 
 ### İş arayan
 1. **Başlangıç** (ilk çalıştırma): CV ekle (klasörde dosya veya yapıştır) → ajan her biri CV alıntılı 3-5 rol önerir → onayla, düzenle, çıkar → limitler (günlük tarama, değerlendirme, hazırlama, tek tek veya toplu) → "İlk taramayı başlat". Roller onaylanmadan hiçbir şey çalışmaz.
-2. **Günlük:** Bugün son tarama özetini ve sayıları gösterir → "Senden beklenenler" iki türde öğe listeler (aşağıda) → Takip her şeyi gösterir.
+2. **Günlük:** Bugün son tarama özetini ve sayıları gösterir → "Senden beklenenler" iki türde öğe listeler (aşağıda) → Takip her şeyi gösterir (en yeni veya en uyumlu önce, sayfa başına 200 satır; yalnızca görünen sayfa çizilir) → Yetenekler son `skill_gap.py` raporunu gösterir (CV / LinkedIn işaretli talep çubukları, ekle / öne çıkar / eksikler listeleri ve bekleyen `profile_edit` öğelerine bağlantı). `profile_edit` kartı mevcut metni ve öneriyi yan yana gösterir (`--before`); onay tek başına hiçbir şey yazmaz.
 3. **Senden beklenenler:**
    - *Burada onayla* (A sınıfı): roller, kriterler, limitler, yüklenecek özel CV, açık form sorularının yanıtları, mail taslağı oluşturma.
    - *Kendin yap* (B sınıfı): rıza kutuları, giriş, kimlik alanları, CAPTCHA, son Gönder, mail gönderme. Kartta "Formu aç" ve "Yaptım" var. "Yaptım" bir beyandır; ajan ✅ yazmadan önce yine doğrular (örn. onay maili).
@@ -91,7 +91,7 @@ Hiçbir süreç ajanla doğrudan konuşmaz. Ajan ve UI iki ekleme-yalnız dosyad
 - 7 günden eski öğeler süresi dolmuş görünür.
 
 ### HTTP servisi
-`scripts/ui_server.py`, yalnızca stdlib, `127.0.0.1` üzerinde, statik sayfa `ui/` altında (saf HTML/CSS/JS, derleme yok, bağımlılık yok). Uç noktalar: `GET /`, `GET /api/tracker`, `GET /api/inbox`, `POST /api/decisions`, `GET /api/profile`, `GET /api/shortlist`. Güncelleme 5 sn'de bir yoklama ile (dosya mtime'ına `If-None-Match`); websocket yok.
+`scripts/ui_server.py`, yalnızca stdlib, `127.0.0.1` üzerinde, statik sayfa `ui/` altında (saf HTML/CSS/JS, derleme yok, bağımlılık yok). Uç noktalar: `GET /`, `GET /api/tracker`, `GET /api/inbox`, `POST /api/decisions`, `GET /api/profile`, `GET /api/shortlist`, `GET /api/skills` (`data/skills-report.json`; yalnızca yetenek adları, sayılar ve işaretler, CV metni asla). Güncelleme 5 sn'de bir yoklama ile (dosya mtime'ına `If-None-Match`); websocket yok.
 
 ### Güvenlik
 - Yalnızca `127.0.0.1`; `Host` başlığı `127.0.0.1:<port>` veya `localhost:<port>` değilse reddet (DNS rebinding).

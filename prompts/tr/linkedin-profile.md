@@ -7,7 +7,7 @@ Gerçekler yalnızca `cv.local.md`'den gelir. Piyasa talebi yalnızca kaydedilmi
 ## Adım 1: yetenek talep raporu (salt okunur)
 1. `data/jobs/` içinde ilan metinleri gerekir (günlük tarama kaydeder). 10'dan azsa raporun zayıf olduğunu söyle. Seçenek sun: daha çok taramayı bekle ya da onaylı `queries.jobs` ve `queries.skills` sorgularını bir kez çalıştır, en çok `limits.max_evaluated_per_round` ilan aç, her metni `data/jobs/<ilan-id>.txt` olarak kaydet.
 2. Kullanıcının mevcut LinkedIn yeteneklerini iste: yapıştırsın ya da kendi oturumu açık tarayıcısında kendi profilinin Yetenekler bölümünü oku (salt okunur; başkasının profilini açma). `data/linkedin-skills.local.txt` dosyasına satır başına bir tane kaydet.
-3. Çalıştır: `python3 scripts/skill_gap.py --jobs data/jobs --cv cv.local.md --linkedin data/linkedin-skills.local.txt`. Sözlük `templates/skills-vocab.txt`; ilanlar raporun tanımadığı bir yeteneği sık geçiriyorsa `data/skills-vocab.local.txt` dosyasına ekle (`Ad | eş ad`) ve yeniden çalıştır.
+3. Çalıştır: `python3 scripts/skill_gap.py --jobs data/jobs --cv cv.local.md --linkedin data/linkedin-skills.local.txt`, sonra aynısını `--json > data/skills-report.json` ile (UI'daki Yetenekler sekmesi bunu okur). Sözlük `templates/skills-vocab.txt`; ilanlar raporun tanımadığı bir yeteneği sık geçiriyorsa `data/skills-vocab.local.txt` dosyasına ekle (`Ad | eş ad`) ve yeniden çalıştır.
 4. Sonucu dört kısa listede göster; her yetenekte talep ("SQL, 30 ilanın 14'ünde") ve CV'deki yetenek için onu kanıtlayan CV satırı olsun:
    - **LinkedIn'e ekle:** CV'de var, piyasa istiyor, profilde yok.
    - **Öne çıkar (top skills):** CV'de olan en çok istenen yetenekler.
@@ -22,7 +22,7 @@ Başlık, Hakkında ve son iki deneyim girdisini yapıştırmasını iste veya k
 - **Deneyim maddeleri:** CV maddelerini, doğru olduğu yerlerde talep gören yetenek adları geçecek şekilde yeniden yaz. Aynı gerçek, aynı sayı.
 - **İşe açığım / iş tercihleri:** unvanlar = onaylı roller, lokasyon = profildeki `locations`. Görünürlüğe (yalnızca işe alımcılar mı herkes mi) kullanıcı karar verir.
 
-Her değişikliği önce → sonra biçiminde, arkasındaki CV satırıyla göster. Taslakları `data/linkedin-profile-drafts.md` dosyasına kaydet. UI kullanılıyorsa her değişiklik için bir `profile_edit` kalemi ekle (`python3 scripts/ui_protocol.py add --class approve --type profile_edit --title ... --preview ...`).
+Her değişikliği önce → sonra biçiminde, arkasındaki CV satırıyla göster. Taslakları `data/linkedin-profile-drafts.md` dosyasına kaydet. UI kullanılıyorsa her değişiklik için bir `profile_edit` kalemi ekle (`python3 scripts/ui_protocol.py add --class approve --type profile_edit --title ... --before "<mevcut metin>" --preview "<önerilen metin>" --evidence "<CV satırı>"`; kart önce → sonra gösterir).
 
 ## Adım 3: rehberli düzenleme (yalnızca açık onayla, her seferinde bir değişiklik)
 Profil düzenlemeleri herkese açıktır. Kullanıcının sohbette adıyla onayladığı her değişiklik için:

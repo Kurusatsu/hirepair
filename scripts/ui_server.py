@@ -3,7 +3,7 @@
 
 Usage: python3 scripts/ui_server.py [--root .] [--port 8765]
 
-Binds 127.0.0.1 only. Reads tracker.md, profile.local.yml, data/inbox.jsonl, reports/shortlist.md.
+Binds 127.0.0.1 only. Reads tracker.md, profile.local.yml, data/inbox.jsonl, reports/shortlist.md, data/skills-report.json.
 Writes only data/decisions.jsonl (append). Never serves cv.local.md or anything outside ui/.
 """
 import argparse
@@ -65,7 +65,8 @@ class App:
         """Files each route depends on, so a change in one file does not invalidate every route."""
         return {"/api/tracker": [self.p("tracker.md")], "/api/inbox": [self.inbox_p, self.dec_p],
                 "/api/profile": [self.p("profile.local.yml")],
-                "/api/shortlist": [self.p("reports", "shortlist.md")]}[route]
+                "/api/shortlist": [self.p("reports", "shortlist.md")],
+                "/api/skills": [self.p("data", "skills-report.json")]}[route]
 
     def etag(self, route):
         h = hashlib.sha256(route.encode())
@@ -91,6 +92,26 @@ class App:
 
     def api_shortlist(self):
         return {"markdown": read_text(self.p("reports", "shortlist.md"))}
+
+    def api_skills(self):
+        """The last `skill_gap.py --json` report; skill names and flags only, never CV text."""
+        raw = read_text(self.p("data", "skills-report.json"))
+        if raw is None:
+            return {"exists": False}
+        try:
+            r = json.loads(raw)
+        except ValueError:
+            return {"exists": False, "error": "invalid report"}
+        if not isinstance(r, dict):
+            return {"exists": False, "error": "invalid report"}
+        keys = ("jobs", "demand", "add_to_linkedin", "top_skills", "gaps", "linkedin_not_in_cv", "linkedin_given")
+        out = {k: r[k] for k in keys if k in r}
+        out["exists"] = True
+        try:
+            out["generated"] = os.path.getmtime(self.p("data", "skills-report.json"))
+        except OSError:
+            pass
+        return out
 
     def add_decision(self, body):
         inbox = proto.read_jsonl(self.inbox_p)
@@ -154,7 +175,8 @@ def make_handler(app):
                     return self._send(404, b"not found", "text/plain; charset=utf-8")
                 return self._send(200, body.encode("utf-8"), STATIC_TYPES[ext])
             routes = {"/api/tracker": app.api_tracker, "/api/inbox": app.api_inbox,
-                      "/api/profile": app.api_profile, "/api/shortlist": app.api_shortlist}
+                      "/api/profile": app.api_profile, "/api/shortlist": app.api_shortlist,
+                      "/api/skills": app.api_skills}
             fn = routes.get(path)
             if fn is None:
                 return self._send(404, b"not found", "text/plain; charset=utf-8")
