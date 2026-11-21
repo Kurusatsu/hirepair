@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hirepair UI mockup</title>
+<!-- Static pre-design with fictional data. No network requests, no build step. See docs/ui-design.md. -->
+<style>
+:root{
+  --bg:#F0FDFA;--card:#FFFFFF;--fg:#134E4A;--muted:#475569;--line:#B6E3DC;
+  --action:#0F766E;--on-action:#FFFFFF;--link:#0F766E;
+  --wait:#C2410C;--wait-bg:#FFF1E6;--ok:#166534;--ok-bg:#E8F7EC;--bad:#B91C1C;--bad-bg:#FDECEC;--info-bg:#E6F4F1;
+  --r:8px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0F1B1A;--card:#16282A;--fg:#E6F4F1;--muted:#9DB2AE;--line:#2A4442;
+  --action:#2DD4BF;--on-action:#04211E;--link:#5EEAD4;
+  --wait:#FDBA74;--wait-bg:#3A2616;--ok:#86EFAC;--ok-bg:#12301C;--bad:#FCA5A5;--bad-bg:#3B1A1A;--info-bg:#173331}}
+:root[data-theme=dark]{
+  --bg:#0F1B1A;--card:#16282A;--fg:#E6F4F1;--muted:#9DB2AE;--line:#2A4442;
+  --action:#2DD4BF;--on-action:#04211E;--link:#5EEAD4;
+  --wait:#FDBA74;--wait-bg:#3A2616;--ok:#86EFAC;--ok-bg:#12301C;--bad:#FCA5A5;--bad-bg:#3B1A1A;--info-bg:#173331}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--font)}
+a{color:var(--link)}
+:focus-visible{outline:3px solid var(--action);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;background:var(--card);padding:8px;z-index:9}
+header{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) var(--s4);border-bottom:1px solid var(--line);background:var(--card)}
+header h1{font-size:1.05rem;margin:0}
+.local{margin-left:auto;font-size:.8rem;color:var(--muted)}
+nav{display:flex;gap:var(--s1);padding:0 var(--s4);background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{all:unset;cursor:pointer;min-height:44px;padding:0 var(--s4);display:flex;align-items:center;gap:var(--s2);color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--fg);border-bottom-color:var(--action);font-weight:600}
+nav button:focus-visible{outline:3px solid var(--action);outline-offset:-3px}
+.count{background:var(--wait-bg);color:var(--wait);border-radius:999px;padding:0 8px;font-size:.8rem;font-weight:600}
+main{max-width:1080px;margin:0 auto;padding:var(--s4)}
+h2{font-size:1.1rem;margin:var(--s5) 0 var(--s2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--s3)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--s4)}
+.stat b{display:block;font-size:1.6rem;line-height:1.2}.stat span{color:var(--muted);font-size:.9rem}
+.muted{color:var(--muted)}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:.82rem;font-weight:600;white-space:nowrap}
+.badge svg{width:14px;height:14px;flex:none}
+.b-wait{background:var(--wait-bg);color:var(--wait)}.b-ok{background:var(--ok-bg);color:var(--ok)}
+.b-bad{background:var(--bad-bg);color:var(--bad)}.b-info{background:var(--info-bg);color:var(--fg)}
+.item{display:grid;gap:var(--s3);margin:var(--s3) 0}
+.item h3{font-size:1rem;margin:0}
+.preview{background:var(--bg);border:1px dashed var(--line);border-radius:var(--r);padding:var(--s3);font-size:.92rem;white-space:pre-wrap}
+.row{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}
+.btn{min-height:44px;padding:0 var(--s4);border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;text-decoration:none}
+.btn:hover{border-color:var(--action)}
+.btn.primary{background:var(--action);color:var(--on-action);border-color:var(--action)}
+.note{font-size:.88rem;color:var(--muted)}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);white-space:nowrap}
+input[type=search]{width:100%;min-height:44px;padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--r);background:var(--card);color:var(--fg);font:inherit;margin:var(--s2) 0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px var(--s3);font-size:.92rem}.kv dt{color:var(--muted)}.kv dd{margin:0}
+.ev{border-left:3px solid var(--action);padding-left:var(--s3);margin:4px 0;font-size:.9rem}
+dialog{border:1px solid var(--line);border-radius:var(--r);background:var(--card);color:var(--fg);max-width:min(440px,92vw);padding:var(--s5)}
+dialog::backdrop{background:#0008}
+[hidden]{display:none!important}
+@media (max-width:640px){header{flex-wrap:wrap}.local{margin-left:0;width:100%}}
+@media (prefers-reduced-motion:no-preference){.btn,nav button{transition:border-color .15s,background-color .15s}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header>
+  <h1>Hirepair</h1>
+  <span class="note">Job-seeker mode</span>
+  <span class="local">Local only · 127.0.0.1 · nothing leaves this computer</span>
+</header>
+<nav role="tablist" aria-label="Sections">
+  <button role="tab" aria-selected="true" aria-controls="p-today" id="t-today">Today</button>
+  <button role="tab" aria-selected="false" aria-controls="p-appr" id="t-appr">Waiting for you <span class="count" aria-label="3 items">3</span></button>
+  <button role="tab" aria-selected="false" aria-controls="p-track" id="t-track">Tracker</button>
+  <button role="tab" aria-selected="false" aria-controls="p-rec" id="t-rec">Recruiter</button>
+</nav>
+<main id="main">
+
+<section id="p-today" role="tabpanel" aria-labelledby="t-today">
+  <h2>Today</h2>
+  <div class="grid">
+    <div class="card stat"><b>3</b><span>waiting for you</span></div>
+    <div class="card stat"><b>12</b><span>listings scored</span></div>
+    <div class="card stat"><b>2 / 5</b><span>prepared today (limit 5)</span></div>
+    <div class="card stat"><b>1</b><span>new reply</span></div>
+  </div>
+  <h2>Last scan</h2>
+  <div class="card">
+    <p style="margin-top:0"><b>Scan finished 17:04.</b> 12 listings opened, 2 applications prepared up to the review page. Nothing was submitted.</p>
+    <p class="note" style="margin-bottom:0">Skipped: 31 already applied, 4 below score 3.0. Queries that returned nothing: 1 (“hiring analyst” posts).</p>
+  </div>
+  <h2>Approved roles</h2>
+  <div class="card row">
+    <span class="badge b-info">Business Analyst</span><span class="badge b-info">IT Business Analyst</span><span class="badge b-info">Application Manager</span>
+    <a class="btn" href="#" style="margin-left:auto">Change roles</a>
+  </div>
+</section>
+
+<section id="p-appr" role="tabpanel" aria-labelledby="t-appr" hidden>
+  <h2>Waiting for you</h2>
+  <p class="note">Two kinds of items. <b>Approve here</b>: the agent continues after your yes. <b>Do it yourself</b>: consents, sign-ins, IDs and the final Submit are never done by the agent.</p>
+
+  <article class="card item" data-kind="approve">
+    <div class="row"><span class="badge b-wait"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 4v4l3 2" stroke="currentColor" stroke-width="2" fill="none"/></svg>Approve here</span><span class="note">CV for upload · Example Bank, Business Analyst</span></div>
+    <h3>Tailored CV is ready for Example Bank</h3>
+    <dl class="kv"><dt>Check</dt><dd>ATS check passed (0 errors, 1 warning)</dd><dt>Facts</dt><dd>Only lines from your CV; 2 keywords reordered</dd></dl>
+    <div class="ev">Posting says: “requirements elicitation, UAT” → your CV: “Led user acceptance testing for quarterly releases.”</div>
+    <div class="row"><button class="btn primary" data-confirm="cv">Approve CV for upload</button><a class="btn" href="#">View CV</a><button class="btn">Skip this job</button></div>
+  </article>
+
+  <article class="card item" data-kind="human">
+    <div class="row"><span class="badge b-bad"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="2" fill="none"/></svg>Do it yourself</span><span class="note">Consent box · Sample Payments, Product Owner</span></div>
+    <h3>Privacy consent (KVKK) must be ticked by you</h3>
+    <p class="note" style="margin:0">The form is filled up to the consent page. The agent will not tick consent boxes, even when they look mandatory.</p>
+    <div class="row"><a class="btn primary" href="#" rel="noreferrer noopener">Open the form</a><button class="btn">I did it</button></div>
+  </article>
+
+  <article class="card item" data-kind="approve">
+    <div class="row"><span class="badge b-wait"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 4v4l3 2" stroke="currentColor" stroke-width="2" fill="none"/></svg>Approve here</span><span class="note">Mail draft · Demo Retail Co</span></div>
+    <h3>Create a Gmail draft (never sent)</h3>
+    <div class="preview">Hello Ms. Example,
+
+I saw your post about the Release Manager role. At my last job I ran production releases for a brokerage back office.
+I am available immediately. CV attached.
+
+Regards</div>
+    <div class="row"><button class="btn primary" data-confirm="draft">Create draft</button><button class="btn">Edit text</button><button class="btn">Discard</button></div>
+    <p class="note" style="margin:0">You send it yourself from Gmail.</p>
+  </article>
+</section>
+
+<section id="p-track" role="tabpanel" aria-labelledby="t-track" hidden>
+  <h2>Tracker</h2>
+  <label for="q" class="note">Filter by company, role or status</label>
+  <input id="q" type="search" placeholder="Example, analyst, waiting…">
+  <div class="wrap"><table id="tbl">
+    <thead><tr><th>Date</th><th>Company</th><th>Role</th><th>Fit</th><th>Status</th><th>Reply</th></tr></thead>
+    <tbody>
+      <tr><td>2030-01-08</td><td>Example Bank</td><td>Business Analyst</td><td>4.2</td><td><span class="badge b-wait">Waiting for you</span></td><td>-</td></tr>
+      <tr><td>2030-01-08</td><td>Sample Payments Ltd</td><td>Product Owner</td><td>3.6</td><td><span class="badge b-bad">Sign-in or consent needed</span></td><td>-</td></tr>
+      <tr><td>2030-01-07</td><td>Demo Retail Co</td><td>Release Manager</td><td>3.1</td><td><span class="badge b-wait">Mail draft, not sent</span></td><td>-</td></tr>
+      <tr><td>2030-01-06</td><td>Acme Software</td><td>Implementation Consultant</td><td>3.8</td><td><span class="badge b-ok">Submitted</span></td><td>Received 2030-01-08</td></tr>
+      <tr><td>2030-01-05</td><td>Placeholder Airlines</td><td>Systems Analyst</td><td>2.4</td><td><span class="badge b-info">Skipped by scan</span></td><td>-</td></tr>
+    </tbody></table></div>
+  <p id="none" class="note" hidden>No rows match. Clear the filter to see all rows.</p>
+</section>
+
+<section id="p-rec" role="tabpanel" aria-labelledby="t-rec" hidden>
+  <h2>Shortlist: Business Analyst (fictional)</h2>
+  <p class="note">Advisory only. A human decides. Candidates are shown by ID; names and protected details are masked.</p>
+  <div class="wrap"><table>
+    <thead><tr><th>ID</th><th>Category</th><th>Score</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>C01</td><td><span class="badge b-ok">Strong match</span></td><td>100</td><td>“Led user acceptance testing for quarterly releases.”</td></tr>
+      <tr><td>C04</td><td><span class="badge b-info">Possible</span></td><td>56</td><td>“Wrote SQL queries”; years not stated</td></tr>
+      <tr><td>C02</td><td><span class="badge b-wait">Needs clarification</span></td><td>28</td><td>“Took part in UAT sessions”</td></tr>
+      <tr><td>C03</td><td><span class="badge b-info">Does not meet criteria (suggestion)</span></td><td>7</td><td>Exclusion hit: review. The CV also contained an instruction aimed at the agent; it was ignored and is quoted in Warnings.</td></tr>
+    </tbody></table></div>
+  <p class="note">Nobody is rejected or contacted by this page.</p>
+</section>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlg-t">
+  <h3 id="dlg-t" style="margin-top:0"></h3>
+  <p id="dlg-b"></p>
+  <div class="row"><button class="btn primary" id="ok">Approve</button><button class="btn" id="no">Cancel</button></div>
+</dialog>
+
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function show(id){tabs.forEach(function(t){var on=t.id===id;t.setAttribute('aria-selected',on);
+    document.getElementById(t.getAttribute('aria-controls')).hidden=!on});}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t.id)});
+    t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?i+1:e.key==='ArrowLeft'?i-1:null;
+      if(n!==null){var x=tabs[(n+tabs.length)%tabs.length];x.focus();show(x.id)}})});
+  var q=document.getElementById('q'),rows=[].slice.call(document.querySelectorAll('#tbl tbody tr')),none=document.getElementById('none');
+  q.addEventListener('input',function(){var v=q.value.toLowerCase(),n=0;rows.forEach(function(r){var m=r.textContent.toLowerCase().indexOf(v)>-1;r.hidden=!m;if(m)n++});none.hidden=n>0});
+  var d=document.getElementById('dlg'),copy={
+    cv:['Approve this CV for upload?','The agent uploads it to the application form and stops at the review page. It does not submit.'],
+    draft:['Create this Gmail draft?','A draft is created in Gmail. It is not sent. You send it yourself.']};
+  [].forEach.call(document.querySelectorAll('[data-confirm]'),function(b){b.addEventListener('click',function(){
+    var c=copy[b.dataset.confirm];document.getElementById('dlg-t').textContent=c[0];document.getElementById('dlg-b').textContent=c[1];d.showModal()})});
+  document.getElementById('no').addEventListener('click',function(){d.close()});
+  document.getElementById('ok').addEventListener('click',function(){d.close()});
+})();
+</script>
+</body>
+</html>

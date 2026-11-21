@@ -23,4 +23,6 @@ The read-only tracker page above is the first step. A minimal local dashboard (n
 - Recruiter view: criteria editor, ranked shortlist with evidence, candidate masking preview
 - Approval inbox: every consent, send and submit step waiting for you, in one list
 
+Design, flow, mockup and the communication protocol: [ui-design.md](ui-design.md) ([TR](ui-design.tr.md)), clickable preview [ui-mockup.html](ui-mockup.html).
+
 Keep it a thin layer over the same Markdown/YAML files so the command-line flow keeps working.
