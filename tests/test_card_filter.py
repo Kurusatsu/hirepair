@@ -28,7 +28,7 @@ class CardFilter(unittest.TestCase):
     def run_filter(self, cards_text):
         cards = f.rows_from(f.stitch([cards_text]))
         keys, ids = f.tracker_keys(self.tracker)
-        return f.filter_cards(cards, f.read_seen(self.seen), keys, ids)
+        return f.filter_cards(cards, f.read_seen(self.seen), keys, ids)[:2]
 
     def test_drop_reasons(self):
         text = ("N=7;111~Business Analyst~Example Bank~1 day ago~|"
@@ -42,7 +42,7 @@ class CardFilter(unittest.TestCase):
         self.assertEqual([c["title"] for c in keep], ["Release Manager", "Data Analyst"])
         self.assertTrue(keep[0]["saved"])
         self.assertTrue(keep[1]["needs_click"])
-        self.assertEqual(counts, {"applied": 1, "seen_id": 2, "in_tracker": 1, "duplicate": 1})
+        self.assertEqual(counts, {"applied": 1, "seen_id": 2, "in_tracker": 1, "duplicate": 1, "excluded_title": 0, "off_target": 0})
 
     def test_row_cut_across_parts_is_stitched(self):
         parts = ["N=2;555~Business Anal", "yst~Fresh Co~1 day ago~|666~PO~X~1 day ago~MORE@40"]
@@ -56,16 +56,83 @@ class CardFilter(unittest.TestCase):
         self.assertEqual((keep, counts["in_tracker"]), ([], 1))
 
     def test_missing_files_keep_everything(self):
-        keep, _ = f.filter_cards(f.rows_from("1~A~B~~"), set(), *f.tracker_keys("/nonexistent"))
+        keep, _, _ = f.filter_cards(f.rows_from("1~A~B~~"), set(), *f.tracker_keys("/nonexistent"))
         self.assertEqual(len(keep), 1)
 
     def test_cli_summary(self):
         p = os.path.join(self.tmp.name, "c.txt")
         open(p, "w", encoding="utf-8").write("N=2;111~Business Analyst~Example Bank~~|777~QA~Z~~")
-        out = subprocess.run([sys.executable, SCRIPT, p, "--seen", self.seen, "--tracker", self.tracker],
+        out = subprocess.run([sys.executable, SCRIPT, p, "--seen", self.seen, "--tracker", self.tracker,
+                              "--profile", os.path.join(self.tmp.name, "none.yml")],
                              capture_output=True, text=True)
         self.assertEqual(out.returncode, 0, out.stderr)
         self.assertIn("2 cards: open 1; dropped seen_id 1", out.stdout)
+
+
+PROFILE = """approved_roles:
+  approved: true
+  roles:
+    - title: "Business Analyst"   # approved
+      reason: "x"
+targets:
+  roles:
+    - "Release / Change Manager"
+  adjacent_roles: ["Project Coordinator"]
+exclusions:
+  roles: ["Helpdesk / L1-L2 support", "Manual QA"]
+always_include_companies:
+  - "Dream Co"
+  - "<COMPANY_B>"
+queries:
+  jobs:
+    - "iş analisti"
+  skills: ["SQL", "Power BI"]
+"""
+
+
+class TitleFilter(unittest.TestCase):
+    def setUp(self):
+        self.rules = f.TitleRules(PROFILE)
+
+    def decide(self, title, company="Any Co"):
+        return self.rules.decide({"title": title, "company": company})
+
+    def test_profile_lists_are_read(self):
+        y = f.mini_yaml(PROFILE)
+        self.assertEqual(y["approved_roles.roles.title"], ["Business Analyst"])
+        self.assertEqual(y["targets.adjacent_roles"], ["Project Coordinator"])
+        self.assertEqual(y["queries.skills"], ["SQL", "Power BI"])
+        self.assertEqual(y["always_include_companies"], ["Dream Co", "<COMPANY_B>"])
+
+    def test_role_matches_with_seniority_and_plural_or_turkish_suffix(self):
+        for t in ("Senior IT Business Analyst", "Business Analysts (Payments)", "Kıdemli İş Analisti",
+                  "Change Manager", "Release Manager - Core Banking", "Project Coordinator"):
+            self.assertEqual(self.decide(t), (True, ""), t)
+
+    def test_exclusions_win_over_role_words(self):
+        self.assertEqual(self.decide("Helpdesk Support Business Analyst"), (False, "excluded_title"))
+        self.assertEqual(self.decide("L1-L2 Support Engineer"), (False, "excluded_title"))
+        self.assertEqual(self.decide("Manual QA Engineer"), (False, "excluded_title"))
+
+    def test_skill_keyword_keeps_off_title_card(self):
+        self.assertEqual(self.decide("Data Analyst (SQL, Power BI)"), (True, "skill"))
+
+    def test_off_target_and_always_include(self):
+        self.assertEqual(self.decide("Sales Representative"), (False, "off_target"))
+        self.assertEqual(self.decide("Sales Representative", "Dream Co"), (True, "always"))
+        self.assertEqual(self.decide("Manager"), (False, "off_target"))
+
+    def test_no_role_phrases_means_no_title_filter(self):
+        rules = f.TitleRules("queries:\n  skills: [SQL]\n")
+        keep, counts, skipped = f.filter_cards(f.rows_from("1~Sales Rep~X~~"), set(), set(), set(), rules)
+        self.assertEqual((len(keep), skipped), (1, []))
+
+    def test_skipped_titles_are_reported(self):
+        keep, counts, skipped = f.filter_cards(
+            f.rows_from("1~Business Analyst~A~~|2~Chef~B~~|3~Helpdesk Support~C~~"), set(), set(), set(), self.rules)
+        self.assertEqual([c["title"] for c in keep], ["Business Analyst"])
+        self.assertEqual([(c["title"], c["reason"]) for c in skipped],
+                         [("Chef", "off_target"), ("Helpdesk Support", "excluded_title")])
 
 
 if __name__ == "__main__":

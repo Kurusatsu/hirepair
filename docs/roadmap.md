@@ -25,7 +25,7 @@ Ordered by expected gain. The slowest part of a run is browser round trips and t
 
 **Agent flow**
 1. Done: `scripts/linkedin_cards.js` reads a results page in one call; `scripts/card_filter.py` drops handled cards before any click. Still to verify on a real supervised run (selectors were tested only on a fake page).
-2. Title prefilter before opening a job page: skip titles that match the profile's exclusions or no target/adjacent role and no `queries.skills` keyword. Opened pages are the main cost.
+2. Done: title prefilter in `card_filter.py` (exclusions, role phrases, `queries.jobs`, `queries.skills`, always-include companies bypass it); skipped titles are reported, not hidden.
 3. Make the read-only search subagent the default in scheduled runs; the parent only tailors CVs and fills forms (smaller parent context, fewer dropped browser sessions).
 4. Re-score from the cached job text instead of reopening pages when only the profile changed.
 5. Monthly: `skill_gap.py` over the last 30 days of `data/jobs/`, propose `queries.skills` changes; drop skill queries that found nothing new for 7 days (same tally as #hiring queries).
