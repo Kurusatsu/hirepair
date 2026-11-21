@@ -10,6 +10,9 @@ Agent CLI:
                      [--preview P] [--link URL] [--id ID]      append an item, print "id hash"
   ui_protocol.py decisions                                       print actionable decisions as JSON lines
   ui_protocol.py consume ITEM_ID                                 mark an item as handled
+  ui_protocol.py compact [--keep-days 30]                        rewrite both files without items consumed or
+                                                                 expired over 30 days ago, superseded definitions
+                                                                 and older decisions (status stays the same)
 Run from the project folder or pass --root.
 """
 import argparse
@@ -177,6 +180,49 @@ def actionable(inbox, decisions):
     return out
 
 
+def compact(inbox, decisions, now=None, keep_days=30):
+    """(inbox rows, decision rows, dropped ids) keeping only what view() and actionable() still need.
+
+    Items consumed or expired more than keep_days ago are dropped with their records; for the rest only
+    the latest definition, the consumed record and the last decision are kept.
+    """
+    now = now or datetime.now()
+    items, consumed = current_items(inbox)
+    last = latest_decisions(decisions)
+    status = {r["id"]: r["status"] for r in view(inbox, decisions, now)}
+    old = now - timedelta(days=keep_days)
+    drop = set()
+    for i, it in items.items():
+        ref = None
+        if status[i] == "consumed":
+            ref = parse_ts(consumed.get(i))
+        elif status[i] == "expired":
+            ref = parse_ts(it.get("created")) + EXPIRY
+        if ref and ref < old:
+            drop.add(i)
+    keep_inbox = [it for i, it in sorted(items.items(), key=lambda kv: kv[1].get("created", "")) if i not in drop]
+    keep_inbox += [{"item": i, "consumed": ts} for i, ts in consumed.items() if i in items and i not in drop]
+    keep_dec = sorted((d for i, d in last.items() if i in items and i not in drop), key=lambda d: d.get("at", ""))
+    return keep_inbox, keep_dec, sorted(drop)
+
+
+def _rewrite(path, rows, expect_size):
+    """Atomically replace path unless it grew since it was read (the UI may have appended a decision)."""
+    try:
+        if os.path.getsize(path) != expect_size:
+            return False
+    except FileNotFoundError:
+        if expect_size:
+            return False
+        return True
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    os.replace(tmp, path)
+    return True
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=".")
@@ -193,8 +239,21 @@ def main(argv=None):
     sub.add_parser("decisions")
     c = sub.add_parser("consume")
     c.add_argument("item")
+    k = sub.add_parser("compact")
+    k.add_argument("--keep-days", type=int, default=30)
     args = ap.parse_args(argv)
     inbox_p, dec_p = paths(args.root)
+    if args.cmd == "compact":
+        sizes = [os.path.getsize(p) if os.path.exists(p) else 0 for p in (inbox_p, dec_p)]
+        inbox, decs = read_jsonl(inbox_p), read_jsonl(dec_p)
+        new_inbox, new_dec, dropped = compact(inbox, decs, keep_days=args.keep_days)
+        # decisions first: if the inbox rewrite is then skipped, every kept decision still matches its item
+        if not (_rewrite(dec_p, new_dec, sizes[1]) and _rewrite(inbox_p, new_inbox, sizes[0])):
+            print("error: a file changed while compacting; run again", file=sys.stderr)
+            return 1
+        print(f"compacted: inbox {len(inbox)} -> {len(new_inbox)} rows, decisions {len(decs)} -> {len(new_dec)}; "
+              f"dropped {len(dropped)} old items")
+        return 0
     if args.cmd == "add":
         try:
             item = make_item(args.cls, args.type, args.title, args.summary, args.evidence, args.preview, args.link, args.id)

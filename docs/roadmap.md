@@ -31,7 +31,7 @@ Ordered by expected gain. The slowest part of a run is browser round trips and t
 5. Done (`scripts/skill_queries.py`: daily `--stale-only`, full report monthly; suggestions only). Monthly: `skill_gap.py` over the last 30 days of `data/jobs/`, propose `queries.skills` changes; drop skill queries that found nothing new for 7 days (same tally as #hiring queries).
 
 **Local files**
-6. `ui_protocol.py compact`: rewrite `data/inbox.jsonl` / `decisions.jsonl` without consumed or expired items older than 30 days (the files are append-only and every poll reads them).
+6. Done: `ui_protocol.py compact`: rewrite `data/inbox.jsonl` / `decisions.jsonl` without consumed or expired items older than 30 days (the files are append-only and every poll reads them).
 7. Tracker archive: move rows older than 90 days with a final status to `tracker-archive.md`; stats read both.
 
 **UI**

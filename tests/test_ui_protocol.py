@@ -83,5 +83,36 @@ class Protocol(unittest.TestCase):
         self.assertEqual(p.read_jsonl(f.name), [])
 
 
+class Compact(unittest.TestCase):
+    def test_compact_keeps_status_and_drops_old_items(self):
+        now = datetime(2030, 3, 1)
+        iso = lambda d: (now - timedelta(days=d)).isoformat(timespec="seconds")  # noqa: E731
+        old_done = item(item_id="a1", created=iso(60))
+        old_exp = item(item_id="a2", created=iso(50))
+        live_v1 = item(item_id="a3", created=iso(2), preview="v1")
+        live = item(item_id="a3", created=iso(1), preview="v2")
+        recent_done = item(item_id="a4", created=iso(10))
+        inbox = [old_done, old_exp, live_v1, live, recent_done,
+                 {"item": "a1", "consumed": iso(45)}, {"item": "a4", "consumed": iso(5)}]
+        decs = [dec(old_done), dec(live_v1), dec(live, "skip"), dec(recent_done)]
+        new_inbox, new_dec, dropped = p.compact(inbox, decs, now)
+        self.assertEqual(dropped, ["a1", "a2"])
+        keep = lambda rows: {r["id"]: (r["status"], r.get("decision")) for r in rows}  # noqa: E731
+        before = {k: v for k, v in keep(p.view(inbox, decs, now)).items() if k not in dropped}
+        self.assertEqual(keep(p.view(new_inbox, new_dec, now)), before)
+        self.assertEqual(len(new_inbox), 3)  # a3 once, a4 and its consumed record
+        self.assertEqual(len(new_dec), 2)
+
+    def test_cli_refuses_when_file_changed(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            inbox_p, dec_p = p.paths(d)
+            p.append_jsonl(inbox_p, item(item_id="b1"))
+            self.assertEqual(p.main(["--root", d, "compact"]), 0)
+            size = os.path.getsize(dec_p) if os.path.exists(dec_p) else 0
+            self.assertFalse(p._rewrite(inbox_p, [], size + 999))
+            self.assertEqual(len(p.read_jsonl(inbox_p)), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
