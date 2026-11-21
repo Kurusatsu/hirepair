@@ -41,6 +41,17 @@ Her uyarlanmış CV `docs/ats-rules.md` kurallarına uyar ve `python3 scripts/at
 - İsteğe bağlı: günlük tarama ve yanıt kontrolü için zamanlanmış görevler
 - Python 3 (yalnızca standart kütüphane)
 
+## İki mod: iş arayan / işe alım
+
+| | İş arayan (`/start-job-agent`) | İşe alım (`/screen-candidates`) |
+|---|---|---|
+| Girdi | Senin CV'n | İlan metni ve aday CV'lerinin olduğu yerel klasör |
+| İlk kapı | Önerilen rolleri onaylarsın | Olmazsa olmaz / olursa iyi / dışlama kriterlerini onaylarsın; onaydan önce hiçbir CV okunmaz |
+| Çıktı | ATS uyumlu özel CV'ler, hazırlanmış başvurular, taslaklar, tracker | Sıralı, açıklanabilir kısa liste (yalnızca ID, kanıt alıntısı, eksikler, 2-3 netleştirme sorusu, uyarılar) |
+| Karar | Gönder, rıza, gönderim sende | Her şey sende: ajan elemez, reddetmez, adaylarla iletişime geçmez |
+
+İşe alım modu puanlamadan önce korunan ve ilgisiz özellikleri (yaş, cinsiyet, uyruk, fotoğraf, isim kökeni, adres vb.) maskeler, CV'de olmayan bilgiyi tahmin etmek yerine `not_stated` yazar, aday verisini yerelde tutar (`screening/` ve `reports/` git'e girmez), mail/InMail/mesaj göndermez. Önce `docs/candidate-screening-safety.md` oku (KVKK/GDPR, saklama süresi, aday aydınlatma metni, önyargı ve adil kullanım). Sahte veriyle dene: `python3 scripts/screen_report.py templates/screening/criteria.example.json templates/screening/scores`. Türkçe prompt: `prompts/tr/screen-candidates.md`. LinkedIn kullanımında platform şartları geçerlidir.
+
 ## Hızlı başlangıç
 
 ```bash

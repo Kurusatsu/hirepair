@@ -59,6 +59,17 @@ Every tailored CV follows `docs/ats-rules.md` (single column, standard headings 
 - Optional: Claude Code scheduled tasks for the daily scan and reply check
 - Python 3 (stdlib only) for the tracker stats
 
+## Two modes: job seeker / recruiter
+
+| | Job seeker (`/start-job-agent`) | Recruiter (`/screen-candidates`) |
+|---|---|---|
+| Input | Your CV | A job description and a local folder of candidate CVs |
+| First gate | You approve proposed roles | You approve must-have / nice-to-have / exclusion criteria; no CV is read before |
+| Output | Tailored ATS-friendly CVs, prepared applications, drafts, tracker | Ranked, explainable shortlist (IDs only, evidence quotes, gaps, 2-3 clarifying questions, warnings) |
+| Human decides | Submit, consents, sending | Everything: the agent never rejects, ranks anyone out or contacts candidates |
+
+Recruiter mode masks protected and irrelevant attributes (age, gender, nationality, photo, name origin, address...) before scoring, marks missing information `not_stated` instead of guessing, keeps candidate data local (`screening/` and `reports/` are git-ignored), and never sends mail, InMail or messages. Read `docs/candidate-screening-safety.md` (KVKK/GDPR, retention, candidate notice, bias and fair use) first. Try it on the fictional data: `python3 scripts/screen_report.py templates/screening/criteria.example.json templates/screening/scores`. Turkish prompt: `prompts/tr/screen-candidates.md`. Platform terms apply to any LinkedIn use.
+
 ## Quick start
 
 ```bash

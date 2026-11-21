@@ -1,0 +1,14 @@
+Candidate C02 (fictional, masked)
+Professional Summary
+Analyst with 2 years in e-commerce operations.
+Work Experience
+Operations Analyst, Demo Shop Co, 09/2023 – 06/2025
+- Documented order-handling processes.
+- Prepared weekly reports in spreadsheets.
+- Took part in UAT sessions for a new checkout page.
+Education
+B.A. Business Administration, Sample University
+Skills
+Excel, Jira
+Languages
+English B2

@@ -7,3 +7,5 @@ cv.local.md
 profile.local.yml
 upload/
 .claude/settings.local.json
+/screening/
+/reports/

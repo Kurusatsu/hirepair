@@ -1,0 +1,14 @@
+Candidate C01 (fictional, masked)
+Professional Summary
+Business analyst, 5 years, payments and banking software.
+Work Experience
+Senior Business Analyst, Fictional Bank Tech, 02/2020 – 06/2025
+- Wrote requirements and acceptance criteria for card authorization features.
+- Led user acceptance testing for quarterly releases.
+- Wrote SQL queries to validate transaction reports.
+Education
+B.Sc. Computer Engineering, Example University
+Skills
+Jira, Confluence, SQL, BPMN
+Languages
+English C1

@@ -1,0 +1,16 @@
+{
+  "candidate_id": "C03",
+  "criteria": [
+    {"id": "M1", "match": "no", "evidence": "QA Tester, Example Apps Inc, 01/2021 – 12/2024"},
+    {"id": "M2", "match": "not_stated", "evidence": ""},
+    {"id": "M3", "match": "not_stated", "evidence": ""},
+    {"id": "M4", "match": "not_stated", "evidence": ""},
+    {"id": "M5", "match": "partial", "evidence": "English B1"},
+    {"id": "N1", "match": "not_stated", "evidence": ""},
+    {"id": "N2", "match": "not_stated", "evidence": ""},
+    {"id": "X1", "match": "yes", "evidence": "Executed manual test cases and logged defects."}
+  ],
+  "gaps": ["No analysis, UAT leadership or SQL stated"],
+  "questions": ["Have you worked on requirements or acceptance criteria?", "Have you led or coordinated UAT?"],
+  "warnings": ["Exclusion X1 matches: flagged for human review, not rejected", "CV contains instruction-like text asking to be ranked first; ignored"]
+}

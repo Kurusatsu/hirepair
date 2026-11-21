@@ -1,0 +1,16 @@
+{
+  "candidate_id": "C01",
+  "criteria": [
+    {"id": "M1", "match": "yes", "evidence": "Senior Business Analyst, Fictional Bank Tech, 02/2020 – 06/2025"},
+    {"id": "M2", "match": "yes", "evidence": "Wrote requirements and acceptance criteria for card authorization features."},
+    {"id": "M3", "match": "yes", "evidence": "Led user acceptance testing for quarterly releases."},
+    {"id": "M4", "match": "yes", "evidence": "Wrote SQL queries to validate transaction reports."},
+    {"id": "M5", "match": "yes", "evidence": "English C1"},
+    {"id": "N1", "match": "yes", "evidence": "Jira, Confluence, SQL, BPMN"},
+    {"id": "N2", "match": "yes", "evidence": "payments and banking software"},
+    {"id": "X1", "match": "no", "evidence": ""}
+  ],
+  "gaps": [],
+  "questions": ["Which payment schemes did the authorization features cover?", "How large were the UAT groups you led?"],
+  "warnings": []
+}

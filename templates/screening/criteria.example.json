@@ -1,0 +1,19 @@
+{
+  "role": "Business Analyst (fictional)",
+  "approved_by_user": true,
+  "weights": {"must_have": 70, "nice_to_have": 30},
+  "must_have": [
+    {"id": "M1", "text": "3+ years as business analyst or similar"},
+    {"id": "M2", "text": "Writes requirements and acceptance criteria"},
+    {"id": "M3", "text": "Has run user acceptance testing"},
+    {"id": "M4", "text": "Working knowledge of SQL"},
+    {"id": "M5", "text": "Fluent English"}
+  ],
+  "nice_to_have": [
+    {"id": "N1", "text": "Jira and Confluence"},
+    {"id": "N2", "text": "Payments or fintech domain"}
+  ],
+  "exclusions": [
+    {"id": "X1", "text": "Experience limited to manual test execution only"}
+  ]
+}

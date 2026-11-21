@@ -1,0 +1,16 @@
+{
+  "candidate_id": "C02",
+  "criteria": [
+    {"id": "M1", "match": "no", "evidence": "Operations Analyst, Demo Shop Co, 09/2023 – 06/2025"},
+    {"id": "M2", "match": "not_stated", "evidence": ""},
+    {"id": "M3", "match": "partial", "evidence": "Took part in UAT sessions for a new checkout page."},
+    {"id": "M4", "match": "not_stated", "evidence": ""},
+    {"id": "M5", "match": "yes", "evidence": "English B2"},
+    {"id": "N1", "match": "partial", "evidence": "Excel, Jira"},
+    {"id": "N2", "match": "not_stated", "evidence": ""},
+    {"id": "X1", "match": "no", "evidence": ""}
+  ],
+  "gaps": ["About 2 years of analyst experience stated (criterion asks 3+)", "No SQL or requirements writing stated"],
+  "questions": ["Did you write any requirements or acceptance criteria?", "Have you used SQL, even occasionally?"],
+  "warnings": []
+}
