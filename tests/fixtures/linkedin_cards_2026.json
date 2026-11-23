@@ -1,0 +1,22 @@
+{
+ "note": "Card shapes seen on LinkedIn's /jobs/search-results/ page on 2026-11-23 (supervised run). Company names are fictional; the line layout and screen-reader extras are as observed. Each card appears twice (outer and inner element share the componentkey).",
+ "cards": [
+  {"componentkey": "job-card-component-ref-4000000001",
+   "text": "Selected, Customs Process Coordinator\nCustoms Process Coordinator\nExample Logistics\nIstanbul\n2 school alumni work here\nViewed\n·\nBe an early applicant"},
+  {"componentkey": "job-card-component-ref-4000000002",
+   "text": "Process Automation Lead (Verified job)\nProcess Automation Lead\nExample Pharma\nIstanbul, Türkiye\n1 company alumni works here\nPosted 1 hour ago\n1 hour ago\n·\nBe an early applicant"},
+  {"componentkey": "job-card-component-ref-4000000003",
+   "text": "IT Business Analyst\nIT Business Analyst\nExample Bank Hub\nIstanbul, Türkiye (Hybrid)\nPosted 2 hours ago\n2 hours ago\n·\nBe an early applicant"},
+  {"componentkey": "job-card-component-ref-4000000004",
+   "text": "İş ve Süreç Geliştirme Yetkilisi (Verified job)\nİş ve Süreç Geliştirme Yetkilisi\nÖrnek Bank\nIstanbul, Türkiye (Hybrid)\nActively reviewing applicants\nApplied\n·\nEasy Apply"},
+  {"componentkey": "job-card-component-ref-4000000005",
+   "text": "Kıdemli İş Analisti\nKıdemli İş Analisti\nÖrnek Ev Tekstili\nIstanbul, Türkiye (On-site)\nSaved\n·\nBe an early applicant\n·\nEasy Apply"}
+ ],
+ "expected": [
+  "4000000001~Customs Process Coordinator~Example Logistics~~Viewed",
+  "4000000002~Process Automation Lead~Example Pharma~Posted 1 hour ago~",
+  "4000000003~IT Business Analyst~Example Bank Hub~Posted 2 hours ago~",
+  "4000000004~İş ve Süreç Geliştirme Yetkilisi~Örnek Bank~~Applied",
+  "4000000005~Kıdemli İş Analisti~Örnek Ev Tekstili~~Saved"
+ ]
+}

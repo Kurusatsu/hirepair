@@ -10,7 +10,10 @@
   const wait = ms => new Promise(r => setTimeout(r, ms));
   await wait(4000);
   // The results list is virtualised: scroll its pane to the bottom in steps so every card renders.
-  const first = document.querySelector('[data-occludable-job-id], [data-job-id]');
+  // 2026 "search-results" layout: cards carry componentkey="job-card-component-ref-<id>" (outer and inner
+  // element share it; document order puts the outer one, with the full text, first).
+  const SEL = '[data-occludable-job-id], [data-job-id], [componentkey^="job-card-component-ref-"]';
+  const first = document.querySelector(SEL);
   let pane = first && first.parentElement;
   while (pane && pane !== document.body && pane.scrollHeight <= pane.clientHeight + 10) pane = pane.parentElement;
   if (pane && pane !== document.body) {
@@ -20,8 +23,9 @@
   const clean = s => (s || '').replace(/[~|\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
   const seen = new Set();
   const rows = [];
-  for (const el of document.querySelectorAll('[data-occludable-job-id], [data-job-id]')) {
-    let id = el.getAttribute('data-occludable-job-id') || el.getAttribute('data-job-id') || '';
+  for (const el of document.querySelectorAll(SEL)) {
+    const ck = (el.getAttribute('componentkey') || '').match(/^job-card-component-ref-(\d+)$/);
+    let id = el.getAttribute('data-occludable-job-id') || el.getAttribute('data-job-id') || (ck ? ck[1] : '');
     if (!id) {
       const a = el.querySelector('a[href*="/jobs/view/"]');
       const m = a && a.getAttribute('href').match(/\/jobs\/view\/(\d+)/);
@@ -29,9 +33,11 @@
     }
     const lines = (el.innerText || '').split('\n').map(clean).filter(Boolean);
     if (!lines.length) continue;
-    // The title line is often repeated (visible text + "with verification"); keep the first.
-    const title = lines[0].replace(/\s+with verification$/i, '');
-    const rest = lines.filter(l => l !== lines[0] && !/with verification$/i.test(l));
+    // The title line is often repeated with screen-reader extras ("Selected, X (Verified job)",
+    // "X with verification"); when the second line is contained in the first, it is the plain title.
+    const lead = lines[0].replace(/\s+with verification$/i, '');
+    const title = lines.length > 1 && lines[1] !== lead && lead.includes(lines[1]) ? lines[1] : lead;
+    const rest = lines.filter(l => l !== lines[0] && l !== title && !/with verification$/i.test(l));
     const company = rest[0] || '';
     const age = lines.find(l => /\b(ago|önce)\b/i.test(l)) || '';
     const badge = lines.find(l => /^(Applied|Başvuruldu|Saved|Kaydedildi|Viewed|Görüntülendi)\b/i.test(l)) || '';
