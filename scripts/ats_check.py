@@ -25,7 +25,7 @@ OPTIONAL = {
     "projects": {"en": ["projects"], "tr": ["projeler"]},
 }
 MONTH_RANGE = re.compile(r"\b(0[1-9]|1[0-2])/(\d{4})\s*[-–—]\s*((?:0[1-9]|1[0-2])/\d{4}|present|günümüz|devam)", re.I)
-YEAR_RANGE = re.compile(r"\b(19|20)\d{2}\s*[-–—]\s*((?:19|20)\d{2}|present|günümüz|devam)", re.I)
+YEAR_RANGE = re.compile(r"(?<!/)\b(19|20)\d{2}\s*[-–—]\s*((?:19|20)\d{2}|present|günümüz|devam)", re.I)
 NAMED_MONTH = re.compile(r"\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık)[a-zçğıöşü]*\.?\s+\d{4}", re.I)
 EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 STOP = set("""the and for with you your are our will from that this have has not but all can any who

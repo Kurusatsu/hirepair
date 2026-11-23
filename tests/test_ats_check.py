@@ -79,12 +79,19 @@ class AtsCheck(unittest.TestCase):
         code, out = run(long_cv)
         self.assertIn("aim for 1 page", out)
 
+    def test_month_year_to_present_is_not_year_only(self):
+        for end in ("Günümüz", "Present"):
+            code, out = run(TR.replace("09/2010 - 06/2014", f"09/2026 – {end}"), "--lang=tr")
+            self.assertNotIn("year-only", out)
+        code, out = run(TR.replace("09/2010 - 06/2014", "2010 - Günümüz"), "--lang=tr")
+        self.assertIn("year-only ranges: 1", out)
+
     def test_senior_thin_cv_warns(self):
         code, out = run(EN)
         self.assertIn("too thin", out)
 
     def test_turkish_dotted_capital_heading_is_recognised(self):
-        code, out = run(TR.replace(" 40", ""), "--lang", "tr")
+        code, out = run(TR.replace(" 40", ""), "--lang=tr")
         self.assertNotIn("missing section", out)
 
     def test_pair_consistent_has_no_errors(self):
