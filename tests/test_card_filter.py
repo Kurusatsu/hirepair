@@ -44,6 +44,14 @@ class CardFilter(unittest.TestCase):
         self.assertTrue(keep[1]["needs_click"])
         self.assertEqual(counts, {"applied": 1, "seen_id": 2, "in_tracker": 1, "duplicate": 1, "excluded_title": 0, "off_target": 0})
 
+    def test_turkish_header_job_ids_are_read(self):
+        # "İlan".lower() is "i̇lan" in Python: the posting column was never found, so a known job ID with a
+        # reworded title slipped through. The reposted card here has a new title but the same job ID.
+        tr = TRACKER.replace("| Date | Company | Role | Posting | Status |", "| Tarih | Şirket | Pozisyon | İlan | Durum |")
+        open(self.tracker, "w", encoding="utf-8").write(tr)
+        keep, counts = self.run_filter("N=1;111~Senior Business Analyst (Hybrid)~Example Bank Türkiye~1 day ago~")
+        self.assertEqual((keep, counts["seen_id"]), ([], 1))
+
     def test_row_cut_across_parts_is_stitched(self):
         parts = ["N=2;555~Business Anal", "yst~Fresh Co~1 day ago~|666~PO~X~1 day ago~MORE@40"]
         cards = f.rows_from(f.stitch(parts))

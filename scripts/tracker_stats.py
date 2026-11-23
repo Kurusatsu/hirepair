@@ -27,7 +27,7 @@ def parse(text):
             continue
         c = cells(line)
         if header is None:
-            header = [h.lower() for h in c]
+            header = [h.replace("İ", "i").lower() for h in c]  # "İlan".lower() is "i̇lan", not "ilan"
             continue
         if set("".join(c)) <= set("-: "):
             continue
