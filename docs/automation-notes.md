@@ -16,6 +16,7 @@ Lessons learned while driving a real, logged-in Chrome with the Claude in Chrome
   - `/jobs/view/<id>/` works; read it only after a short wait, or the text of the previous page comes back.
   - A job page with an unfinished Easy Apply draft shows "Continue" and "You last modified this application …" instead of the Easy Apply button: compare with the tracker before preparing it again.
   - Similar queries overlap heavily: after the first 25-card query, the next three added 2, 3 and 8 new cards.
+- LinkedIn job tracker (checked 2026-11-24): `/my-items/saved-jobs/` redirects to `/jobs-tracker/` with tabs Saved, In Progress (unfinished Easy Apply drafts), Applied, Interview and Archived (`?stage=applied` etc.). Rows carry `componentkey="opportunityTrackerOverflowMenuButton_table_<job id>"`, 10 per page, newest application first; the "Next" button has no aria-label. A row shows "Applied 9h ago", "(Posted 4d ago)" or "(No longer accepting applications)", and LinkedIn's signals "Application viewed" / "Resume downloaded". Ages are relative ("1w ago"), so older dates are approximate. `scripts/linkedin_myjobs.js` reads it; 50 applied rows matched 41 tracker rows on the first run, and the rest were applications sent outside Hirepair.
 - If the extension disconnects, re-check the tab context up to three times with waits, then re-run the failed queries. Machine sleep also kills sessions; do searching first and long CV work later.
 - Work in your own new tab and close it at the end. Do not use the browser from two agents at once.
 

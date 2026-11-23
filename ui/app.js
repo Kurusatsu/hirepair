@@ -37,7 +37,7 @@ tr: {
   sk_edits:'{n} profil değişikliği onayını bekliyor', sk_go:'Onaylara git', in_cv:'CV', on_li:'LinkedIn', not_cv:'CV\'de yok',
   sort_label:'Sırala', sort_date:'En yeni önce', sort_fit:'En uyumlu önce', prev:'Önceki', next:'Sonraki', range:'{a}–{b} / {n} satır',
   before:'Şimdi', after:'Önerilen',
-  trk_fixes:'Mailine göre {n} takip düzeltmesi onayını bekliyor', a_tracker_fix:'Takibi düzelt',
+  trk_fixes:'Gmail ve LinkedIn\'e göre {n} takip düzeltmesi onayını bekliyor', a_tracker_fix:'Takibi düzelt',
   d_t_tracker_fix:'Bu takip düzeltmesi uygulansın mı?', d_b_tracker_fix:'Ajan bir sonraki çalışmasında yalnızca bu satırın durumunu değiştirir ya da bu satırı ekler. Hiçbir başvuru gönderilmez, mailine dokunulmaz.'
 },
 en: {
@@ -76,7 +76,7 @@ en: {
   sk_edits:'Profile changes waiting for approval: {n}', sk_go:'Go to approvals', in_cv:'CV', on_li:'LinkedIn', not_cv:'not in CV',
   sort_label:'Sort', sort_date:'Newest first', sort_fit:'Best fit first', prev:'Previous', next:'Next', range:'{a}–{b} of {n} rows',
   before:'Now', after:'Suggested',
-  trk_fixes:'Tracker fixes from your mail waiting for approval: {n}', a_tracker_fix:'Fix the tracker',
+  trk_fixes:'Tracker fixes from your mail and LinkedIn waiting for approval: {n}', a_tracker_fix:'Fix the tracker',
   d_t_tracker_fix:'Apply this tracker fix?', d_b_tracker_fix:'At its next run the agent only changes this row\'s status or adds this row. Nothing is submitted and your mail is not touched.'
 }};
 var lang = 'tr';

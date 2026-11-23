@@ -1,0 +1,19 @@
+{
+ "note": "Row shapes seen on LinkedIn's job tracker (/jobs-tracker/?stage=applied) on 2026-11-24. Companies are fictional; the lines, signals and paging (10 rows per page, a 'Next' button with no aria-label) are as observed.",
+ "pages": [
+  [
+   {"id": "4000000011", "text": "Technical Product Manager\nExample Pay · Istanbul, Türkiye (Hybrid)\nApplied 9h ago\n(Posted 4d ago)\nAdd note\nDid you hear back?\nYes\nNo"},
+   {"id": "4000000012", "text": "Project Manager (Verified job)\nProject Manager\nExample Data · Istanbul, Türkiye (Hybrid)\nApplied 9h ago\n(Posted 1d ago)\nAdd note\nDid you hear back?\nYes\nNo"}
+  ],
+  [
+   {"id": "4000000013", "text": "Data Governance Consultant\nExample Consulting · Pendik (Hybrid)\nApplied 4d ago\n(No longer accepting applications)\nApplication viewed\nAdd note\nDid you hear back?\nYes\nNo"},
+   {"id": "4000000014", "text": "Product Owner\nExample AI · Istanbul (Hybrid)\nApplied 1w ago\n(No longer accepting applications)\nResume downloaded\n2 connections\nAdd note\nYes, I heard back from the company"}
+  ]
+ ],
+ "expected": [
+  "4000000011~0~applied~~Technical Product Manager~Example Pay",
+  "4000000012~0~applied~~Project Manager~Example Data",
+  "4000000013~4~applied~viewed+closed~Data Governance Consultant~Example Consulting",
+  "4000000014~7~applied~downloaded+closed+heard_yes~Product Owner~Example AI"
+ ]
+}

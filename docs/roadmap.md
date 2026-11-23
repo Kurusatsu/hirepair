@@ -13,6 +13,8 @@ Order matters: finish what is below "Now" before starting "Next".
 - Done: tracker follows the inbox (`scripts/reply_reconcile.py`): the reply check writes mail events, Reply cells are written, and Status fixes or rows for applications made by hand are proposed as `tracker_fix` approvals (before → after, banner on the Tracker tab) and applied after the user's yes. Found on the first real run: a manual application missing from the tracker and a row still ⏳ after a rejection.
 - Skill matching: a tool name such as "Azure DevOps" also counts as the practice "DevOps" (overlapping vocabulary entries).
 
+- Done: LinkedIn job tracker sync (`linkedin_myjobs.js`, `linkedin_sync.py`): applied / interview rows and LinkedIn's signals feed the same tracker fixes as mail; saved jobs join the manual list. Not covered yet: the In Progress tab (unfinished Easy Apply drafts) is only listed, not compared with ⏳ rows.
+
 ## Found and fixed on the first real run (2026-11-23)
 - LinkedIn's 2026 search-results layout: `linkedin_cards.js` read 0 cards (no `data-job-id`); it now reads `componentkey`. Posts have a new layout too: `linkedin_posts.js` replaces the ad hoc filter (Turkish `İ` matching, reposts).
 - Skill report: company names and benefit sections (health insurance, training budget) counted as demand; "requirements analysis" did not map to Requirements Gathering.

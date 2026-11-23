@@ -4,7 +4,8 @@
 The reply check reads Gmail (read only) and writes one JSON line per application mail to an events file:
   {"company": "Acme", "role": "Business Analyst", "kind": "received", "date": "2026-11-23",
    "ref": "REQ-123", "from": "acme.com", "subject": "..."}
-kind: received | rejected | interview | info | assessment | verify.  ref, from and subject are optional.
+kind: received | rejected | interview | info | assessment | verify, and from scripts/linkedin_sync.py:
+applied | viewed | downloaded | closed.  ref, from, subject, url, channel, source and undated are optional.
 
   reply_reconcile.py check EVENTS [--tracker tracker.md] [--write-replies] [--inbox] [--json]
       REPLY     the row's Reply cell should say what the mail says (--write-replies writes these: the reply
@@ -32,19 +33,25 @@ import ui_protocol as up  # noqa: E402
 from card_filter import _tok_match, norm, tokens  # noqa: E402
 from tracker_stats import cells  # noqa: E402
 
-KINDS = ("received", "rejected", "interview", "info", "assessment", "verify")
-SENT_PROOF = {"received", "rejected", "interview", "info", "assessment"}  # the employer has the application
+KINDS = ("received", "rejected", "interview", "info", "assessment", "verify", "applied", "viewed", "downloaded", "closed")
+SENT_PROOF = {"received", "rejected", "interview", "info", "assessment", "applied", "viewed", "downloaded"}
+UNDATED = {"viewed", "downloaded", "closed"}  # LinkedIn shows the signal, not when it happened
+NO_REPLY = {"applied"}  # proves the application went out; not a reply from the employer
 OPEN = ("⏳", "✉️", "💬", "🔗", "🔒")
 LABELS = {
     "tr": {"received": "Alındı", "rejected": "Reddedildi", "interview": "Mülakat daveti", "info": "Bilgi istendi",
            "assessment": "Test/ödev", "verify": "Doğrulama gerekiyor", "sent": "Başvuruldu",
-           "by_mail": "mail ile doğrulandı", "no_row": "(satır yok)"},
+           "applied": "LinkedIn'de başvuruldu", "viewed": "Başvuru görüntülendi (LinkedIn)",
+           "downloaded": "CV indirildi (LinkedIn)", "closed": "İlan kapandı",
+           "by_mail": "mail ile doğrulandı", "by_linkedin": "LinkedIn'de doğrulandı", "no_row": "(satır yok)"},
     "en": {"received": "Received", "rejected": "Rejected", "interview": "Interview invite", "info": "Info requested",
            "assessment": "Assessment", "verify": "Verification needed", "sent": "Submitted",
-           "by_mail": "confirmed by mail", "no_row": "(no row)"},
+           "applied": "Applied on LinkedIn", "viewed": "Application viewed (LinkedIn)",
+           "downloaded": "Resume downloaded (LinkedIn)", "closed": "Posting closed",
+           "by_mail": "confirmed by mail", "by_linkedin": "confirmed on LinkedIn", "no_row": "(no row)"},
 }
 COLS = {"date": {"date", "tarih"}, "company": {"company", "şirket", "sirket"}, "role": {"role", "pozisyon"},
-        "posting": {"posting", "ilan"}, "status": {"status", "durum"}, "reply": {"reply", "yanıt", "yanit"}}
+        "posting": {"posting", "ilan"}, "channel": {"channel", "kanal"}, "status": {"status", "durum"}, "reply": {"reply", "yanıt", "yanit"}}
 MATCH, EXACT = 0.6, 0.95
 FIXES = os.path.join("data", "tracker-fixes.jsonl")
 
@@ -146,7 +153,8 @@ def check(tr, events):
         if kind not in KINDS or not ev.get("company") or not re.match(r"^\d{4}-\d{2}-\d{2}$", ev.get("date", "")):
             out.append({"kind": "SKIP", "event": ev, "why": "needs company, a known kind and a YYYY-MM-DD date"})
             continue
-        said = f"{lab[kind]} {ev['date']}"
+        said = lab[kind] if kind in UNDATED or ev.get("undated") else f"{lab[kind]} {ev['date']}"
+        by = lab["by_linkedin"] if ev.get("source") == "linkedin" else lab["by_mail"]
         how, hit, score = match(tr, ev)
         if how == "unsure":
             out.append({"kind": "UNSURE", "event": ev, "rows": [[tr.get(c, k) for k in ("date", "company", "role")]
@@ -159,7 +167,7 @@ def check(tr, events):
                             "why": "verification mail: the user must open the link (read only, never clicked)"})
             elif kind in SENT_PROOF and pair not in missing_done:
                 missing_done.add(pair)
-                row = new_row(tr, ev, said)
+                row = new_row(tr, ev, said, by)
                 out.append({"kind": "MISSING", "event": ev, "key": None, "before": lab["no_row"], "after": row})
             continue
         line_i, c = hit
@@ -167,14 +175,14 @@ def check(tr, events):
         if score < EXACT:
             out.append({"kind": "NOTE", "event": ev, "key": key, "why": "title differs from the row; check it is the same job"})
         reply = planned_reply.get(line_i, tr.get(c, "reply"))
-        if norm(said) not in norm(reply):
+        if kind not in NO_REPLY and norm(said) not in norm(reply):
             new = said if reply in ("", "-", "—") else f"{reply}; {said}"
             planned_reply[line_i] = new
             out.append({"kind": "REPLY", "event": ev, "key": key, "line": line_i, "before": reply, "after": new})
         status = tr.get(c, "status")
         if kind in SENT_PROOF and status.startswith(OPEN) and line_i not in status_done:
             status_done.add(line_i)
-            after = f"✅ {lab['sent']} ({lab['by_mail']}: {said})"
+            after = f"✅ {lab['sent']} ({by}: {said})"
             out.append({"kind": "STATUS", "event": ev, "key": key, "before": status, "after": after})
     for f in out:
         if f["kind"] in ("STATUS", "MISSING"):
@@ -182,10 +190,11 @@ def check(tr, events):
     return out
 
 
-def new_row(tr, ev, said):
+def new_row(tr, ev, said, by):
     lab = LABELS[tr.lang]
     val = {"date": ev["date"], "company": ev["company"], "role": ev.get("role") or "—",
-           "posting": ev.get("ref") or "—", "status": f"✅ {lab['sent']} ({lab['by_mail']}: {said})", "reply": said}
+           "posting": ev.get("url") or ev.get("ref") or "—", "channel": ev.get("channel") or "—",
+           "status": f"✅ {lab['sent']} ({by}: {said})", "reply": "—" if ev["kind"] in NO_REPLY else said}
     by_col = {i: k for k, i in tr.col.items() if i is not None}
     return "| " + " | ".join(val.get(by_col.get(i), "—").replace("|", "/") for i in range(len(tr.header))) + " |"
 
@@ -200,20 +209,21 @@ def to_inbox(tr, findings, root):
             continue
         ev = f["event"]
         role = ev.get("role") or "?"
+        li = ev.get("source") == "linkedin"
         if tr.lang == "tr":
             title = (f"Tracker: {ev['company']} – {role} durumu güncellensin mi?" if f["kind"] == "STATUS"
                      else f"Tracker'a eklensin mi: {ev['company']} – {role}")
-            summary = (f"Gmail'de '{lab[ev['kind']]}' maili var ({ev['date']}), satır hâlâ bekliyor görünüyor."
-                       if f["kind"] == "STATUS" else
-                       f"Gmail'de '{lab[ev['kind']]}' maili var ({ev['date']}) ama tracker'da satırı yok; "
-                       "elle yapılmış bir başvuru olabilir.")
+            seen = (f"LinkedIn'in iş takibinde '{lab[ev['kind']]}' görünüyor ({ev['date']})" if li
+                    else f"Gmail'de '{lab[ev['kind']]}' maili var ({ev['date']})")
+            summary = (f"{seen}, satır hâlâ bekliyor görünüyor." if f["kind"] == "STATUS" else
+                       f"{seen} ama tracker'da satırı yok; Hirepair dışında yapılmış bir başvuru olabilir.")
         else:
             title = (f"Tracker: update the status of {ev['company']} – {role}?" if f["kind"] == "STATUS"
                      else f"Add to the tracker: {ev['company']} – {role}?")
-            summary = (f"Gmail has a '{lab[ev['kind']]}' mail ({ev['date']}), but the row still looks open."
-                       if f["kind"] == "STATUS" else
-                       f"Gmail has a '{lab[ev['kind']]}' mail ({ev['date']}), but the tracker has no row; "
-                       "it may be an application made by hand.")
+            seen = (f"LinkedIn's job tracker shows '{lab[ev['kind']]}' ({ev['date']})" if li
+                    else f"Gmail has a '{lab[ev['kind']]}' mail ({ev['date']})")
+            summary = (f"{seen}, but the row still looks open." if f["kind"] == "STATUS" else
+                       f"{seen}, but the tracker has no row; it may be an application made outside Hirepair.")
         evidence = [x for x in (ev.get("from"), ev.get("subject")) if x]
         item = up.make_item("approve", "tracker_fix", title, summary, evidence[:2], f["after"], "", f["id"],
                             before=f["before"])
