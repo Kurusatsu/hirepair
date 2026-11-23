@@ -51,8 +51,15 @@ def load_vocab(paths):
 
 
 def skills_in(text, vocab):
+    """Skills named in text. A match that lies inside a longer skill's match does not count, so the tool
+    "Azure DevOps" is not also the practice "DevOps" (it still counts where "DevOps" stands alone)."""
     t = norm(text)
-    return {canon for canon, pats in vocab.items() if any(p.search(t) for p in pats)}
+    spans = {canon: [m.span() for p in pats for m in p.finditer(t)] for canon, pats in vocab.items()}
+    spans = {c: s for c, s in spans.items() if s}
+    every = [(a, b, c) for c, s in spans.items() for a, b in s]
+    return {c for c, s in spans.items()
+            if any(not any(c2 != c and a2 <= a and b <= b2 and (b2 - a2) > (b - a) for a2, b2, c2 in every)
+                   for a, b in s)}
 
 
 def read(path):

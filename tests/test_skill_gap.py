@@ -43,6 +43,12 @@ class SkillGap(unittest.TestCase):
         # an insurance job still counts: the requirement is not a benefit line
         self.assertIn("Insurance", g.skills_in(g.job_text("Sigorta sektöründe 3 yıl deneyim"), VOCAB))
 
+    def test_tool_name_is_not_the_practice(self):
+        s = g.skills_in("Tools: Azure DevOps, Jira", VOCAB)
+        self.assertIn("Azure DevOps", s)
+        self.assertNotIn("DevOps", s)
+        self.assertIn("DevOps", g.skills_in("Azure DevOps boards and a DevOps culture", VOCAB))
+
     def test_requirements_analysis_is_requirements_gathering(self):
         self.assertIn("Requirements Gathering", g.skills_in("Requirements analysis, SDLC", VOCAB))
         self.assertIn("Requirements Gathering", g.skills_in("gather business needs from stakeholders", VOCAB))
