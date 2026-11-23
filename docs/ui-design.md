@@ -22,7 +22,7 @@ Rules taken from the checks: contrast 4.5:1 minimum (palette re-measured: the su
 
 ## 3. Elements
 
-**Shell:** header (product, mode, "Local only" note), tabs: Today, Waiting for you (count badge), Tracker, Recruiter, plus Onboarding the first time.
+**Shell:** header (product, mode, "Local only" note), tabs: Today, Waiting for you (count badge), Tracker, Skills, Recruiter, plus Onboarding the first time.
 
 **Components:** stat card, status badge (icon + word), approval card (kind badge, title, evidence quote, preview, actions), "Do it yourself" card, filterable table, evidence quote, confirm dialog, toast, empty state.
 
@@ -45,7 +45,7 @@ Rules taken from the checks: contrast 4.5:1 minimum (palette re-measured: the su
 1. **Onboarding** (first run): add CV (file in the folder, or paste) → agent proposes 3-5 roles with a CV quote each → you approve, edit, remove → limits (scans per day, evaluated, prepared, one-by-one or batch) → "Start first scan". Nothing runs before the roles are approved.
 2. **Daily:** Today shows the last scan summary and numbers → "Waiting for you" lists items in two kinds (below) → Tracker shows everything (newest or best fit first, 200 rows per page; only the visible page is rendered) → Skills shows the last `skill_gap.py` report (demand bars with CV / LinkedIn flags, add / pin / gaps lists, and a link to pending `profile_edit` items). A `profile_edit` card shows the current text and the suggestion side by side (`--before`); approving types nothing by itself.
 3. **Waiting for you:**
-   - *Approve here* (class A): roles, criteria, limits, tailored CV for upload, answers to open form questions, creating a mail draft.
+   - *Approve here* (class A): roles, criteria, limits, tailored CV for upload, answers to open form questions, creating a mail draft, LinkedIn profile edits, and tracker fixes (`tracker_fix`: a Status change or a missing row that a mail or LinkedIn's job tracker suggests, shown before → after; the Tracker tab shows a banner while any wait). An approved or edited tracker fix is applied by `reply_reconcile.py apply` at the next run; a skipped one is not proposed again.
    - *Do it yourself* (class B): consent boxes, sign-in, ID fields, CAPTCHA, final Submit, sending mail. The card has "Open the form" and "I did it". "I did it" is a claim; the agent still checks (for example a confirmation mail) before it writes ✅.
 
 ### Recruiter
