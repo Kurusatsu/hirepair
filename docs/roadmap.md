@@ -8,7 +8,15 @@ Order matters: finish what is below "Now" before starting "Next".
 - Turkish prompts and README, safety and privacy docs, example mail drafts
 
 ## Next: tidy and harden
-- Run every mode end to end on a real account and fix what breaks (LinkedIn search assistant and Gmail source are only tested on fictional data)
+- Run every mode end to end on a real account and fix what breaks. Done on a supervised run (2026-11-23): job search and card filter, job-text cache and scoring, skill report, Easy Apply up to Review with the resume upload, #hiring post search, Gmail reply check and a mail draft. Still untested on a real account: the scheduled run (search subagent + `candidates_check.py --done-only`), `/linkedin-profile` guided edit, company portals (Workday sign-in stop), recruiter mode sources.
+- CV PDF build step: tailored CVs stop at Markdown because no build command is configured; the form then gets the general CV.
+- Reply check: it only updates the Reply cell. Applications made by hand never get a row, and a row stays ⏳ after a "received" or rejection mail. List both in the report as tracker mismatches.
+- Skill matching: a tool name such as "Azure DevOps" also counts as the practice "DevOps" (overlapping vocabulary entries).
+
+## Found and fixed on the first real run (2026-11-23)
+- LinkedIn's 2026 search-results layout: `linkedin_cards.js` read 0 cards (no `data-job-id`); it now reads `componentkey`. Posts have a new layout too: `linkedin_posts.js` replaces the ad hoc filter (Turkish `İ` matching, reposts).
+- Skill report: company names and benefit sections (health insurance, training budget) counted as demand; "requirements analysis" did not map to Requirements Gathering.
+- ATS check: `MM/YYYY – Günümüz` was flagged as a year-only date; two tests passed `--lang` wrongly and checked nothing.
 
 ## Done in "tidy and harden"
 - More ATS checks: section order, length by experience level, bilingual CV pair (TR/EN) check, with unit tests (`python3 -m unittest discover -s tests`)
@@ -24,7 +32,7 @@ Order matters: finish what is below "Now" before starting "Next".
 Ordered by expected gain. The slowest part of a run is browser round trips and tokens, not the local code.
 
 **Agent flow**
-1. Done: `scripts/linkedin_cards.js` reads a results page in one call; `scripts/card_filter.py` drops handled cards before any click. Still to verify on a real supervised run (selectors were tested only on a fake page).
+1. Done: `scripts/linkedin_cards.js` reads a results page in one call; `scripts/card_filter.py` drops handled cards before any click. Verified on a real supervised run (2026-11-23) after adapting to the new layout; a node test with the observed card shapes guards it.
 2. Done: title prefilter in `card_filter.py` (exclusions, role phrases, `queries.jobs`, `queries.skills`, always-include companies bypass it); skipped titles are reported, not hidden.
 3. Done: the read-only search subagent is the default in scheduled runs, with a fixed candidate-file format; `scripts/candidates_check.py` waits for it (`--done-only`), checks rows and query coverage, and prints the prepare queue within the limits.
 4. Done: candidate files carry a profile hash; `scripts/rescore_queue.py` lists cached jobs scored with an older profile, and the search subagent re-scores them from `data/jobs/` without opening pages; `candidates_check.py` warns when a file was scored with a different profile.
