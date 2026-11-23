@@ -6,7 +6,7 @@ Gerçekler yalnızca `cv.local.md`'den gelir. Piyasa talebi yalnızca kaydedilmi
 
 ## Adım 1: yetenek talep raporu (salt okunur)
 1. `data/jobs/` içinde ilan metinleri gerekir (günlük tarama kaydeder). 10'dan azsa raporun zayıf olduğunu söyle. Seçenek sun: daha çok taramayı bekle ya da onaylı `queries.jobs` ve `queries.skills` sorgularını bir kez çalıştır, en çok `limits.max_evaluated_per_round` ilan aç, her metni `data/jobs/<ilan-id>.txt` olarak kaydet.
-2. Kullanıcının mevcut LinkedIn yeteneklerini iste: yapıştırsın ya da kendi oturumu açık tarayıcısında kendi profilinin Yetenekler bölümünü oku (salt okunur; başkasının profilini açma). `data/linkedin-skills.local.txt` dosyasına satır başına bir tane kaydet.
+2. Kullanıcının mevcut LinkedIn yeteneklerini iste: yapıştırsın ya da kendi oturumu açık tarayıcısında oku: `https://www.linkedin.com/in/me/details/skills/` sayfasını aç ve tek çağrıda `scripts/linkedin_skills.js` çalıştır (salt okunur, hiçbir şeye tıklamaz; yalnızca kendi profili, başkasınınki asla). `data/linkedin-skills.local.txt` dosyasına satır başına bir tane kaydet.
 3. Çalıştır: `python3 scripts/skill_gap.py --jobs data/jobs --cv cv.local.md --linkedin data/linkedin-skills.local.txt`, sonra aynısını `--json > data/skills-report.json` ile (UI'daki Yetenekler sekmesi bunu okur). Sözlük `templates/skills-vocab.txt`; ilanlar raporun tanımadığı bir yeteneği sık geçiriyorsa `data/skills-vocab.local.txt` dosyasına ekle (`Ad | eş ad`) ve yeniden çalıştır.
 4. Sonucu dört kısa listede göster; her yetenekte talep ("SQL, 30 ilanın 14'ünde") ve CV'deki yetenek için onu kanıtlayan CV satırı olsun:
    - **LinkedIn'e ekle:** CV'de var, piyasa istiyor, profilde yok.

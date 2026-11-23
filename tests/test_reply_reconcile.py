@@ -135,6 +135,10 @@ class Reconcile(unittest.TestCase):
         f = self.findings()
         self.assertIn("Alındı 2030-01-05; Reddedildi 2030-01-09", [x["after"] for x in f if x["kind"] == "REPLY"])
         self.assertIn("mail ile doğrulandı", [x for x in f if x["kind"] == "STATUS"][0]["after"])
+        new = [x for x in f if x["kind"] == "MISSING"][0]["after"]
+        self.assertEqual(new.split("|")[5].strip(), "—")  # İlan column found (no ref for New Co)
+        tr = rr.Tracker(self.tracker)
+        self.assertIsNotNone(tr.col["posting"])
 
 
 if __name__ == "__main__":

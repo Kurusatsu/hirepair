@@ -7,10 +7,12 @@ Usage: python3 scripts/linkedin_sync.py MYJOBS.txt [more.txt ...] [--today YYYY-
 MYJOBS.txt holds the raw outputs of scripts/linkedin_myjobs.js (applied, interview, saved or in_progress tab).
 Applied rows become "applied" events (the application went out on LinkedIn) plus one event per signal LinkedIn
 shows: viewed (Application viewed), downloaded (Resume downloaded), closed (No longer accepting applications).
-Interview rows become "interview" events. The events are appended to the same JSONL file the reply check
+Interview rows become "interview" events. Draft rows (unfinished Easy Apply) become "draft" events and
+"Clicked apply" rows (a company form opened from LinkedIn, not confirmed) become "clicked" events: a job with
+no tracker row is proposed as a ⏳ / 🔗 row; a draft whose posting closed only notes that on an existing row. The events are appended to the same JSONL file the reply check
 writes, so `python3 scripts/reply_reconcile.py check <file> --write-replies --inbox` handles both: Reply
 cells for the signals, and approval cards for rows that are still waiting or missing (applications sent on
-LinkedIn outside Hirepair). In-progress rows (unfinished Easy Apply drafts) are listed as DRAFT lines. Saved
+LinkedIn outside Hirepair). Saved
 rows are listed as SAVED lines; with --manual FILE they are also added to the manual candidates list
 (data/manual-candidates.md), which the daily scan opens and scores first, so a job saved on the phone is
 picked up by the next scan.
@@ -57,6 +59,13 @@ def events(rows, today, since_days):
             when = (today - timedelta(days=r["days"])).isoformat()
             ev.append({**base, "kind": "applied", "date": when})
             ev += [{**base, "kind": s, "date": today.isoformat()} for s in SIGNALS if s in r["signals"]]
+        elif r["stage"] in ("draft", "clicked_apply"):
+            if r["days"] > since_days:
+                continue
+            if "closed" in r["signals"]:  # a dead draft: only worth a note on an existing row
+                ev.append({**base, "kind": "closed", "date": today.isoformat()})
+            else:
+                ev.append({**base, "kind": "draft" if r["stage"] == "draft" else "clicked", "date": today.isoformat()})
         elif r["stage"] == "interview":
             ev.append({**base, "kind": "interview", "date": today.isoformat(), "undated": True})
         else:
@@ -106,11 +115,11 @@ def main(argv=None):
     with open(out, "a", encoding="utf-8") as fh:
         for e in ev:
             fh.write(json.dumps(e, ensure_ascii=False) + "\n")
-    kinds = {k: sum(1 for e in ev if e["kind"] == k) for k in ("applied", "interview") + SIGNALS}
+    kinds = {k: sum(1 for e in ev if e["kind"] == k) for k in ("applied", "interview", "draft", "clicked") + SIGNALS}
     print(f"{len(rows)} LinkedIn rows -> {len(ev)} events in {out} ("
           + ", ".join(f"{k} {v}" for k, v in kinds.items()) + f"; applications older than {a.since_days} days skipped)")
     for r in listed:
-        tag = "SAVED" if r["stage"] == "saved" else "DRAFT" if r["stage"] == "in_progress" else r["stage"].upper()
+        tag = "SAVED" if r["stage"] == "saved" else r["stage"].upper()
         print(f"{tag:6} {r['id']}  {r['title']} @ {r['company']}")
     saved = [r for r in listed if r["stage"] == "saved"]
     if a.manual and saved:

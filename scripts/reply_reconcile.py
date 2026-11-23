@@ -5,7 +5,7 @@ The reply check reads Gmail (read only) and writes one JSON line per application
   {"company": "Acme", "role": "Business Analyst", "kind": "received", "date": "2026-11-23",
    "ref": "REQ-123", "from": "acme.com", "subject": "..."}
 kind: received | rejected | interview | info | assessment | verify, and from scripts/linkedin_sync.py:
-applied | viewed | downloaded | closed.  ref, from, subject, url, channel, source and undated are optional.
+applied | viewed | downloaded | closed | draft | clicked.  ref, from, subject, url, channel, source and undated are optional.
 
   reply_reconcile.py check EVENTS [--tracker tracker.md] [--write-replies] [--inbox] [--json]
       REPLY     the row's Reply cell should say what the mail says (--write-replies writes these: the reply
@@ -33,21 +33,25 @@ import ui_protocol as up  # noqa: E402
 from card_filter import _tok_match, norm, tokens  # noqa: E402
 from tracker_stats import cells  # noqa: E402
 
-KINDS = ("received", "rejected", "interview", "info", "assessment", "verify", "applied", "viewed", "downloaded", "closed")
+KINDS = ("received", "rejected", "interview", "info", "assessment", "verify", "applied", "viewed", "downloaded", "closed",
+         "draft", "clicked")
 SENT_PROOF = {"received", "rejected", "interview", "info", "assessment", "applied", "viewed", "downloaded"}
 UNDATED = {"viewed", "downloaded", "closed"}  # LinkedIn shows the signal, not when it happened
-NO_REPLY = {"applied"}  # proves the application went out; not a reply from the employer
+NO_REPLY = {"applied", "draft", "clicked"}  # facts about the application, not replies from the employer
+STARTED = {"draft": "⏳", "clicked": "🔗"}  # started on LinkedIn, not sent: a missing row is proposed as open
 OPEN = ("⏳", "✉️", "💬", "🔗", "🔒")
 LABELS = {
     "tr": {"received": "Alındı", "rejected": "Reddedildi", "interview": "Mülakat daveti", "info": "Bilgi istendi",
            "assessment": "Test/ödev", "verify": "Doğrulama gerekiyor", "sent": "Başvuruldu",
            "applied": "LinkedIn'de başvuruldu", "viewed": "Başvuru görüntülendi (LinkedIn)",
            "downloaded": "CV indirildi (LinkedIn)", "closed": "İlan kapandı",
+           "draft": "Easy Apply taslağı LinkedIn'de bekliyor", "clicked": "Şirket sitesinde başvuru başlatıldı (LinkedIn)",
            "by_mail": "mail ile doğrulandı", "by_linkedin": "LinkedIn'de doğrulandı", "no_row": "(satır yok)"},
     "en": {"received": "Received", "rejected": "Rejected", "interview": "Interview invite", "info": "Info requested",
            "assessment": "Assessment", "verify": "Verification needed", "sent": "Submitted",
            "applied": "Applied on LinkedIn", "viewed": "Application viewed (LinkedIn)",
            "downloaded": "Resume downloaded (LinkedIn)", "closed": "Posting closed",
+           "draft": "Easy Apply draft waiting on LinkedIn", "clicked": "Company form opened from LinkedIn",
            "by_mail": "confirmed by mail", "by_linkedin": "confirmed on LinkedIn", "no_row": "(no row)"},
 }
 COLS = {"date": {"date", "tarih"}, "company": {"company", "şirket", "sirket"}, "role": {"role", "pozisyon"},
@@ -67,7 +71,7 @@ class Tracker:
                 continue
             c = cells(line)
             if self.header is None:
-                self.header = [h.lower() for h in c]
+                self.header = [h.replace("İ", "i").lower() for h in c]  # "İlan".lower() is not "ilan"
             elif not set("".join(c)) <= set("-: "):
                 self.rows.append((i, c))
         if self.header is None:
@@ -165,7 +169,7 @@ def check(tr, events):
             if kind == "verify":
                 out.append({"kind": "NOTE", "event": ev, "key": None,
                             "why": "verification mail: the user must open the link (read only, never clicked)"})
-            elif kind in SENT_PROOF and pair not in missing_done:
+            elif (kind in SENT_PROOF or kind in STARTED) and pair not in missing_done:
                 missing_done.add(pair)
                 row = new_row(tr, ev, said, by)
                 out.append({"kind": "MISSING", "event": ev, "key": None, "before": lab["no_row"], "after": row})
@@ -194,7 +198,9 @@ def new_row(tr, ev, said, by):
     lab = LABELS[tr.lang]
     val = {"date": ev["date"], "company": ev["company"], "role": ev.get("role") or "—",
            "posting": ev.get("url") or ev.get("ref") or "—", "channel": ev.get("channel") or "—",
-           "status": f"✅ {lab['sent']} ({by}: {said})", "reply": "—" if ev["kind"] in NO_REPLY else said}
+           "status": (f"{STARTED[ev['kind']]} {lab[ev['kind']]}" if ev["kind"] in STARTED
+                      else f"✅ {lab['sent']} ({by}: {said})"),
+           "reply": "—" if ev["kind"] in NO_REPLY else said}
     by_col = {i: k for k, i in tr.col.items() if i is not None}
     return "| " + " | ".join(val.get(by_col.get(i), "—").replace("|", "/") for i in range(len(tr.header))) + " |"
 

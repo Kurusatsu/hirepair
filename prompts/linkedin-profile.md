@@ -6,7 +6,7 @@ Facts come only from `cv.local.md`. Market demand comes only from saved job desc
 
 ## Step 1: skill demand report (read only)
 1. Need job texts in `data/jobs/` (the daily scan saves them). If there are fewer than 10, say so: the report is weak. Offer one of: wait for more scans, or run the approved `queries.jobs` and `queries.skills` once, read up to `limits.max_evaluated_per_round` job pages, and save each text to `data/jobs/<job-id>.txt`. Opening pages is read-only; still respect the limits.
-2. Ask the user for their current LinkedIn skills: paste them, or let you read the profile's Skills section in their own signed-in browser (read only; open their own profile only, never other people's). Save them to `data/linkedin-skills.local.txt`, one per line.
+2. Ask the user for their current LinkedIn skills: paste them, or let you read them in their own signed-in browser: open `https://www.linkedin.com/in/me/details/skills/` and run `scripts/linkedin_skills.js` in ONE call (read only, clicks nothing; their own profile only, never other people's). Save them to `data/linkedin-skills.local.txt`, one per line.
 3. Run `python3 scripts/skill_gap.py --jobs data/jobs --cv cv.local.md --linkedin data/linkedin-skills.local.txt`, then the same with `--json > data/skills-report.json` (the UI's Skills tab reads it).
    The vocabulary is `templates/skills-vocab.txt`; if the job texts keep naming a skill the report does not know, add it to `data/skills-vocab.local.txt` (`Name | alias`) and re-run.
 4. Show the result in four short lists, each skill with its demand (for example "SQL, 14/30 jobs") and, for CV skills, the CV line that proves it:

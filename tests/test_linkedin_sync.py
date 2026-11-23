@@ -116,5 +116,45 @@ class Sync(unittest.TestCase):
             self.assertTrue(any("LinkedIn's job tracker" in items[i]["summary"] for i in inbox_added))
 
 
+class OpenApplications(unittest.TestCase):
+    RAW = ("N=3;4000000011~0~draft~~Technical Product Manager~Example Pay|4000000031~1~draft~~New Draft~Draft Co"
+           "|4000000032~-1~draft~closed~Dead Draft~Gone Co\n"
+           "N=2;4000000033~3~clicked_apply~~Portal Role~Portal Co|4000000034~40~clicked_apply~~Old Portal Role~Old Co")
+
+    def test_drafts_and_company_forms(self):
+        with tempfile.TemporaryDirectory() as d:
+            tracker = os.path.join(d, "tracker.md")
+            with open(tracker, "w", encoding="utf-8") as f:
+                f.write(TRACKER)
+            ev, listed = ls.events(ls.rows_from(self.RAW), date(2030, 1, 10), 14)
+            self.assertEqual(listed, [])
+            self.assertEqual({(e["ref"], e["kind"]) for e in ev},
+                             {("4000000011", "draft"), ("4000000031", "draft"), ("4000000032", "closed"),
+                              ("4000000033", "clicked")})  # the 40-day-old posting is skipped
+            found = rr.check(rr.Tracker(tracker), ev)
+            rows = {f["event"]["ref"]: f for f in found if f["kind"] == "MISSING"}
+            self.assertEqual(set(rows), {"4000000031", "4000000033"})  # the known draft and the dead one add none
+            self.assertIn("| ⏳ Easy Apply draft waiting on LinkedIn |", rows["4000000031"]["after"])
+            self.assertIn("| 🔗 Company form opened from LinkedIn |", rows["4000000033"]["after"])
+            self.assertFalse([f for f in found if f["kind"] in ("STATUS", "REPLY")])  # a draft proves nothing
+
+
+@unittest.skipUnless(shutil.which("node"), "node not installed")
+class Skills(unittest.TestCase):
+    def test_reads_names_once(self):
+        runner = r"""
+const fs = require('fs'), vm = require('vm');
+const el = t => ({ innerText: t });
+const items = [el('SQL\nUsed at Example Co'), el('Jira\n1 endorsement'), el('SQL\nagain'), el('Agile | Scrum')];
+const document = { body: { scrollHeight: 0 }, querySelectorAll: s => s.includes('profile.skill(') ? items : [] };
+const ctx = vm.createContext({ document, window: { scrollTo() {} }, setTimeout: f => f() });
+vm.runInContext(fs.readFileSync(process.argv[1], 'utf8'), ctx).then(out => console.log(out));
+"""
+        out = subprocess.run(["node", "-e", runner, os.path.join(SCRIPTS, "linkedin_skills.js")],
+                             capture_output=True, text=True)
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertEqual(out.stdout.strip(), "N=3;SQL|Jira|Agile Scrum")
+
+
 if __name__ == "__main__":
     unittest.main()

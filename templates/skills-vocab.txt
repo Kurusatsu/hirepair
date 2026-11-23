@@ -28,6 +28,7 @@ Waterfall
 SAFe
 Project Management | proje yönetimi
 Program Management
+Internal Controls | internal control | iç kontrol
 Change Management | değişiklik yönetimi
 Release Management | release manager | sürüm yönetimi
 ITIL
@@ -73,6 +74,7 @@ Python
 Java
 JavaScript | js
 TypeScript
+Unit Testing | unit test | unit tests | birim test
 C#
 .NET
 Node.js | nodejs

@@ -1,10 +1,10 @@
 // Read LinkedIn's own job tracker (My jobs) in ONE JavaScript call per batch of pages.
-// Open https://www.linkedin.com/jobs-tracker/?stage=applied (or saved, in_progress, interview), wait ~5 s,
+// Open https://www.linkedin.com/jobs-tracker/?stage=applied (or saved, draft, clicked_apply, interview), wait ~5 s,
 // paste this body. It reads the open tab page by page (newest application first) until rows are older
 // than DAYS or MAX_PAGES pages were read, and keeps the rows in the page.
 // Output: "N=<rows>;" then "id~days~stage~signals~title~company" rows joined by "|". If the output ends
 // with "MORE@<n>", call again with OFF = n: later calls only slice the rows already read.
-// days: age of the application (applied tab) in days, -1 if unknown. signals, joined by "+": viewed
+// days: age of the application in days (applied tab), else age of the posting; -1 if unknown. signals, joined by "+": viewed
 // (Application viewed), downloaded (Resume downloaded), closed (No longer accepting applications),
 // heard_yes / heard_no (your own answer to "Did you hear back?"). No links, no query strings.
 // Then: python3 scripts/linkedin_sync.py <saved output file> (see that script).
@@ -25,7 +25,7 @@
     return m && m[2].toLowerCase() in UNIT ? Number(m[1]) * UNIT[m[2].toLowerCase()] : -1;
   };
   const clean = s => String(s == null ? '' : s).replace(/[~|\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
-  const NOISE = /^(Add note|Not ekle|Did you hear back\?|Geri dönüş aldınız mı\?|Yes|No|Evet|Hayır|·|\d+ connections?|\+\d+)$/i;
+  const NOISE = /^(Add note|Not ekle|Did you hear back\?|Geri dönüş aldınız mı\?|Did you finish applying\?|Continue Application|Discard draft.*|Yes|No|Evet|Hayır|·|\d+ connections?|\+\d+)$/i;
   const rows = [];
   const seen = new Set();
   let pages = 0;
@@ -45,7 +45,8 @@
       const title = lines.length > 1 && lines[1] !== lead && lead.includes(lines[1]) ? lines[1] : plain;
       const place = lines.find(l => l.includes(' · ')) || '';
       const applied = lines.find(l => /^(Applied|Başvuruldu)\b/i.test(l)) || '';
-      const d = applied ? days(applied) : -1;
+      const posted = lines.find(l => /^\(?(Posted|Reposted|Yayınlandı)\b/i.test(l)) || '';
+      const d = applied ? days(applied) : posted ? days(posted) : -1;
       if (d > oldest) oldest = d;
       const sig = [];
       if (lines.some(l => /Application viewed|Başvuru görüntülendi/i.test(l))) sig.push('viewed');
