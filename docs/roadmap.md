@@ -9,7 +9,7 @@ Order matters: finish what is below "Now" before starting "Next".
 
 ## Next: tidy and harden
 - Run every mode end to end on a real account and fix what breaks. Done on a supervised run (2026-11-23): job search and card filter, job-text cache and scoring, skill report, Easy Apply up to Review with the resume upload, #hiring post search, Gmail reply check and a mail draft. Still untested on a real account: the scheduled run (search subagent + `candidates_check.py --done-only`), `/linkedin-profile` guided edit, company portals (Workday sign-in stop), recruiter mode sources.
-- CV PDF build step: tailored CVs stop at Markdown because no build command is configured; the form then gets the general CV.
+- Done: CV PDF build step (`scripts/build_cv_pdf.py`): Markdown to a single-column HTML page printed by the local headless Chrome; fails on more than 2 pages or no text layer. Before it, tailored CVs stopped at Markdown and forms got the general CV.
 - Reply check: it only updates the Reply cell. Applications made by hand never get a row, and a row stays ⏳ after a "received" or rejection mail. List both in the report as tracker mismatches.
 - Skill matching: a tool name such as "Azure DevOps" also counts as the practice "DevOps" (overlapping vocabulary entries).
 

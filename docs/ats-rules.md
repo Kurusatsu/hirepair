@@ -1,6 +1,6 @@
 # ATS rules for tailored CVs
 
-Every CV the agent tailors for a role MUST follow these rules. Check with `python3 scripts/ats_check.py <cv.md> --jd <job.txt>` before building the PDF. The keyword report only reports; it never adds anything.
+Every CV the agent tailors for a role MUST follow these rules. Check with `python3 scripts/ats_check.py <cv.md> --jd <job.txt>` before building the PDF with `python3 scripts/build_cv_pdf.py <cv.md>` (rules 1, 2, 5, 6, 7, 11 are built in). The keyword report only reports; it never adds anything.
 
 1. **Single column.** No side bars, no multi-column layouts.
 2. **No tables, icons, charts, graphics, photos or text boxes.** No critical information in headers or footers.

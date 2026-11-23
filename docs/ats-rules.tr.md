@@ -1,6 +1,6 @@
 # Uyarlanan CV'ler için ATS kuralları
 
-Ajanın bir rol için uyarladığı her CV bu kurallara UYMALIDIR. PDF'ten önce `python3 scripts/ats_check.py <cv.md> --jd <ilan.txt>` ile kontrol et. Anahtar kelime raporu yalnızca raporlar, hiçbir şey eklemez.
+Ajanın bir rol için uyarladığı her CV bu kurallara UYMALIDIR. PDF'ten önce `python3 scripts/ats_check.py <cv.md> --jd <ilan.txt>` ile kontrol et, ardından PDF'i `python3 scripts/build_cv_pdf.py <cv.md>` ile üret (1, 2, 5, 6, 7 ve 11. kurallar içinde hazır). Anahtar kelime raporu yalnızca raporlar, hiçbir şey eklemez.
 
 1. **Tek sütun.** Yan çubuk veya çok sütunlu yerleşim yok.
 2. **Tablo, ikon, grafik, fotoğraf, metin kutusu yok.** Üstbilgi/altbilgide kritik bilgi yok.

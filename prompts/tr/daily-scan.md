@@ -2,7 +2,7 @@
 
 Claude Code zamanlanmış görev prompt'u. Günde bir kez (örn. 17:00) çalışır: ilanlar (A) ve "#hiring" gönderileri (B) tek turda aranıp tek havuzda birleştirilir. `<YER_TUTUCU>`ları kendi değerlerinle değiştir.
 
-**Varsayılanlar (etkileşimli çalıştırmada, hiçbir şey değiştirilmediyse):** `<RAPOR_DILI>` = kullanıcının yazdığı dil (varsayılan Türkçe); `<ELLE_EKLENEN_LISTE>` = `data/manual-candidates.md`; `<SEEN_IDS_TXT>` = `data/seen-ids.txt`; `<ADAY_DOSYASI>` = `data/candidates-<tarih>.md`; `<MAIL_TASLAK_DOSYASI>` = `data/mail-drafts-<tarih>.md`. Eksik dosyayı boş oluştur (hepsi git'e girmeyen `data/` altında). CV'yi PDF'e çevirecek komut yapılandırılmadıysa uyarlanan CV'yi `data/cv/<Ad_Soyad_Rol_Cv>.md` olarak kaydet, `ats_check.py` çalıştır ve PDF'i nasıl üreteceğini kullanıcıya sor (örn. tarayıcıdan PDF olarak yazdır). Derleme adımı uydurma.
+**Varsayılanlar (etkileşimli çalıştırmada, hiçbir şey değiştirilmediyse):** `<RAPOR_DILI>` = kullanıcının yazdığı dil (varsayılan Türkçe); `<ELLE_EKLENEN_LISTE>` = `data/manual-candidates.md`; `<SEEN_IDS_TXT>` = `data/seen-ids.txt`; `<ADAY_DOSYASI>` = `data/candidates-<tarih>.md`; `<MAIL_TASLAK_DOSYASI>` = `data/mail-drafts-<tarih>.md`. Eksik dosyayı boş oluştur (hepsi git'e girmeyen `data/` altında). CV'yi PDF'e çevirmek için: uyarlanan CV'yi `data/cv/<Ad_Soyad_Rol_Cv>.md` olarak kaydet, `ats_check.py` çalıştır, sonra `python3 scripts/build_cv_pdf.py data/cv/<Ad_Soyad_Rol_Cv>.md` (yerel Chrome ile yazdırır; 2 sayfayı aşarsa hata verir). Chrome yoksa PDF'i nasıl üreteceğini kullanıcıya sor. Derleme adımı uydurma.
 
 ---
 

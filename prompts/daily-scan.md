@@ -4,7 +4,7 @@ A scheduled-task prompt for Claude Code. It runs once a day (for example 17:00) 
 
 Replace every `<PLACEHOLDER>` before use. Keep your real data in files that are git-ignored (see `.gitignore`).
 
-**Defaults (interactive run, nothing replaced):** `<REPORT_LANGUAGE>` = the language the user writes in; `<PATH_TO_CV_MD>` = `cv.local.md`; `<PATH_TO_PROFILE_YML>` = `profile.local.yml`; `<PATH_TO_TRACKER_MD>` = `tracker.md`; `<PATH_TO_MANUAL_LIST_MD>` = `data/manual-candidates.md`; `<PATH_TO_SEEN_IDS_TXT>` = `data/seen-ids.txt`; `<CANDIDATES_FILE>` = `data/candidates-<date>.md`; `<MAIL_DRAFTS_FILE>` = `data/mail-drafts-<date>.md`. Create a missing file empty (all under git-ignored `data/`). `<YOUR_CV_BUILD_COMMAND>` has no default: if none is configured, save the tailored CV as `data/cv/<First_Last_Role_Cv>.md`, run `ats_check.py` on it, and ask the user how to produce the PDF (for example print to PDF from a browser). Never invent a build step.
+**Defaults (interactive run, nothing replaced):** `<REPORT_LANGUAGE>` = the language the user writes in; `<PATH_TO_CV_MD>` = `cv.local.md`; `<PATH_TO_PROFILE_YML>` = `profile.local.yml`; `<PATH_TO_TRACKER_MD>` = `tracker.md`; `<PATH_TO_MANUAL_LIST_MD>` = `data/manual-candidates.md`; `<PATH_TO_SEEN_IDS_TXT>` = `data/seen-ids.txt`; `<CANDIDATES_FILE>` = `data/candidates-<date>.md`; `<MAIL_DRAFTS_FILE>` = `data/mail-drafts-<date>.md`. Create a missing file empty (all under git-ignored `data/`). `<YOUR_CV_BUILD_COMMAND>` = save the tailored CV as `data/cv/<First_Last_Role_Cv>.md`, run `ats_check.py` on it, then `python3 scripts/build_cv_pdf.py data/cv/<First_Last_Role_Cv>.md` (prints it with the local Chrome; fails on more than 2 pages). If Chrome is missing, ask the user how to produce the PDF. Never invent a build step.
 
 ---
 
@@ -16,7 +16,7 @@ You are running a job-search sweep for the candidate. Write all user-facing text
 - Tracker (every company/role already handled): `<PATH_TO_TRACKER_MD>` (see `docs/tracker-format.md`)
 - Manually added candidates: `<PATH_TO_MANUAL_LIST_MD>`
 - Seen-ID list: `<PATH_TO_SEEN_IDS_TXT>` (one job ID per line)
-- CV builder: `<YOUR_CV_BUILD_COMMAND>` (anything that turns a per-job payload into a PDF of at most 2 pages)
+- CV builder: `<YOUR_CV_BUILD_COMMAND>` (anything that turns a per-job payload into a PDF of at most 2 pages; default `scripts/build_cv_pdf.py`)
 
 ## Who and what
 Only roles in `approved_roles` (and `adjacent_roles`) are searched and scored. All role targets, exclusions, always-include companies, location rules and form facts come from the profile file. Do not hard-code them here. Treat the profile's exclusions as hard; everything else only lowers the score.
