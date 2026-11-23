@@ -1,0 +1,19 @@
+{
+ "note": "Post shapes seen on LinkedIn's content search on 2026-11-23 (supervised run). Names, companies and addresses are fictional; the layout ('<age> • Follow', reposts of one text, dotted capital İ) is as observed.",
+ "posts": [
+  {"componentkey": "expandedAAA111FeedType_SEARCH",
+   "text": "Example Recruiter\nTalent Partner\n3d •\nFollow\n📢 İŞ ANALİSTİ ARIYORUZ! Ankara'da ikamet eden aday arıyoruz.\njobs@example.com"},
+  {"componentkey": "expandedBBB222FeedType_SEARCH",
+   "text": "Other Recruiter\nHR\n3d • Edited •\nConnect\n📢 İŞ ANALİSTİ ARIYORUZ! Ankara'da ikamet eden aday arıyoruz.\njobs@example.com"},
+  {"componentkey": "expandedCCC333FeedType_SEARCH",
+   "text": "Third Person\nRecruiter\n1w •\nFollow\nİş Analisti & .NET Developer – Bankacılık\nİstanbul / Hibrit\ncv@example.com.tr"},
+  {"componentkey": "expandedDDD444FeedType_SEARCH",
+   "text": "Someone\nCoach\n2mo •\nFollow\nKariyer tavsiyeleri paylaşıyorum."},
+  {"componentkey": "update-card-focusEEE555", "text": "not a post container"}
+ ],
+ "expected": [
+  "3~1~jobs@example.com~📢 İŞ ANALİSTİ ARIYORUZ! Ankara'da ikamet eden aday arıyoruz. jobs@example.com",
+  "7~1~cv@example.com.tr~İş Analisti & .NET Developer – Bankacılık İstanbul / Hibrit cv@example.com.tr",
+  "60~0~~Kariyer tavsiyeleri paylaşıyorum."
+ ]
+}

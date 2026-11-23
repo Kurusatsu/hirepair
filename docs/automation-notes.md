@@ -54,6 +54,7 @@ Forms that worked:
 - Unquoted keywords, no date-posted filter, sort by `date_posted`.
 - Scroll to the bottom twice, wait about 6 seconds.
 - Then filter in one JavaScript call by keyword and by post age (3 days preferred, 7 acceptable) and extract public e-mail addresses with a regex.
+- Supervised run on 2026-11-23: posts have no `data-urn`; each post is an element with `componentkey="expanded<id>FeedType_…"`, which `scripts/linkedin_posts.js` reads. "iş analisti istanbul işe alım" returned only posts older than a week; "iş analisti arıyoruz" returned 5 posts within 7 days, newest first. The same opening was reposted by three recruiters (the script keeps one). In JavaScript, `"İ".toLowerCase()` is not `"i"`: replace `İ` before matching Turkish keywords.
 - Keep a per-query tally (working / empty / failed) and replace queries that stay empty for several days.
 - If three working queries produce nothing relevant, report "post scan inconclusive" instead of retrying the rest.
 
