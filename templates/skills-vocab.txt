@@ -4,7 +4,7 @@
 
 # Analysis and product
 Business Analysis | business analyst | iş analizi | iş analisti
-Requirements Gathering | requirements elicitation | requirement analysis | gereksinim analizi | ihtiyaç analizi
+Requirements Gathering | requirements elicitation | requirement analysis | requirements analysis | gather requirements | gathering requirements | gather business needs | gereksinim analizi | ihtiyaç analizi
 User Stories | user story | kullanıcı hikayesi
 Use Cases | use case
 Process Improvement | process optimization | süreç iyileştirme

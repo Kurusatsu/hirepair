@@ -28,6 +28,25 @@ class SkillGap(unittest.TestCase):
         self.assertIn("C#", g.skills_in("Backend in C# and .NET", VOCAB))
         self.assertIn(".NET", g.skills_in("Backend in C# and .NET", VOCAB))
 
+    def test_job_text_drops_company_name_and_benefits(self):
+        raw = ("Example Sigorta | Business Analyst | https://example.com/1\n"
+               "Requirements\nSQL and Jira.\n"
+               "What We Offer\nTraining budget\nHealth insurance for your family\n"
+               "Qualifications\nUser acceptance testing.\n"
+               "Yan haklar: özel sağlık sigortası, eğitim bütçesi\n"
+               "Comprehensive health insurance and Private Pension Plan\n")
+        s = g.skills_in(g.job_text(raw), VOCAB)
+        self.assertEqual({"Business Analysis", "SQL", "Jira", "User Acceptance Testing"} & s,
+                         {"Business Analysis", "SQL", "Jira", "User Acceptance Testing"})
+        self.assertNotIn("Insurance", s)  # company name, benefit section and benefit lines
+        self.assertNotIn("Training", s)
+        # an insurance job still counts: the requirement is not a benefit line
+        self.assertIn("Insurance", g.skills_in(g.job_text("Sigorta sektöründe 3 yıl deneyim"), VOCAB))
+
+    def test_requirements_analysis_is_requirements_gathering(self):
+        self.assertIn("Requirements Gathering", g.skills_in("Requirements analysis, SDLC", VOCAB))
+        self.assertIn("Requirements Gathering", g.skills_in("gather business needs from stakeholders", VOCAB))
+
     def test_education_heading_is_not_training(self):
         self.assertNotIn("Training", g.skills_in(CV, VOCAB))
 

@@ -35,7 +35,7 @@ def recent_jobs(jobs_dir, today, days):
     out = {}
     for p in sorted(glob.glob(os.path.join(jobs_dir, "*.txt")) + glob.glob(os.path.join(jobs_dir, "*.md"))):
         if os.path.getmtime(p) >= cutoff:
-            out[os.path.basename(p)] = skill_gap.read(p)
+            out[os.path.basename(p)] = skill_gap.job_text(skill_gap.read(p))
     return out
 
 

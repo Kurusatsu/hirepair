@@ -60,6 +60,36 @@ def read(path):
         return f.read()
 
 
+# Benefit text describes the employer, not the job: "health insurance" is not demand for Insurance and a
+# "training budget" is not demand for Training. A benefits section runs until a requirements-type heading.
+BENEFITS_HEAD = re.compile(r"^\W*(what we offer|what we provide|our benefits|benefits|perks|yan haklar|"
+                           r"neler sunuyoruz|sunduğumuz (imkanlar|olanaklar|haklar))\b")
+REQUIREMENTS_HEAD = re.compile(r"^\W*(requirements|qualifications|responsibilities|about you|role summary|"
+                               r"what (are we|we are) looking for|what you will do|how to succeed|"
+                               r"aranan nitelikler|beklediğimiz nitelikler|nitelikler|sorumluluklar|"
+                               r"görev tanımı|iş tanımı)\b")
+BENEFIT_LINE = re.compile(r"\b(health|medical|life|private) insurance|pension plan|meal card|sağlık sigortası|"
+                          r"hayat (ve ferdi kaza )?sigortası|ferdi kaza|yemek kartı|bireysel emeklilik")
+
+
+def job_text(raw):
+    """Job file text without what is not a requirement: the company name in the cache's first line
+    ("company | role | URL") and benefit lines or sections."""
+    lines = raw.splitlines()
+    if lines and lines[0].count("|") >= 2:
+        lines[0] = lines[0].split("|")[1]
+    out, in_benefits = [], False
+    for line in lines:
+        n = norm(line).strip()
+        if BENEFITS_HEAD.match(n):
+            in_benefits = True
+        elif in_benefits and REQUIREMENTS_HEAD.match(n):
+            in_benefits = False
+        if not in_benefits and not BENEFIT_LINE.search(n):
+            out.append(line)
+    return "\n".join(out)
+
+
 def analyse(jobs, cv_text, linkedin, vocab, min_share=0.15):
     """jobs: {name: text}. Returns a dict report. linkedin: list of skill names or None."""
     n = len(jobs)
@@ -126,7 +156,7 @@ def main(argv=None):
         print("error: empty skill vocabulary", file=sys.stderr)
         return 1
     files = sorted(glob.glob(os.path.join(a.jobs, "*.txt")) + glob.glob(os.path.join(a.jobs, "*.md")))
-    jobs = {os.path.basename(p): read(p) for p in files}
+    jobs = {os.path.basename(p): job_text(read(p)) for p in files}
     cv = read(a.cv) if a.cv and os.path.isfile(a.cv) else ""
     if not cv:
         print(f"warning: CV not found at {a.cv}; every skill will show as a gap", file=sys.stderr)
