@@ -36,7 +36,9 @@ tr: {
   sk_check:"LinkedIn'de var, CV'de yok (doğru mu kontrol et)", sk_li_none:'LinkedIn yetenekleri verilmedi.', sk_none:'-',
   sk_edits:'{n} profil değişikliği onayını bekliyor', sk_go:'Onaylara git', in_cv:'CV', on_li:'LinkedIn', not_cv:'CV\'de yok',
   sort_label:'Sırala', sort_date:'En yeni önce', sort_fit:'En uyumlu önce', prev:'Önceki', next:'Sonraki', range:'{a}–{b} / {n} satır',
-  before:'Şimdi', after:'Önerilen'
+  before:'Şimdi', after:'Önerilen',
+  trk_fixes:'Mailine göre {n} takip düzeltmesi onayını bekliyor', a_tracker_fix:'Takibi düzelt',
+  d_t_tracker_fix:'Bu takip düzeltmesi uygulansın mı?', d_b_tracker_fix:'Ajan bir sonraki çalışmasında yalnızca bu satırın durumunu değiştirir ya da bu satırı ekler. Hiçbir başvuru gönderilmez, mailine dokunulmaz.'
 },
 en: {
   skip:'Skip to content', mode:'Job-seeker mode', local:'Local only · 127.0.0.1 · nothing leaves this computer',
@@ -73,7 +75,9 @@ en: {
   sk_check:'On LinkedIn, not in CV (check they are true)', sk_li_none:'No LinkedIn skills given.', sk_none:'-',
   sk_edits:'Profile changes waiting for approval: {n}', sk_go:'Go to approvals', in_cv:'CV', on_li:'LinkedIn', not_cv:'not in CV',
   sort_label:'Sort', sort_date:'Newest first', sort_fit:'Best fit first', prev:'Previous', next:'Next', range:'{a}–{b} of {n} rows',
-  before:'Now', after:'Suggested'
+  before:'Now', after:'Suggested',
+  trk_fixes:'Tracker fixes from your mail waiting for approval: {n}', a_tracker_fix:'Fix the tracker',
+  d_t_tracker_fix:'Apply this tracker fix?', d_b_tracker_fix:'At its next run the agent only changes this row\'s status or adds this row. Nothing is submitted and your mail is not touched.'
 }};
 var lang = 'tr';
 try { var sv = localStorage.getItem('hp_lang'); if (sv === 'en' || sv === 'tr') lang = sv; } catch (e) {}
@@ -252,9 +256,10 @@ function itemCard(it) {
   var top = el('div', 'row');
   add(top, human ? badge('bad', 'lock', t('k_human')) : badge('wait', 'clock', t('k_approve')), el('span', 'note', it.type || ''));
   if (!pend) {
-    var key = 'st_' + it.status;
-    add(top, badge(it.status === 'stale' ? 'bad' : 'info', it.status === 'consumed' ? 'check' : 'info',
-      T.tr[key] ? t(key) : String(it.status), it.decision ? t('d_' + it.decision) : ''));
+    var key = 'st_' + it.status, skipped = it.status === 'consumed' && it.decision === 'skip';
+    add(top, badge(it.status === 'stale' ? 'bad' : 'info', it.status === 'consumed' && !skipped ? 'check' : 'info',
+      skipped ? t('d_skip') : T.tr[key] ? t(key) : String(it.status),
+      it.decision && it.status !== 'consumed' ? t('d_' + it.decision) : ''));
   }
   c.appendChild(top);
   add(c, el('h3', '', it.title));
@@ -330,7 +335,7 @@ function send(it, decision, text, inDlg) {
   }).catch(function () { fail(t('neterr')); });
 }
 
-function renderAll() { renderCount(); renderToday(); renderTracker(); renderInbox(); renderShortlist(); renderSkills(); }
+function renderAll() { renderCount(); renderToday(); renderTracker(); renderInbox(); renderShortlist(); renderSkills(); renderFixes(); }
 
 function chipList(title, names, tone) {
   var c = el('div', 'card');
@@ -341,17 +346,22 @@ function chipList(title, names, tone) {
   c.appendChild(w);
   return c;
 }
+// A card pointing to the approvals tab when items of one type are waiting (profile edits, tracker fixes).
+function pendingBanner(box, type, key) {
+  clear(box);
+  var n = ((state.inbox && state.inbox.items) || []).filter(function (i) { return i.type === type && i.status === 'pending'; }).length;
+  if (!n) return;
+  var e = el('div', 'card row');
+  var go = el('button', 'btn primary', t('sk_go')); go.type = 'button';
+  go.addEventListener('click', function () { var x = $('t-appr'); x.focus(); show(x); });
+  add(e, badge('wait', 'clock', t(key).replace('{n}', n)), go);
+  box.appendChild(e);
+}
+function renderFixes() { pendingBanner($('trk-fixes'), 'tracker_fix', 'trk_fixes'); }
 function renderSkills() {
   var r = state.skills, lists = $('sk-lists'), bars = $('sk-bars'), meta = $('sk-meta'), eds = $('sk-edits');
   clear(lists); clear(bars); clear(eds); meta.textContent = '';
-  var edits = ((state.inbox && state.inbox.items) || []).filter(function (i) { return i.type === 'profile_edit' && i.status === 'pending'; });
-  if (edits.length) {
-    var e = el('div', 'card row');
-    var go = el('button', 'btn primary', t('sk_go')); go.type = 'button';
-    go.addEventListener('click', function () { var x = $('t-appr'); x.focus(); show(x); });
-    add(e, badge('wait', 'clock', t('sk_edits').replace('{n}', edits.length)), go);
-    eds.appendChild(e);
-  }
+  pendingBanner(eds, 'profile_edit', 'sk_edits');
   var has = !!(r && r.exists && r.jobs);
   $('sk-empty').hidden = has; bars.hidden = !has;
   if (!has) return;
@@ -392,7 +402,7 @@ function poll() {
   take('inbox', '/api/inbox', function () {
     var n = pendingItems().length;
     if (state.lastPending !== null && n !== state.lastPending) announce(t('waiting_n').replace('{n}', n));
-    state.lastPending = n; renderCount(); renderInbox(); renderToday(); renderSkills();
+    state.lastPending = n; renderCount(); renderInbox(); renderToday(); renderSkills(); renderFixes();
   }).catch(function () {});
   take('tracker', '/api/tracker', function () { renderTracker(); renderToday(); }).catch(function () {});
 }

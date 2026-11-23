@@ -70,6 +70,7 @@ The skill reads prompts and docs from this repo, so keep the repo in place.
 - **Mail drafts, never sends:** ready examples in [templates/emails](templates/emails/README.md) (application, follow-up, clarifying question, interview invite)
 - **Bias and privacy built in:** protected attributes (age, gender, nationality, photo, name origin...) are masked before scoring; all data stays on your machine
 - **Tracker:** a plain Markdown file; `python3 scripts/tracker_stats.py tracker.md` prints counts, `python3 scripts/tracker_archive.py` moves closed rows older than 90 days to `tracker-archive.md`, and `python3 scripts/tracker_view.py` opens a read-only local page (127.0.0.1 only) with a "waiting for you" list and a filter. Approvals stay in the chat
+- **Tracker follows your inbox:** the daily reply check reads application mails (read only) and keeps the tracker honest: it writes replies, and when a mail shows an application you made by hand, or a row still marked waiting although the company confirmed it, it proposes the fix (before → after) for your one-click approval in the local UI (`scripts/reply_reconcile.py`)
 - **Local UI (optional):** `python3 scripts/ui_server.py` opens a local page (127.0.0.1 only) with Waiting for you / Tracker / Recruiter. Consents, sign-in and final Submit always stay yours. Details: [docs/ui-design.md](docs/ui-design.md)
 - **Turkish market:** Turkish prompts in `prompts/tr/`, KVKK-aware consent steps, net/gross salary care
 

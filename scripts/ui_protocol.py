@@ -25,7 +25,8 @@ import time
 from datetime import datetime, timedelta
 
 CLASSES = {"approve": {"approve", "skip", "edit"}, "human": {"done", "skip"}}
-TYPES = {"approve": {"roles", "criteria", "limits", "cv_upload", "mail_draft", "open_question", "profile_edit"},
+TYPES = {"approve": {"roles", "criteria", "limits", "cv_upload", "mail_draft", "open_question", "profile_edit",
+                     "tracker_fix"},
          "human": {"consent", "signin", "id_field", "captcha", "submit", "send"}}
 EXPIRY = timedelta(days=7)
 MAX_TEXT = 4000
@@ -144,7 +145,7 @@ def view(inbox, decisions, now=None):
             status = "expired"
         row = dict(it)
         row["status"] = status
-        if d and status in ("decided", "stale"):
+        if d and status in ("decided", "stale", "consumed"):
             row["decision"] = d.get("decision")
         out.append(row)
     out.sort(key=lambda r: r.get("created", ""))

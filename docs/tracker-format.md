@@ -41,6 +41,7 @@ An agent never writes ✅ on its own for an application it did not see confirmed
 
 - One row per company + role. Deduplicate by company + role before adding a row.
 - The agent only appends rows and edits the Status and Reply cells of existing rows.
+- Mail and tracker in step: the reply check writes Reply cells itself, but a Status change or a new row that a mail suggests (an application made by hand, or a row still ⏳ after a "received" mail) is only proposed (`scripts/reply_reconcile.py`, approval type `tracker_fix`) and applied after the user's yes.
 - Never put passwords, ID numbers or full personal data in the tracker.
 
 ## Archive

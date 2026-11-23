@@ -10,7 +10,7 @@ Order matters: finish what is below "Now" before starting "Next".
 ## Next: tidy and harden
 - Run every mode end to end on a real account and fix what breaks. Done on a supervised run (2026-11-23): job search and card filter, job-text cache and scoring, skill report, Easy Apply up to Review with the resume upload, #hiring post search, Gmail reply check and a mail draft. Still untested on a real account: the scheduled run (search subagent + `candidates_check.py --done-only`), `/linkedin-profile` guided edit, company portals (Workday sign-in stop), recruiter mode sources.
 - Done: CV PDF build step (`scripts/build_cv_pdf.py`): Markdown to a single-column HTML page printed by the local headless Chrome; fails on more than 2 pages or no text layer. Before it, tailored CVs stopped at Markdown and forms got the general CV.
-- Reply check: it only updates the Reply cell. Applications made by hand never get a row, and a row stays ⏳ after a "received" or rejection mail. List both in the report as tracker mismatches.
+- Done: tracker follows the inbox (`scripts/reply_reconcile.py`): the reply check writes mail events, Reply cells are written, and Status fixes or rows for applications made by hand are proposed as `tracker_fix` approvals (before → after, banner on the Tracker tab) and applied after the user's yes. Found on the first real run: a manual application missing from the tracker and a row still ⏳ after a rejection.
 - Skill matching: a tool name such as "Azure DevOps" also counts as the practice "DevOps" (overlapping vocabulary entries).
 
 ## Found and fixed on the first real run (2026-11-23)
